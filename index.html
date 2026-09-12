@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sky Blue Community Service Centre</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    header {
+      background: #0759a5;
+      color: white;
+      padding: 28px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 25px auto;
+      padding: 0 18px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #0759a5;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ccd3dd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 15px;
+      background: #0759a5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #064781;
+    }
+
+    .info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #eef6ff;
+      border-left: 4px solid #0759a5;
+      border-radius: 6px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #667085;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Sky Blue Community Service Centre</h1>
+    <p>Report community service delivery issues</p>
+  </header>
+
+  <main class="container">
+
+    <div class="card">
+
+      <h2>Report a Community Issue</h2>
+
+      <p>
+        Use this form to bring service delivery problems affecting
+        our community forward for recording and follow-up.
+      </p>
+
+      <form id="reportForm">
+
+        <label for="name">Your Name</label>
+        <input
+          type="text"
+          id="name"
+          placeholder="Enter your name"
+          required
+        >
+
+        <label for="category">Issue Category</label>
+        <select id="category" required>
+          <option value="">Select an issue</option>
+          <option>Electricity</option>
+          <option>Water</option>
+          <option>Blocked Drain / Stormwater</option>
+          <option>Pothole / Road</option>
+          <option>Illegal Dumping</option>
+          <option>Public Toilet / Facility</option>
+          <option>Building on Sidewalk / Public Space</option>
+          <option>Vandalism of Public Infrastructure</option>
+          <option>Theft</option>
+          <option>Other</option>
+        </select>
+
+        <label for="location">Location</label>
+        <input
+          type="text"
+          id="location"
+          placeholder="Street, section or landmark"
+          required
+        >
+
+        <label for="description">Describe the Problem</label>
+        <textarea
+          id="description"
+          placeholder="Explain what is happening..."
+          required
+        ></textarea>
+
+        <button type="submit">
+          Submit Report
+        </button>
+
+      </form>
+
+      <div class="info">
+        <strong>Important:</strong>
+        Please provide accurate information so that reported matters
+        can be properly recorded and followed up.
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>
+    Sky Blue Solution • Community Service Reporting Centre
+  </footer>
+
+  <script>
+    document.getElementById("reportForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      alert(
+        "Thank you. Your community report has been recorded on this device. " +
+        "Database and WhatsApp reporting will be connected in the next phase."
+      );
+
+      this.reset();
+    });
+  </script>
+
+</body>
+</html>
