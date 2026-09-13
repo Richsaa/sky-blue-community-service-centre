@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Sky Blue Community Service Centre</title>
 
   <style>
@@ -44,7 +45,7 @@
       background: white;
       padding: 25px;
       border-radius: 14px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
     }
 
     h2 {
@@ -91,6 +92,11 @@
       background: #064781;
     }
 
+    button:disabled {
+      background: #7b8794;
+      cursor: not-allowed;
+    }
+
     .info {
       margin-top: 20px;
       padding: 15px;
@@ -129,44 +135,74 @@
       <form id="reportForm">
 
         <label for="name">Your Name</label>
+
         <input
           type="text"
           id="name"
+          name="name"
           placeholder="Enter your name"
           required
         >
 
         <label for="category">Issue Category</label>
-        <select id="category" required>
+
+        <select
+          id="category"
+          name="category"
+          required
+        >
           <option value="">Select an issue</option>
-          <option>Electricity</option>
-          <option>Water</option>
-          <option>Blocked Drain / Stormwater</option>
-          <option>Pothole / Road</option>
-          <option>Illegal Dumping</option>
-          <option>Public Toilet / Facility</option>
-          <option>Building on Sidewalk / Public Space</option>
-          <option>Vandalism of Public Infrastructure</option>
-          <option>Theft</option>
-          <option>Other</option>
+          <option value="Electricity">Electricity</option>
+          <option value="Water">Water</option>
+          <option value="Blocked Drain / Stormwater">
+            Blocked Drain / Stormwater
+          </option>
+          <option value="Pothole / Road">
+            Pothole / Road
+          </option>
+          <option value="Illegal Dumping">
+            Illegal Dumping
+          </option>
+          <option value="Public Toilet / Facility">
+            Public Toilet / Facility
+          </option>
+          <option value="Building on Sidewalk / Public Space">
+            Building on Sidewalk / Public Space
+          </option>
+          <option value="Vandalism of Public Infrastructure">
+            Vandalism of Public Infrastructure
+          </option>
+          <option value="Theft">
+            Theft
+          </option>
+          <option value="Other">
+            Other
+          </option>
         </select>
 
         <label for="location">Location</label>
+
         <input
           type="text"
           id="location"
+          name="location"
           placeholder="Street, section or landmark"
           required
         >
 
         <label for="description">Describe the Problem</label>
+
         <textarea
           id="description"
+          name="description"
           placeholder="Explain what is happening..."
           required
         ></textarea>
 
-        <button type="submit">
+        <button
+          type="submit"
+          id="submitButton"
+        >
           Submit Report
         </button>
 
@@ -187,16 +223,97 @@
   </footer>
 
   <script>
-    document.getElementById("reportForm").addEventListener("submit", function(event) {
-      event.preventDefault();
+    document
+      .getElementById("reportForm")
+      .addEventListener("submit", async function(event) {
 
-      alert(
-        "Thank you. Your community report has been recorded on this device. " +
-        "Database and WhatsApp reporting will be connected in the next phase."
-      );
+        event.preventDefault();
 
-      this.reset();
-    });
+        const form = this;
+        const submitButton = document.getElementById("submitButton");
+
+        const name = document
+          .getElementById("name")
+          .value
+          .trim();
+
+        const category = document
+          .getElementById("category")
+          .value
+          .trim();
+
+        const location = document
+          .getElementById("location")
+          .value
+          .trim();
+
+        const description = document
+          .getElementById("description")
+          .value
+          .trim();
+
+        if (!name || !category || !location || !description) {
+          alert("Please complete all required fields.");
+          return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitting...";
+
+        try {
+
+          const response = await fetch("/api/report", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              name: name,
+              category: category,
+              location: location,
+              description: description
+            })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+
+            alert(
+              "Thank you. Your community report has been successfully recorded.\n\n" +
+              "Report ID: " + result.reportId
+            );
+
+            form.reset();
+
+          } else {
+
+            alert(
+              result.message ||
+              "Could not submit the report."
+            );
+
+          }
+
+        } catch (error) {
+
+          console.error("Report submission error:", error);
+
+          alert(
+            "Unable to submit the report right now. " +
+            "Please try again."
+          );
+
+        } finally {
+
+          submitButton.disabled = false;
+          submitButton.textContent = "Submit Report";
+
+        }
+
+      });
   </script>
 
 </body>
