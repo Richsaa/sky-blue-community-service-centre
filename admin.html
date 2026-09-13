@@ -1,1 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Sky Blue Community Service Centre - Admin</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    header {
+      background: #0759a5;
+      color: white;
+      padding: 24px 18px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .stat h3 {
+      margin: 0 0 8px;
+      color: #667085;
+      font-size: 14px;
+    }
+
+    .stat strong {
+      font-size: 28px;
+      color: #0759a5;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar input,
+    .toolbar select {
+      padding: 11px;
+      border: 1px solid #ccd3dd;
+      border-radius: 7px;
+      font-size: 15px;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 850px;
+    }
+
+    th,
+    td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #eef6ff;
+      color: #0759a5;
+    }
+
+    .status {
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .new {
+      background: #e8f1ff;
+      color: #0759a5;
+    }
+
+    .progress {
+      background: #fff4d6;
+      color: #8a5a00;
+    }
+
+    .resolved {
+      background: #e7f7ed;
+      color: #18794e;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #667085;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #0759a5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #667085;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Sky Blue Community Service Centre</h1>
+    <p>Administrator Dashboard</p>
+  </header>
+
+  <main class="container">
+
+    <section class="stats">
+
+      <div class="stat">
+        <h3>Total Reports</h3>
+        <strong id="totalReports">0</strong>
+      </div>
+
+      <div class="stat">
+        <h3>New</h3>
+        <strong id="newReports">0</strong>
+      </div>
+
+      <div class="stat">
+        <h3>In Progress</h3>
+        <strong id="progressReports">0</strong>
+      </div>
+
+      <div class="stat">
+        <h3>Resolved</h3>
+        <strong id="resolvedReports">0</strong>
+      </div>
+
+    </section>
+
+    <section class="card">
+
+      <h2>Community Reports</h2>
+
+      <div class="toolbar">
+
+        <input
+          type="search"
+          id="search"
+          placeholder="Search reports..."
+        >
+
+        <select id="statusFilter">
+          <option value="">All statuses</option>
+          <option value="New">New</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+
+      </div>
+
+      <div id="loading" class="loading">
+        Loading reports...
+      </div>
+
+      <table id="reportsTable" style="display:none;">
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+
+        <tbody id="reportsBody"></tbody>
+
+      </table>
+
+      <div id="empty" class="empty" style="display:none;">
+        No reports found.
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    Sky Blue Solution • Community Service Reporting Centre
+  </footer>
+
+  <script>
+
+    let allReports = [];
+
+    async function loadReports() {
+
+      const loading = document.getElementById("loading");
+      const table = document.getElementById("reportsTable");
+      const empty = document.getElementById("empty");
+
+      try {
+
+        const response = await fetch("/api/reports");
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.message || "Could not load reports.");
+        }
+
+        allReports = result.reports || [];
+
+        updateStatistics();
+
+        renderReports();
+
+        loading.style.display = "none";
+
+        if (allReports.length > 0) {
+          table.style.display = "table";
+          empty.style.display = "none";
+        } else {
+          table.style.display = "none";
+          empty.style.display = "block";
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        loading.textContent =
+          "Could not load reports. The dashboard API still needs to be connected.";
+
+      }
+
+    }
+
+    function updateStatistics() {
+
+      document.getElementById("totalReports").textContent =
+        allReports.length;
+
+      document.getElementById("newReports").textContent =
+        allReports.filter(report => report.status === "New").length;
+
+      document.getElementById("progressReports").textContent =
+        allReports.filter(report => report.status === "In Progress").length;
+
+      document.getElementById("resolvedReports").textContent =
+        allReports.filter(report => report.status === "Resolved").length;
+
+    }
+
+    function renderReports() {
+
+      const search =
+        document.getElementById("search").value
+        .toLowerCase()
+        .trim();
+
+      const status =
+        document.getElementById("statusFilter").value;
+
+      const body =
+        document.getElementById("reportsBody");
+
+      body.innerHTML = "";
+
+      const filteredReports = allReports.filter(report => {
+
+        const searchableText = (
+          report.name + " " +
+          report.category + " " +
+          report.location + " " +
+          report.description
+        ).toLowerCase();
+
+        const matchesSearch =
+          !search || searchableText.includes(search);
+
+        const matchesStatus =
+          !status || report.status === status;
+
+        return matchesSearch && matchesStatus;
+
+      });
+
+      if (filteredReports.length === 0) {
+
+        document.getElementById("reportsTable").style.display = "none";
+        document.getElementById("empty").style.display = "block";
+
+        return;
+
+      }
+
+      document.getElementById("reportsTable").style.display = "table";
+      document.getElementById("empty").style.display = "none";
+
+      filteredReports.forEach(report => {
+
+        const row = document.createElement("tr");
+
+        const statusClass =
+          report.status === "Resolved"
+            ? "resolved"
+            : report.status === "In Progress"
+              ? "progress"
+              : "new";
+
+        row.innerHTML = `
+          <td>${escapeHtml(report.id)}</td>
+          <td>${escapeHtml(report.name)}</td>
+          <td>${escapeHtml(report.category)}</td>
+          <td>${escapeHtml(report.location)}</td>
+          <td>${escapeHtml(report.description)}</td>
+          <td>
+            <span class="status ${statusClass}">
+              ${escapeHtml(report.status)}
+            </span>
+          </td>
+          <td>${escapeHtml(report.created_at)}</td>
+        `;
+
+        body.appendChild(row);
+
+      });
+
+    }
+
+    function escapeHtml(value) {
+
+      const div = document.createElement("div");
+
+      div.textContent =
+        value === null || value === undefined
+          ? ""
+          : String(value);
+
+      return div.innerHTML;
+
+    }
+
+    document
+      .getElementBy
