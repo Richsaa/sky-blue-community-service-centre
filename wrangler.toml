@@ -1,1 +1,11 @@
+name = "sky-blue-community-service-centre"
+main = "worker.js"
+compatibility_date = "2026-09-13"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "sky-blue-community-service-centre"
+database_id = "152bdc2c-c0c5-4352-a7a0-d076e55bcd92"
+
+[assets]
+directory = "./public"
