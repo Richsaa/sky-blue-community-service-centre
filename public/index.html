@@ -1,10 +1,431 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Sky Blue Community Service Centre</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    header {
+      background: #0759a5;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 25px auto;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #0759a5;
+    }
+
+    .intro {
+      line-height: 1.6;
+      color: #4b5563;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ccd4df;
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #0759a5;
+    }
+
+    .required {
+      color: #d62828;
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #0759a5;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: #064782;
+    }
+
+    .button:disabled {
+      background: #8aa7c2;
+      cursor: not-allowed;
+    }
+
+    .message {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+
+    .success {
+      background: #e8f7ee;
+      color: #176b3a;
+      border: 1px solid #a8dfbd;
+    }
+
+    .error {
+      background: #fdecec;
+      color: #9b1c1c;
+      border: 1px solid #f2b8b8;
+    }
+
+    .notice {
+      margin-top: 20px;
+      padding: 15px;
+      background: #eef6ff;
+      border-left: 4px solid #0759a5;
+      line-height: 1.5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 15px;
+      color: #667085;
+      font-size: 14px;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #667085;
+      margin-top: 6px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 23px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
+
 <body>
+
+<header>
   <h1>Sky Blue Community Service Centre</h1>
-  <p>Community service reporting system.</p>
+  <p>Report Community Issues. Help Us Build a Better Community.</p>
+</header>
+
+<div class="container">
+
+  <div class="card">
+
+    <h2>Report a Community Issue</h2>
+
+    <p class="intro">
+      Use this form to report service-delivery problems, infrastructure
+      concerns, safety issues and other matters affecting your community.
+      Your report will be recorded for follow-up and escalation to the
+      appropriate department or authority.
+    </p>
+
+    <form id="reportForm">
+
+      <label for="name">
+        Your Name <span class="required">*</span>
+      </label>
+
+      <input
+        type="text"
+        id="name"
+        name="name"
+        placeholder="Enter your full name"
+        required
+      >
+
+      <label for="phone">
+        Mobile Number <span class="required">*</span>
+      </label>
+
+      <input
+        type="tel"
+        id="phone"
+        name="phone"
+        placeholder="e.g. 0791234567"
+        required
+      >
+
+      <label for="category">
+        What are you reporting? <span class="required">*</span>
+      </label>
+
+      <select id="category" name="category" required>
+        <option value="">Select a category</option>
+
+        <option value="Electricity">
+          Electricity / Power
+        </option>
+
+        <option value="Water">
+          Water / Water Supply
+        </option>
+
+        <option value="Drainage">
+          Blocked Drain / Stormwater
+        </option>
+
+        <option value="Potholes">
+          Potholes / Roads
+        </option>
+
+        <option value="Illegal Dumping">
+          Illegal Dumping / Waste
+        </option>
+
+        <option value="Fire / Disaster">
+          Fire / Disaster / Emergency
+        </option>
+
+        <option value="Street Lights">
+          Street Lights
+        </option>
+
+        <option value="Public Infrastructure">
+          Damaged / Vandalised Public Infrastructure
+        </option>
+
+        <option value="Public Toilets">
+          Public Toilets
+        </option>
+
+        <option value="Building on Sidewalk">
+          Building on Sidewalk / Pavement
+        </option>
+
+        <option value="Building on Someone's Space">
+          Building on Someone's Space / Property Dispute
+        </option>
+
+        <option value="Theft">
+          Theft / Removal of Public Infrastructure
+        </option>
+
+        <option value="Safety">
+          Community Safety
+        </option>
+
+        <option value="Other">
+          Other
+        </option>
+      </select>
+
+      <label for="location">
+        Location of the Problem <span class="required">*</span>
+      </label>
+
+      <input
+        type="text"
+        id="location"
+        name="location"
+        placeholder="Street name, landmark or area"
+        required
+      >
+
+      <div class="small">
+        Please provide the most accurate location possible.
+      </div>
+
+      <label for="description">
+        Describe the Problem <span class="required">*</span>
+      </label>
+
+      <textarea
+        id="description"
+        name="description"
+        placeholder="Explain what is happening..."
+        required
+      ></textarea>
+
+      <label for="urgency">
+        Urgency
+      </label>
+
+      <select id="urgency" name="urgency">
+        <option value="Normal">Normal</option>
+        <option value="Urgent">Urgent</option>
+        <option value="Emergency">Emergency</option>
+      </select>
+
+      <div class="notice">
+        <strong>Emergency:</strong>
+        If there is an immediate danger to life or property, contact the
+        appropriate emergency services directly as well as submitting this
+        report.
+      </div>
+
+      <button
+        type="submit"
+        class="button"
+        id="submitButton"
+      >
+        Submit Report
+      </button>
+
+      <div
+        id="successMessage"
+        class="message success"
+      ></div>
+
+      <div
+        id="errorMessage"
+        class="message error"
+      ></div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<footer>
+  <strong>Sky Blue Community Service Centre</strong>
+  <br>
+  Community Reporting &amp; Service Delivery Support
+  <br><br>
+  Powered by Sky Blue Solution
+</footer>
+
+<script>
+  const form = document.getElementById("reportForm");
+  const submitButton = document.getElementById("submitButton");
+  const successMessage = document.getElementById("successMessage");
+  const errorMessage = document.getElementById("errorMessage");
+
+  form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    successMessage.style.display = "none";
+    errorMessage.style.display = "none";
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+
+    const report = {
+      name: document.getElementById("name").value.trim(),
+      phone: document.getElementById("phone").value.trim(),
+      category: document.getElementById("category").value,
+      location: document.getElementById("location").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      urgency: document.getElementById("urgency").value
+    };
+
+    try {
+
+      const response = await fetch("/api/reports", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(report)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "The report could not be submitted."
+        );
+      }
+
+      form.reset();
+
+      successMessage.innerHTML =
+        "<strong>Report submitted successfully.</strong><br>" +
+        "Your community issue has been recorded." +
+        (data.id ? "<br>Reference number: " + data.id : "");
+
+      successMessage.style.display = "block";
+
+      window.scrollTo({
+        top: successMessage.offsetTop,
+        behavior: "smooth"
+      });
+
+    } catch (error) {
+
+      errorMessage.textContent =
+        "We could not submit your report. " +
+        error.message +
+        " Please try again.";
+
+      errorMessage.style.display = "block";
+
+    } finally {
+
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit Report";
+
+    }
+  });
+</script>
+
 </body>
-</html>
+  </html>
