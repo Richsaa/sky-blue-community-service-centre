@@ -155,6 +155,12 @@
       margin-top: 6px;
     }
 
+    .loading {
+      color: #0759a5;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
     @media (max-width: 600px) {
       header h1 {
         font-size: 23px;
@@ -218,64 +224,12 @@
       </label>
 
       <select id="category" name="category" required>
-        <option value="">Select a category</option>
-
-        <option value="Electricity">
-          Electricity / Power
-        </option>
-
-        <option value="Water">
-          Water / Water Supply
-        </option>
-
-        <option value="Drainage">
-          Blocked Drain / Stormwater
-        </option>
-
-        <option value="Potholes">
-          Potholes / Roads
-        </option>
-
-        <option value="Illegal Dumping">
-          Illegal Dumping / Waste
-        </option>
-
-        <option value="Fire / Disaster">
-          Fire / Disaster / Emergency
-        </option>
-
-        <option value="Street Lights">
-          Street Lights
-        </option>
-
-        <option value="Public Infrastructure">
-          Damaged / Vandalised Public Infrastructure
-        </option>
-
-        <option value="Public Toilets">
-          Public Toilets
-        </option>
-
-        <option value="Building on Sidewalk">
-          Building on Sidewalk / Pavement
-        </option>
-
-        <option value="Building on Someone's Space">
-          Building on Someone's Space / Property Dispute
-        </option>
-
-        <option value="Theft">
-          Theft / Removal of Public Infrastructure
-        </option>
-
-        <option value="Safety">
-          Community Safety
-        </option>
-
-        <option value="Other">
-          Other
-        </option>
+        <option value="">Loading categories...</option>
       </select>
+
+      <div id="categoryStatus" class="loading">
+        Connecting to the community reporting system...
+      </div>
 
       <label for="location">
         Location of the Problem <span class="required">*</span>
@@ -325,8 +279,9 @@
         type="submit"
         class="button"
         id="submitButton"
+        disabled
       >
-        Submit Report
+        Loading...
       </button>
 
       <div
@@ -354,78 +309,312 @@
 </footer>
 
 <script>
+
   const form = document.getElementById("reportForm");
-  const submitButton = document.getElementById("submitButton");
-  const successMessage = document.getElementById("successMessage");
-  const errorMessage = document.getElementById("errorMessage");
 
-  form.addEventListener("submit", async function(event) {
-    event.preventDefault();
+  const submitButton =
+    document.getElementById("submitButton");
 
-    successMessage.style.display = "none";
-    errorMessage.style.display = "none";
+  const successMessage =
+    document.getElementById("successMessage");
 
-    submitButton.disabled = true;
-    submitButton.textContent = "Submitting...";
+  const errorMessage =
+    document.getElementById("errorMessage");
 
-    const report = {
-      name: document.getElementById("name").value.trim(),
-      phone: document.getElementById("phone").value.trim(),
-      category: document.getElementById("category").value,
-      location: document.getElementById("location").value.trim(),
-      description: document.getElementById("description").value.trim(),
-      urgency: document.getElementById("urgency").value
-    };
+  const categorySelect =
+    document.getElementById("category");
+
+  const categoryStatus =
+    document.getElementById("categoryStatus");
+
+
+  /*
+   * Load categories from the Cloudflare Worker.
+   */
+
+  async function loadCategories() {
 
     try {
 
-      const response = await fetch("/api/reports", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(report)
-      });
+      const response = await fetch("/api/categories");
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          data.error || "The report could not be submitted."
+          data.error || "Unable to load categories."
         );
       }
 
-      form.reset();
+      /*
+       * The Worker returns an array of categories.
+       */
 
-      successMessage.innerHTML =
-        "<strong>Report submitted successfully.</strong><br>" +
-        "Your community issue has been recorded." +
-        (data.id ? "<br>Reference number: " + data.id : "");
+      const categories =
+        Array.isArray(data)
+          ? data
+          : data.results || data.categories || [];
 
-      successMessage.style.display = "block";
+      categorySelect.innerHTML =
+        '<option value="">Select a category</option>';
 
-      window.scrollTo({
-        top: successMessage.offsetTop,
-        behavior: "smooth"
+      categories.forEach(function(category) {
+
+        const option =
+          document.createElement("option");
+
+        option.value = category.id;
+
+        option.textContent =
+          category.name ||
+          category.category_name ||
+          "Category " + category.id;
+
+        categorySelect.appendChild(option);
+
       });
+
+      if (categories.length === 0) {
+
+        categoryStatus.textContent =
+          "No categories are currently available.";
+
+        submitButton.disabled = true;
+
+        return;
+      }
+
+      categoryStatus.textContent =
+        "Categories loaded successfully.";
+
+      submitButton.disabled = false;
+
+      submitButton.textContent =
+        "Submit Report";
 
     } catch (error) {
 
+      console.error(
+        "Category loading error:",
+        error
+      );
+
+      categorySelect.innerHTML =
+        '<option value="">Unable to load categories</option>';
+
+      categoryStatus.textContent =
+        "The reporting system could not load the categories.";
+
       errorMessage.textContent =
-        "We could not submit your report. " +
-        error.message +
-        " Please try again.";
+        "System connection error: " +
+        error.message;
 
-      errorMessage.style.display = "block";
+      errorMessage.style.display =
+        "block";
 
-    } finally {
-
-      submitButton.disabled = false;
-      submitButton.textContent = "Submit Report";
+      submitButton.disabled = true;
 
     }
-  });
+  }
+
+
+  /*
+   * Submit report.
+   */
+
+  form.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      successMessage.style.display =
+        "none";
+
+      errorMessage.style.display =
+        "none";
+
+      submitButton.disabled =
+        true;
+
+      submitButton.textContent =
+        "Submitting...";
+
+
+      const categoryId =
+        Number(categorySelect.value);
+
+
+      const report = {
+
+        category_id: categoryId,
+
+        name:
+          document
+            .getElementById("name")
+            .value
+            .trim(),
+
+        phone:
+          document
+            .getElementById("phone")
+            .value
+            .trim(),
+
+        location:
+          document
+            .getElementById("location")
+            .value
+            .trim(),
+
+        description:
+          document
+            .getElementById("description")
+            .value
+            .trim(),
+
+        urgency:
+          document
+            .getElementById("urgency")
+            .value
+
+      };
+
+
+      if (!categoryId) {
+
+        errorMessage.textContent =
+          "Please select a reporting category.";
+
+        errorMessage.style.display =
+          "block";
+
+        submitButton.disabled =
+          false;
+
+        submitButton.textContent =
+          "Submit Report";
+
+        return;
+      }
+
+
+      try {
+
+        /*
+         * IMPORTANT:
+         * The Worker create endpoint is /api/report
+         */
+
+        const response =
+          await fetch("/api/report", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(report)
+
+          });
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "The report could not be submitted."
+          );
+
+        }
+
+
+        form.reset();
+
+
+        const reference =
+          data.reference_number ||
+          data.report_id ||
+          data.id ||
+          "Pending";
+
+
+        successMessage.innerHTML =
+          "<strong>Report submitted successfully.</strong><br><br>" +
+
+          "Your community issue has been recorded." +
+
+          "<br><br>" +
+
+          "<strong>Reference Number:</strong> " +
+
+          reference +
+
+          "<br><br>" +
+
+          "Please keep this reference number for follow-up.";
+
+
+        successMessage.style.display =
+          "block";
+
+
+        window.scrollTo({
+
+          top:
+            successMessage.offsetTop,
+
+          behavior:
+            "smooth"
+
+        });
+
+
+      } catch (error) {
+
+        console.error(
+          "Report submission error:",
+          error
+        );
+
+
+        errorMessage.innerHTML =
+          "<strong>Report could not be submitted.</strong><br>" +
+          error.message;
+
+
+        errorMessage.style.display =
+          "block";
+
+
+      } finally {
+
+        submitButton.disabled =
+          false;
+
+        submitButton.textContent =
+          "Submit Report";
+
+      }
+
+    }
+  );
+
+
+  /*
+   * Start the system.
+   */
+
+  loadCategories();
+
 </script>
 
 </body>
-  </html>
+</html>
