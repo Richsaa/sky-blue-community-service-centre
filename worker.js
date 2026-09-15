@@ -1,6 +1,27 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    // WhatsApp webhook verification
+if (url.pathname === "/api/whatsapp" && request.method === "GET") {
+  const mode = url.searchParams.get("hub.mode");
+  const token = url.searchParams.get("hub.verify_token");
+  const challenge = url.searchParams.get("hub.challenge");
+
+  if (mode === "subscribe" && token === env.WHATSAPP_VERIFY_TOKEN) {
+    return new Response(challenge, { status: 200 });
+  }
+
+  return new Response("Forbidden", { status: 403 });
+}
+
+// WhatsApp incoming messages
+if (url.pathname === "/api/whatsapp" && request.method === "POST") {
+  const body = await request.json();
+
+  console.log("WhatsApp webhook:", JSON.stringify(body));
+
+  return new Response("EVENT_RECEIVED", { status: 200 });
+}
 
     // --------------------------------------------------
     // CONFIGURATION
