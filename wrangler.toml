@@ -1,6 +1,1 @@
-name = "sky-blue-community-service-centre"
-main = "worker.js"
-compatibility_date = "2026-09-13"
 
-[assets]
-directory = "."
