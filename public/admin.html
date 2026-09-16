@@ -1,1 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sky Blue Community Service Centre - Admin</title>
 
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    header {
+      background: #0759a5;
+      color: white;
+      padding: 24px 18px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.08);
+    }
+
+    .stat h3 {
+      margin: 0 0 8px;
+      color: #667085;
+      font-size: 14px;
+    }
+
+    .stat strong {
+      font-size: 28px;
+      color: #0759a5;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.08);
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0 20px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar input,
+    .toolbar select {
+      padding: 11px;
+      border: 1px solid #ccd3dd;
+      border-radius: 7px;
+      font-size: 15px;
+      min-width: 170px;
+      flex: 1;
+    }
+
+    button {
+      border: none;
+      border-radius: 7px;
+      padding: 11px 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .refresh {
+      background: #0759a5;
+      color: white;
+    }
+
+    .manage {
+      background: #0759a5;
+      color: white;
+      white-space: nowrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1150px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #eef6ff;
+      color: #0759a5;
+    }
+
+    .status,
+    .priority {
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .new {
+      background: #e8f1ff;
+      color: #0759a5;
+    }
+
+    .progress {
+      background: #fff4d6;
+      color: #8a5a00;
+    }
+
+    .resolved {
+      background: #e7f7ed;
+      color: #18794e;
+    }
+
+    .urgent {
+      background: #fff0d6;
+      color: #9a5b00;
+    }
+
+    .emergency {
+      background: #fdecec;
+      color: #a61b1b;
+    }
+
+    .normal {
+      background: #eef2f6;
+      color: #475467;
+    }
+
+    .reference {
+      font-weight: bold;
+      color: #0759a5;
+      white-space: nowrap;
+    }
+
+    .loading,
+    .empty,
+    .error {
+      text-align: center;
+      padding: 30px;
+    }
+
+    .loading {
+      color: #0759a5;
+    }
+
+    .error {
+      color: #a61b1b;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #667085;
+      font-size: 13px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-box {
+      max-width: 700px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      align-items: center;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+    }
+
+    .close {
+      background: #eef2f6;
+      color: #344054;
+      font-size: 20px;
+      padding: 5px 10px;
+    }
+
+    .detail {
+      margin-bottom: 12px;
+    }
+
+    .detail strong {
+      display: block;
+      color: #667085;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .detail div {
+      background: #f8fafc;
+      border-radius: 7px;
+      padding: 10px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-top: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #ccd3dd;
+      border-radius: 7px;
+      font-size: 15px;
+      font-family: Arial, sans-serif;
+    }
+
+    .form-group textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .save {
+      margin-top: 18px;
+      width: 100%;
+      background: #0759a5;
+      color: white;
+      font-size: 16px;
+    }
+
+    .history {
+      margin-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 15px;
+    }
+
+    .history-item {
+      background: #f8fafc;
+      border-left: 4px solid #0759a5;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+    }
+
+    .history-item strong {
+      color: #0759a5;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 21px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .modal {
+        padding: 10px;
+      }
+
+      .modal-box {
+        margin: 10px auto;
+        padding: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Sky Blue Community Service Centre</h1>
+  <p>Administrator Dashboard</p>
+</header>
+
+<main class="container">
+
+  <section class="stats">
+    <div class="stat">
+      <h3>Total Reports</h3>
+      <strong id="totalReports">0</strong>
+    </div>
+
+    <div class="stat">
+      <h3>New</h3>
+      <strong id="newReports">0</strong>
+    </div>
+
+    <div class="stat">
+      <h3>In Progress</h3>
+      <strong id="progressReports">0</strong>
+    </div>
+
+    <div class="stat">
+      <h3>Resolved</h3>
+      <strong id="resolvedReports">0</strong>
+    </div>
+
+    <div class="stat">
+      <h3>Urgent</h3>
+      <strong id="urgentReports">0</strong>
+    </div>
+
+    <div class="stat">
+      <h3>Emergency</h3>
+      <strong id="emergencyReports">0</strong>
+    </div>
+  </section>
+
+  <section class="card">
+
+    <h2>Community Reports</h2>
+
+    <div class="toolbar">
+
+      <input
+        type="search"
+        id="search"
+        placeholder="Search reports..."
+      >
+
+      <select id="statusFilter">
+        <option value="">All statuses</option>
+        <option value="New">New</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+
+      <select id="priorityFilter">
+        <option value="">All priorities</option>
+        <option value="Normal">Normal</option>
+        <option value="Urgent">Urgent</option>
+        <option value="Emergency">Emergency</option>
+      </select>
+
+      <button class="refresh" onclick="loadReports()">
+        Refresh
+      </button>
+
+    </div>
+
+    <div id="loading" class="loading">
+      Loading reports...
+    </div>
+
+    <div
+      id="error"
+      class="error"
+      style="display:none;"
+    ></div>
+
+    <table
+      id="reportsTable"
+      style="display:none;"
+    >
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Location</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Priority</th>
+          <th>Department</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="reportsBody"></tbody>
+    </table>
+
+    <div
+      id="empty"
+      class="empty"
+      style="display:none;"
+    >
+      No reports found.
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <strong>Sky Blue Community Service Centre</strong><br>
+  Powered by Sky Blue Solution
+</footer>
+
+
+<!-- MANAGEMENT MODAL -->
+
+<div
+  id="reportModal"
+  class="modal"
+  onclick="closeModalOutside(event)"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <div>
+        <h2 id="modalTitle">
+          Manage Report
+        </h2>
+      </div>
+
+      <button
+        class="close"
+        onclick="closeModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div id="reportDetails"></div>
+
+    <div class="form-group">
+      <label for="status">
+        Status
+      </label>
+
+      <select id="status">
+        <option value="New">New</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="priority">
+        Priority
+      </label>
+
+      <select id="priority">
+        <option value="Normal">Normal</option>
+        <option value="Urgent">Urgent</option>
+        <option value="Emergency">Emergency</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="department">
+        Assign Department
+      </label>
+
+      <select id="department">
+        <option value="">
+          Select department
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="comment">
+        Update / Comment
+      </label>
+
+      <textarea
+        id="comment"
+        placeholder="Enter an update for this report..."
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="resolutionNotes">
+        Resolution Notes
+      </label>
+
+      <textarea
+        id="resolutionNotes"
+        placeholder="Enter resolution details if applicable..."
+      ></textarea>
+    </div>
+
+    <button
+      class="save"
+      onclick="saveReport()"
+    >
+      Save Report Update
+    </button>
+
+    <div class="history">
+
+      <h3>Report History</h3>
+
+      <div id="history">
+        Loading history...
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let allReports = [];
+let departments = [];
+let currentReportId = null;
+
+
+async function loadDepartments() {
+
+  try {
+
+    const response =
+      await fetch("/api/departments");
+
+    const data =
+      await response.json();
+
+    departments =
+      Array.isArray(data)
+        ? data
+        : data.results || [];
+
+    const select =
+      document.getElementById("department");
+
+    select.innerHTML =
+      '<option value="">Select department</option>';
+
+    departments.forEach(department => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = department.id;
+
+      option.textContent =
+        department.name ||
+        department.department_name ||
+        ("Department " + department.id);
+
+      select.appendChild(option);
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Department loading error:",
+      error
+    );
+
+  }
+
+}
+
+
+async function loadReports() {
+
+  const loading =
+    document.getElementById("loading");
+
+  const table =
+    document.getElementById("reportsTable");
+
+  const empty =
+    document.getElementById("empty");
+
+  const errorBox =
+    document.getElementById("error");
+
+  loading.style.display = "block";
+  table.style.display = "none";
+  empty.style.display = "none";
+  errorBox.style.display = "none";
+
+  try {
+
+    const response =
+      await fetch("/api/reports");
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Unable to load reports."
+      );
+
+    }
+
+    allReports =
+      Array.isArray(data)
+        ? data
+        : data.reports ||
+          data.results ||
+          [];
+
+    updateStatistics();
+
+    renderReports();
+
+    loading.style.display = "none";
+
+  } catch (error) {
+
+    console.error(error);
+
+    loading.style.display = "none";
+
+    errorBox.textContent =
+      "Could not load reports: " +
+      error.message;
+
+    errorBox.style.display = "block";
+
+  }
+
+}
+
+
+function updateStatistics() {
+
+  document.getElementById(
+    "totalReports"
+  ).textContent =
+    allReports.length;
+
+  document.getElementById(
+    "newReports"
+  ).textContent =
+    allReports.filter(
+      report =>
+        report.status === "New"
+    ).length;
+
+  document.getElementById(
+    "progressReports"
+  ).textContent =
+    allReports.filter(
+      report =>
+        report.status === "In Progress"
+    ).length;
+
+  document.getElementById(
+    "resolvedReports"
+  ).textContent =
+    allReports.filter(
+      report =>
+        report.status === "Resolved"
+    ).length;
+
+  document.getElementById(
+    "urgentReports"
+  ).textContent =
+    allReports.filter(
+      report =>
+        report.priority === "Urgent"
+    ).length;
+
+  document.getElementById(
+    "emergencyReports"
+  ).textContent =
+    allReports.filter(
+      report =>
+        report.priority === "Emergency"
+    ).length;
+
+}
+
+
+function renderReports() {
+
+  const search =
+    document
+      .getElementById("search")
+      .value
+      .toLowerCase()
+      .trim();
+
+  const status =
+    document.getElementById(
+      "statusFilter"
+    ).value;
+
+  const priority =
+    document.getElementById(
+      "priorityFilter"
+    ).value;
+
+  const body =
+    document.getElementById(
+      "reportsBody"
+    );
+
+  const table =
+    document.getElementById(
+      "reportsTable"
+    );
+
+  const empty =
+    document.getElementById(
+      "empty"
+    );
+
+  body.innerHTML = "";
+
+  const filtered =
+    allReports.filter(report => {
+
+      const searchable = (
+
+        report.id + " " +
+        report.name + " " +
+        report.category + " " +
+        report.location + " " +
+        report.description + " " +
+        report.reference_number
+
+      ).toLowerCase();
+
+      const matchesSearch =
+        !search ||
+        searchable.includes(search);
+
+      const matchesStatus =
+        !status ||
+        report.status === status;
+
+      const matchesPriority =
+        !priority ||
+        report.priority === priority;
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesPriority
+      );
+
+    });
+
+
+  if (filtered.length === 0) {
+
+    table.style.display = "none";
+    empty.style.display = "block";
+
+    return;
+  }
+
+
+  table.style.display = "table";
+  empty.style.display = "none";
+
+
+  filtered.forEach(report => {
+
+    const row =
+      document.createElement("tr");
+
+
+    const statusClass =
+      report.status === "Resolved"
+        ? "resolved"
+        : report.status === "In Progress"
+          ? "progress"
+          : "new";
+
+
+    const priorityClass =
+      report.priority === "Emergency"
+        ? "emergency"
+        : report.priority === "Urgent"
+          ? "urgent"
+          : "normal";
+
+
+    const department =
+      getDepartmentName(
+        report.assigned_department_id ||
+        report.department_id
+      );
+
+
+    row.innerHTML = `
+
+      <td>
+        <span class="reference">
+          ${escapeHtml(
+            report.reference_number ||
+            "No reference"
+          )}
+        </span>
+      </td>
+
+      <td>
+        ${escapeHtml(report.name)}
+      </td>
+
+      <td>
+        ${escapeHtml(report.category)}
+      </td>
+
+      <td>
+        ${escapeHtml(report.location)}
+      </td>
+
+      <td>
+        ${escapeHtml(report.description)}
+      </td>
+
+      <td>
+        <span class="status ${statusClass}">
+          ${escapeHtml(report.status)}
+        </span>
+      </td>
+
+      <td>
+        <span class="priority ${priorityClass}">
+          ${escapeHtml(
+            report.priority || "Normal"
+          )}
+        </span>
+      </td>
+
+      <td>
+        ${escapeHtml(department)}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          report.created_at || ""
+        )}
+      </td>
+
+      <td>
+        <button
+          class="manage"
+          onclick="openReport(${report.id})"
+        >
+          Manage
+        </button>
+      </td>
+
+    `;
+
+    body.appendChild(row);
+
+  });
+
+}
+
+
+function getDepartmentName(id) {
+
+  if (!id) {
+    return "Not assigned";
+  }
+
+  const department =
+    departments.find(
+      item =>
+        Number(item.id) === Number(id)
+    );
+
+  if (!department) {
+    return "Department " + id;
+  }
+
+  return (
+    department.name ||
+    department.department_name ||
+    ("Department " + id)
+  );
+
+}
+
+
+async function openReport(id) {
+
+  currentReportId = id;
+
+  document.getElementById(
+    "reportModal"
+  ).style.display = "block";
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent =
+    "Loading Report...";
+
+  document.getElementById(
+    "reportDetails"
+  ).innerHTML =
+    "Loading report details...";
+
+  document.getElementById(
+    "history"
+  ).innerHTML =
+    "Loading history...";
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/reports/" + id
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Unable to load report."
+      );
+
+    }
+
+    const report =
+      data.report;
+
+    document.getElementById(
+      "modalTitle"
+    ).textContent =
+      "Manage " +
+      (report.reference_number ||
+       "Report");
+
+
+    document.getElementById(
+      "reportDetails"
+    ).innerHTML = `
+
+      <div class="detail">
+        <strong>REFERENCE</strong>
+        <div>
+          ${escapeHtml(
+            report.reference_number ||
+            "No reference"
+          )}
+        </div>
+      </div>
+
+      <div class="detail">
+        <strong>NAME</strong>
+        <div>
+          ${escapeHtml(
+            report.name
+          )}
+        </div>
+      </div>
+
+      <div class="detail">
+        <strong>CATEGORY</strong>
+        <div>
+          ${escapeHtml(
+            report.category
+          )}
+        </div>
+      </div>
+
+      <div class="detail">
+        <strong>LOCATION</strong>
+        <div>
+          ${escapeHtml(
+            report.location
+          )}
+        </div>
+      </div>
+
+      <div class="detail">
+        <strong>DESCRIPTION</strong>
+        <div>
+          ${escapeHtml(
+            report.description
+          )}
+        </div>
+      </div>
+
+    `;
+
+
+    document.getElementById(
+      "status"
+    ).value =
+      report.status || "New";
+
+
+    document.getElementById(
+      "priority"
+    ).value =
+      report.priority || "Normal";
+
+
+    document.getElementById(
+      "department"
+    ).value =
+      report.assigned_department_id ||
+      report.department_id ||
+      "";
+
+
+    document.getElementById(
+      "comment"
+    ).value = "";
+
+
+    document.getElementById(
+      "resolutionNotes"
+    ).value =
+      report.resolution_notes || "";
+
+
+    renderHistory(
+      data.updates || []
+    );
+
+
+  } catch (error) {
+
+    document.getElementById(
+      "reportDetails"
+    ).innerHTML =
+      '<div class="error">' +
+      escapeHtml(error.message) +
+      '</div>';
+
+  }
+
+}
+
+
+function renderHistory(updates) {
+
+  const history =
+    document.getElementById(
+      "history"
+    );
+
+  if (!updates.length) {
+
+    history.innerHTML =
+      "<p>No updates recorded yet.</p>";
+
+    return;
+  }
+
+
+  history.innerHTML = "";
+
+
+  updates.forEach(update => {
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "history-item";
+
+    item.innerHTML = `
+
+      <strong>
+        ${escapeHtml(
+          update.status || "Update"
+        )}
+      </strong>
+
+      <div>
+        ${escapeHtml(
+          update.comment ||
+          "No comment"
+        )}
+      </div>
+
+      <small>
+        ${escapeHtml(
+          update.created_at || ""
+        )}
+      </small>
+
+    `;
+
+    history.appendChild(item);
+
+  });
+
+}
+
+
+async function saveReport() {
+
+  if (!currentReportId) {
+    return;
+  }
+
+
+  const status =
+    document.getElementById(
+      "status"
+    ).value;
+
+  const priority =
+    document.getElementById(
+      "priority"
+    ).value;
+
+  const department =
+    document.getElementById(
+      "department"
+    ).value;
+
+  const comment =
+    document.getElementById(
+      "comment"
+    ).value.trim();
+
+  const resolutionNotes =
+    document.getElementById(
+      "resolutionNotes"
+    ).value.trim();
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/reports/" +
+        currentReportId,
+        {
+          method: "PATCH",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            status: status,
+
+            priority: priority,
+
+            department_id:
+              department
+                ? Number(department)
+                : null,
+
+            comment: comment,
+
+            resolution_notes:
+              resolutionNotes
+
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Unable to update report."
+      );
+
+    }
+
+
+    alert(
+      "Report updated successfully."
+    );
+
+
+    closeModal();
+
+    await loadReports();
+
+  } catch (error) {
+
+    alert(
+      "Update failed: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+function closeModal() {
+
+  document.getElementById(
+    "reportModal"
+  ).style.display =
+    "none";
+
+  currentReportId = null;
+
+}
+
+
+function closeModalOutside(event) {
+
+  if (
+    event.target.id ===
+    "reportModal"
+  ) {
+    closeModal();
+  }
+
+}
+
+
+function escapeHtml(value) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    value === null ||
+    value === undefined
+      ? ""
+      : String(value);
+
+  return div.innerHTML;
+
+}
+
+
+document
+  .getElementById("search")
+  .addEventListener(
+    "input",
+    renderReports
+  );
+
+
+document
+  .getElementById("statusFilter")
+  .addEventListener(
+    "change",
+    renderReports
+  );
+
+
+document
+  .getElementById("priorityFilter")
+  .addEventListener(
+    "change",
+    renderReports
+  );
+
+
+loadDepartments();
+loadReports();
+
+</script>
+
+</body>
+      </html>
