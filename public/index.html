@@ -1,1 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Sky Blue Digital Service | Business Communication & Digital Operations</title>
+
+  <meta name="description" content="Sky Blue Digital Service helps businesses manage communication, customer engagement and digital operations through modern cloud-based software.">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7faff;
+      color: #10233f;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5edf7;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: auto;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0866ff;
+      letter-spacing: -0.5px;
+    }
+
+    .brand span {
+      color: #10233f;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: #50627a;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover {
+      color: #0866ff;
+    }
+
+    .nav-button {
+      background: #0866ff;
+      color: #ffffff !important;
+      padding: 11px 18px;
+      border-radius: 9px;
+    }
+
+    .hero {
+      max-width: 1180px;
+      margin: auto;
+      padding: 90px 24px 80px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eaf2ff;
+      color: #0866ff;
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      font-size: clamp(42px, 6vw, 68px);
+      line-height: 1.05;
+      letter-spacing: -2.5px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 span {
+      color: #0866ff;
+    }
+
+    .hero-text {
+      color: #607089;
+      font-size: 19px;
+      max-width: 650px;
+      margin-bottom: 32px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .primary {
+      background: #0866ff;
+      color: #ffffff;
+      padding: 14px 22px;
+      border-radius: 9px;
+      font-weight: 700;
+    }
+
+    .secondary {
+      background: #ffffff;
+      color: #10233f;
+      padding: 14px 22px;
+      border-radius: 9px;
+      border: 1px solid #d8e2ef;
+      font-weight: 700;
+    }
+
+    .dashboard {
+      background: #ffffff;
+      border: 1px solid #dce7f5;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(16, 35, 63, 0.10);
+    }
+
+    .dash-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #edf2f8;
+      margin-bottom: 18px;
+    }
+
+    .dash-title {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .status {
+      font-size: 11px;
+      background: #e9f8ef;
+      color: #198754;
+      padding: 5px 9px;
+      border-radius: 30px;
+      font-weight: 700;
+    }
+
+    .dash-card {
+      padding: 17px;
+      border: 1px solid #edf2f8;
+      border-radius: 13px;
+      margin-bottom: 12px;
+    }
+
+    .dash-card strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .dash-card span {
+      color: #718198;
+      font-size: 12px;
+    }
+
+    .section {
+      padding: 80px 24px;
+    }
+
+    .section-inner {
+      max-width: 1180px;
+      margin: auto;
+    }
+
+    .section-heading {
+      max-width: 700px;
+      margin-bottom: 42px;
+    }
+
+    .section-heading h2 {
+      font-size: 38px;
+      letter-spacing: -1.5px;
+      margin-bottom: 12px;
+    }
+
+    .section-heading p {
+      color: #65758c;
+      font-size: 17px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature {
+      background: #ffffff;
+      border: 1px solid #e0e9f4;
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #eaf2ff;
+      color: #0866ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .feature h3 {
+      font-size: 18px;
+      margin-bottom: 9px;
+    }
+
+    .feature p {
+      color: #68788f;
+      font-size: 14px;
+    }
+
+    .platform {
+      background: #10233f;
+      color: #ffffff;
+    }
+
+    .platform .section-heading p {
+      color: #b9c7d9;
+    }
+
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .platform-card {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .platform-card h3 {
+      margin-bottom: 10px;
+    }
+
+    .platform-card p {
+      color: #c0ccdb;
+      font-size: 14px;
+    }
+
+    .cta {
+      max-width: 1000px;
+      margin: 80px auto;
+      padding: 60px 30px;
+      text-align: center;
+      background: #eaf2ff;
+      border-radius: 24px;
+    }
+
+    .cta h2 {
+      font-size: 38px;
+      letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+
+    .cta p {
+      color: #62728a;
+      margin-bottom: 25px;
+    }
+
+    .footer {
+      background: #ffffff;
+      border-top: 1px solid #e3ebf5;
+      padding: 35px 24px;
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer p {
+      color: #718198;
+      font-size: 13px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #52647b;
+      font-size: 13px;
+    }
+
+    @media (max-width: 850px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 60px;
+      }
+
+      .features,
+      .platform-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading h2,
+      .cta h2 {
+        font-size: 30px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .nav {
+        padding: 15px 18px;
+      }
+
+      .brand {
+        font-size: 18px;
+      }
+
+      .hero {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      h1 {
+        font-size: 43px;
+      }
+
+      .hero-text {
+        font-size: 17px;
+      }
+
+      .section {
+        padding: 60px 18px;
+      }
+
+      .dashboard {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <nav class="nav">
+      <a href="/" class="brand">
+        Sky Blue <span>Digital Service</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#platform">Platform</a>
+        <a href="#about">About</a>
+        <a href="/subscribe.html" class="nav-button">Get Started</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="hero">
+
+      <div>
+        <div class="badge">SMART DIGITAL BUSINESS PLATFORM</div>
+
+        <h1>
+          Run your business with
+          <span>better digital tools.</span>
+        </h1>
+
+        <p class="hero-text">
+          Sky Blue Digital Service brings business communication,
+          customer engagement and digital operations together in one
+          modern cloud-based platform.
+        </p>
+
+        <div class="buttons">
+          <a href="/subscribe.html" class="primary">Explore Plans</a>
+          <a href="#platform" class="secondary">Discover the Platform</a>
+        </div>
+      </div>
+
+      <div class="dashboard">
+
+        <div class="dash-top">
+          <div class="dash-title">Business Dashboard</div>
+          <div class="status">ACTIVE</div>
+        </div>
+
+        <div class="dash-card">
+          <strong>Customer Communication</strong>
+          <span>Manage conversations and customer engagement.</span>
+        </div>
+
+        <div class="dash-card">
+          <strong>Digital Workflows</strong>
+          <span>Organize recurring business processes efficiently.</span>
+        </div>
+
+        <div class="dash-card">
+          <strong>Business Platform</strong>
+          <span>Access your digital services from one central system.</span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="section" id="features">
+
+      <div class="section-inner">
+
+        <div class="section-heading">
+          <h2>Everything your business needs to operate digitally.</h2>
+          <p>
+            Built for businesses that want simpler communication,
+            better customer engagement and more organized digital operations.
+          </p>
+        </div>
+
+        <div class="features">
+
+          <div class="feature">
+            <div class="icon">01</div>
+            <h3>Customer Communication</h3>
+            <p>
+              Centralize important customer communication and make
+              interactions easier to manage.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="icon">02</div>
+            <h3>Digital Operations</h3>
+            <p>
+              Turn repetitive business processes into organized
+              digital workflows.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="icon">03</div>
+            <h3>Cloud Based</h3>
+            <p>
+              Access your digital business services online without
+              depending on traditional desktop software.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="icon">04</div>
+            <h3>Scalable</h3>
+            <p>
+              Start with the tools you need today and expand as
+              your business grows.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="icon">05</div>
+            <h3>Secure Platform</h3>
+            <p>
+              Designed with modern cloud infrastructure and
+              responsible handling of business information.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="icon">06</div>
+            <h3>Simple Experience</h3>
+            <p>
+              A clean interface designed to help businesses get
+              started without unnecessary complexity.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="section platform" id="platform">
+
+      <div class="section-inner">
+
+        <div class="section-heading">
+          <h2>A digital platform built around your business.</h2>
+          <p>
+            Connect communication, customer engagement and business
+            workflows through one flexible SaaS platform.
+          </p>
+        </div>
+
+        <div class="platform-grid">
+
+          <div class="platform-card">
+            <h3>Communication</h3>
+            <p>
+              Keep customer communication organized and accessible
+              through your digital business environment.
+            </p>
+          </div>
+
+          <div class="platform-card">
+            <h3>Engagement</h3>
+            <p>
+              Create better customer experiences with structured
+              digital interactions.
+            </p>
+          </div>
+
+          <div class="platform-card">
+            <h3>Operations</h3>
+            <p>
+              Bring important recurring tasks and workflows into
+              one digital operating environment.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section class="section" id="about">
+
+      <div class="section-inner">
+
+        <div class="cta">
+
+          <h2>Ready to take your business digital?</h2>
+
+          <p>
+            Choose a Sky Blue Digital Service plan and start building
+            a more connected and organized business.
+          </p>
+
+          <a href="/subscribe.html" class="primary">
+            View Subscription Plans
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+
+    <div class="footer-inner">
+
+      <p>
+        © 2026 Sky Blue Solution (Pty) Ltd. All rights reserved.
+      </p>
+
+      <div class="footer-links">
+        <a href="/subscribe.html">Subscriptions</a>
+        <a href="/privacy-policy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/refund.html">Refund Policy</a>
+        <a href="/cancellation.html">Cancellation</a>
+      </div>
+
+    </div>
+
+  </footer>
+
+</body>
+  </html>
