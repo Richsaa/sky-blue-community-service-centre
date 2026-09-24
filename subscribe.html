@@ -1,1 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Sky Blue Digital Service | Subscription</title>
+
+  <meta name="description" content="Choose a Sky Blue Digital Service subscription for business communication, customer engagement and digital operations.">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f6f9fd;
+      color: #10233f;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 1150px;
+      margin: auto;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e3eaf3;
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      font-size: 21px;
+      font-weight: 800;
+      color: #0756c9;
+    }
+
+    .brand span {
+      color: #10233f;
+    }
+
+    .back {
+      color: #52657c;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .back:hover {
+      color: #0756c9;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 70px 0 45px;
+      background: linear-gradient(180deg, #ffffff, #f6f9fd);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      background: #eaf2ff;
+      color: #0756c9;
+      padding: 7px 13px;
+      border-radius: 25px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(38px, 6vw, 58px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: auto;
+      color: #65758a;
+      font-size: 17px;
+    }
+
+    .plans-section {
+      padding: 25px 0 80px;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .plan {
+      background: white;
+      border: 1px solid #dfe7f1;
+      border-radius: 18px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(22, 55, 95, 0.05);
+    }
+
+    .plan.featured {
+      border: 2px solid #0756c9;
+      position: relative;
+      box-shadow: 0 20px 45px rgba(7, 86, 201, 0.12);
+    }
+
+    .popular {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0756c9;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .plan h2 {
+      font-size: 23px;
+      margin-bottom: 8px;
+    }
+
+    .plan-description {
+      color: #718096;
+      font-size: 14px;
+      min-height: 48px;
+      margin-bottom: 22px;
+    }
+
+    .price {
+      font-size: 39px;
+      font-weight: 800;
+      color: #0b1f3a;
+      margin-bottom: 4px;
+    }
+
+    .price span {
+      font-size: 14px;
+      font-weight: 500;
+      color: #718096;
+    }
+
+    .billing {
+      color: #718096;
+      font-size: 12px;
+      margin-bottom: 22px;
+    }
+
+    .features {
+      border-top: 1px solid #edf1f6;
+      padding-top: 20px;
+      margin-bottom: 25px;
+      flex: 1;
+    }
+
+    .features li {
+      list-style: none;
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: #43566e;
+    }
+
+    .features li::before {
+      content: "✓";
+      color: #0756c9;
+      font-weight: 800;
+      margin-right: 9px;
+    }
+
+    .button {
+      display: block;
+      text-align: center;
+      padding: 13px 18px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1px solid #d5dfeb;
+      background: white;
+      color: #0756c9;
+    }
+
+    .featured .button {
+      background: #0756c9;
+      color: white;
+      border-color: #0756c9;
+    }
+
+    .button:hover {
+      opacity: 0.9;
+    }
+
+    .information {
+      text-align: center;
+      max-width: 800px;
+      margin: 20px auto 0;
+      padding: 25px;
+      background: #eef5ff;
+      border-radius: 14px;
+      color: #53677f;
+      font-size: 14px;
+    }
+
+    .legal {
+      text-align: center;
+      margin-top: 28px;
+      color: #718096;
+      font-size: 12px;
+    }
+
+    .legal a {
+      color: #0756c9;
+      margin: 0 5px;
+    }
+
+    footer {
+      background: #07182d;
+      color: #aebdd0;
+      padding: 30px 0;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 850px) {
+      .plans {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        margin: auto;
+      }
+
+      .hero {
+        padding-top: 55px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand">
+      Sky Blue <span>Digital Service</span>
+    </div>
+
+    <a href="index.html" class="back">← Back to website</a>
+  </div>
+</header>
+
+
+<section class="hero">
+  <div class="container">
+
+    <div class="eyebrow">SIMPLE • SCALABLE • DIGITAL</div>
+
+    <h1>Choose your plan.</h1>
+
+    <p>
+      Get the digital tools your business needs for communication,
+      customer engagement and everyday digital operations.
+    </p>
+
+  </div>
+</section>
+
+
+<section class="plans-section">
+
+  <div class="container">
+
+    <div class="plans">
+
+      <!-- STARTER -->
+
+      <div class="plan">
+
+        <h2>Starter</h2>
+
+        <p class="plan-description">
+          Essential digital tools for businesses getting started.
+        </p>
+
+        <div class="price">
+          R199 <span>/ month</span>
+        </div>
+
+        <div class="billing">
+          Monthly subscription
+        </div>
+
+        <ul class="features">
+          <li>Digital business communication</li>
+          <li>Customer engagement tools</li>
+          <li>Essential digital operations</li>
+          <li>Online account access</li>
+          <li>Platform updates</li>
+          <li>Standard support</li>
+        </ul>
+
+        <a href="#checkout" class="button">
+          Choose Starter
+        </a>
+
+      </div>
+
+
+      <!-- GROWTH -->
+
+      <div class="plan featured">
+
+        <div class="popular">POPULAR PLAN</div>
+
+        <h2>Growth</h2>
+
+        <p class="plan-description">
+          More capability for businesses expanding their digital operations.
+        </p>
+
+        <div class="price">
+          R399 <span>/ month</span>
+        </div>
+
+        <div class="billing">
+          Monthly subscription
+        </div>
+
+        <ul class="features">
+          <li>Everything in Starter</li>
+          <li>Enhanced customer engagement</li>
+          <li>Expanded digital operations</li>
+          <li>Business communication tools</li>
+          <li>Improved workflow management</li>
+          <li>Priority support</li>
+        </ul>
+
+        <a href="#checkout" class="button">
+          Choose Growth
+        </a>
+
+      </div>
+
+
+      <!-- PROFESSIONAL -->
+
+      <div class="plan">
+
+        <h2>Professional</h2>
+
+        <p class="plan-description">
+          Advanced digital capability for organizations with broader needs.
+        </p>
+
+        <div class="price">
+          R599 <span>/ month</span>
+        </div>
+
+        <div class="billing">
+          Monthly subscription
+        </div>
+
+        <ul class="features">
+          <li>Everything in Growth</li>
+          <li>Advanced digital operations</li>
+          <li>Advanced customer engagement</li>
+          <li>Expanded business communication</li>
+          <li>Scalable platform access</li>
+          <li>Enhanced support</li>
+        </ul>
+
+        <a href="#checkout" class="button">
+          Choose Professional
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="information" id="checkout">
+      <strong>Secure subscription</strong><br>
+      Your subscription is activated after successful payment and
+      account setup. Subscription pricing and billing terms are shown
+      before payment.
+    </div>
+
+
+    <div class="legal">
+      By subscribing, you agree to our
+      <a href="terms.html">Terms & Conditions</a>,
+      <a href="privacy-policy.html">Privacy Policy</a>,
+      <a href="refund.html">Refund Policy</a> and
+      <a href="cancellation.html">Cancellation Policy</a>.
+    </div>
+
+  </div>
+
+</section>
+
+
+<footer>
+  <div class="container">
+    © 2026 Sky Blue Solution (PTY) LTD. All rights reserved.
+  </div>
+</footer>
+
+</body>
+  </html>
