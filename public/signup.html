@@ -1,1 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Create Business Account | Sky Blue Digital Service</title>
+
+  <meta
+    name="description"
+    content="Create your Sky Blue Digital Service business account."
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #f4f8ff 0%, #eef5ff 100%);
+      color: #172033;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5eaf2;
+      padding: 18px 20px;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1264d8;
+      text-decoration: none;
+    }
+
+    .login-link {
+      color: #1264d8;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    main {
+      padding: 45px 20px 60px;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: auto;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e7f0ff;
+      color: #1264d8;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    .intro p {
+      color: #64748b;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e1e7f0;
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 15px 40px rgba(20, 60, 120, .08);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #263449;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #ccd5e3;
+      border-radius: 9px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      background: #ffffff;
+    }
+
+    input:focus {
+      border-color: #1264d8;
+      box-shadow: 0 0 0 3px rgba(18, 100, 216, .10);
+    }
+
+    .help {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .message {
+      display: none;
+      padding: 13px 14px;
+      border-radius: 9px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.error {
+      display: block;
+      background: #fff1f2;
+      color: #b42318;
+      border: 1px solid #fecdd3;
+    }
+
+    .message.success {
+      display: block;
+      background: #ecfdf3;
+      color: #087443;
+      border: 1px solid #a7f3d0;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 9px;
+      padding: 14px;
+      background: #1264d8;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+    }
+
+    button:hover {
+      background: #0d52b4;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      background: #91acd3;
+      cursor: not-allowed;
+    }
+
+    .terms {
+      margin-top: 18px;
+      text-align: center;
+      color: #718096;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .terms a {
+      color: #1264d8;
+      text-decoration: none;
+    }
+
+    .bottom-login {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    .bottom-login a {
+      color: #1264d8;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 20px;
+      color: #8490a3;
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 30px 15px 45px;
+      }
+
+      .card {
+        padding: 22px;
+        border-radius: 15px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .header-inner {
+        align-items: center;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="brand">Sky Blue Digital Service</a>
+    <a href="/login.html" class="login-link">Sign In</a>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="intro">
+      <div class="badge">BUSINESS ACCOUNT</div>
+
+      <h1>Create your account</h1>
+
+      <p>
+        Start managing your business communication, customer engagement
+        and digital operations from one platform.
+      </p>
+    </div>
+
+    <div class="card">
+
+      <div id="message" class="message"></div>
+
+      <form id="signupForm">
+
+        <div class="form-group">
+          <label for="businessName">Business Name</label>
+          <input
+            type="text"
+            id="businessName"
+            name="businessName"
+            placeholder="Enter your business name"
+            required
+            autocomplete="organization"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            placeholder="Enter your full name"
+            required
+            autocomplete="name"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="email">Business Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@yourbusiness.com"
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="+27 00 000 0000"
+            required
+            autocomplete="tel"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a secure password"
+            required
+            minlength="8"
+            autocomplete="new-password"
+          >
+          <div class="help">
+            Password must contain at least 8 characters.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Enter your password again"
+            required
+            minlength="8"
+            autocomplete="new-password"
+          >
+        </div>
+
+        <button type="submit" id="submitButton">
+          Create Business Account
+        </button>
+
+      </form>
+
+      <div class="terms">
+        By creating an account, you agree to our
+        <a href="/terms.html">Terms & Conditions</a>
+        and
+        <a href="/privacy-policy.html">Privacy Policy</a>.
+      </div>
+
+      <div class="bottom-login">
+        Already have an account?
+        <a href="/login.html">Sign in</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  © 2026 Sky Blue Solution (Pty) Ltd. All rights reserved.
+</footer>
+
+<script>
+  const form = document.getElementById("signupForm");
+  const message = document.getElementById("message");
+  const submitButton = document.getElementById("submitButton");
+
+  function showMessage(text, type) {
+    message.textContent = text;
+    message.className = "message " + type;
+  }
+
+  form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const businessName =
+      document.getElementById("businessName").value.trim();
+
+    const fullName =
+      document.getElementById("fullName").value.trim();
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const phone =
+      document.getElementById("phone").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const confirmPassword =
+      document.getElementById("confirmPassword").value;
+
+    message.className = "message";
+    message.textContent = "";
+
+    if (!businessName || !fullName || !email || !phone) {
+      showMessage("Please complete all required fields.", "error");
+      return;
+    }
+
+    if (password.length < 8) {
+      showMessage(
+        "Your password must contain at least 8 characters.",
+        "error"
+      );
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showMessage(
+        "The passwords do not match.",
+        "error"
+      );
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Creating Account...";
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          business_name: businessName,
+          full_name: fullName,
+          email: email,
+          phone: phone,
+          password: password
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Unable to create your account. Please try again."
+        );
+      }
+
+      showMessage(
+        "Your business account has been created. Redirecting to sign in...",
+        "success"
+      );
+
+      setTimeout(function() {
+        window.location.href = "/login.html?registered=1";
+      }, 1200);
+
+    } catch (error) {
+      showMessage(
+        error.message ||
+        "Something went wrong. Please try again.",
+        "error"
+      );
+
+      submitButton.disabled = false;
+      submitButton.textContent = "Create Business Account";
+    }
+  });
+</script>
+
+</body>
+  </html>
