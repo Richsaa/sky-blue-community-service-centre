@@ -1,1 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Dashboard | Sky Blue Digital Service</title>
+
+  <meta
+    name="description"
+    content="Sky Blue Digital Service business dashboard."
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f8fc;
+      color: #172033;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e3e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: auto;
+      padding: 17px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      color: #1264d8;
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-email {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .logout {
+      border: 1px solid #d5ddea;
+      background: #ffffff;
+      color: #334155;
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 35px 20px 60px;
+    }
+
+    .welcome {
+      margin-bottom: 28px;
+    }
+
+    .welcome-badge {
+      display: inline-block;
+      background: #e7f0ff;
+      color: #1264d8;
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      color: #111827;
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      color: #64748b;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .status-card {
+      background: #ffffff;
+      border: 1px solid #e1e7f0;
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 8px 25px rgba(20, 60, 120, .05);
+    }
+
+    .status-title {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+
+    .status-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: #172033;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 8px 13px;
+      border-radius: 20px;
+      background: #fff7e6;
+      color: #9a6700;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .section-title {
+      font-size: 19px;
+      color: #172033;
+      margin: 30px 0 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature {
+      background: #ffffff;
+      border: 1px solid #e1e7f0;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 25px rgba(20, 60, 120, .05);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #e7f0ff;
+      color: #1264d8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .feature h3 {
+      font-size: 17px;
+      margin-bottom: 8px;
+      color: #172033;
+    }
+
+    .feature p {
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .subscription {
+      margin-top: 28px;
+      background: #1264d8;
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .subscription h2 {
+      font-size: 20px;
+      margin-bottom: 7px;
+    }
+
+    .subscription p {
+      font-size: 13px;
+      opacity: .9;
+      line-height: 1.5;
+    }
+
+    .plans-button {
+      display: inline-block;
+      background: #ffffff;
+      color: #1264d8;
+      text-decoration: none;
+      font-weight: 800;
+      padding: 11px 17px;
+      border-radius: 9px;
+      white-space: nowrap;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: #64748b;
+    }
+
+    .error {
+      max-width: 600px;
+      margin: 60px auto;
+      background: #ffffff;
+      border: 1px solid #e1e7f0;
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .error h2 {
+      margin-bottom: 10px;
+      color: #b42318;
+    }
+
+    .error p {
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .status-card,
+      .subscription {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-right {
+        gap: 8px;
+      }
+
+      .user-email {
+        display: none;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="/" class="brand">Sky Blue Digital Service</a>
+
+      <div class="header-right">
+        <span id="userEmail" class="user-email"></span>
+
+        <button id="logoutButton" class="logout">
+          Log out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="dashboard" style="display:none;">
+
+    <section class="welcome">
+      <span class="welcome-badge">BUSINESS DASHBOARD</span>
+
+      <h1>
+        Welcome, <span id="userName">Customer</span>
+      </h1>
+
+      <p>
+        Manage your Sky Blue Digital Service account and access your
+        business communication and digital operations tools.
+      </p>
+    </section>
+
+    <section class="status-card">
+
+      <div>
+        <div class="status-title">
+          Current Plan
+        </div>
+
+        <div id="plan" class="status-value">
+          No active plan
+        </div>
+      </div>
+
+      <div>
+        <span id="subscriptionStatus" class="status-badge">
+          Pending
+        </span>
+      </div>
+
+    </section>
+
+    <h2 class="section-title">
+      Your Services
+    </h2>
+
+    <section class="grid">
+
+      <div class="feature">
+        <div class="feature-icon">C</div>
+
+        <h3>
+          Customer Communication
+        </h3>
+
+        <p>
+          Manage customer communication channels and keep business
+          conversations organized.
+        </p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">W</div>
+
+        <h3>
+          Digital Workflows
+        </h3>
+
+        <p>
+          Build structured digital workflows to simplify repetitive
+          business processes.
+        </p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">M</div>
+
+        <h3>
+          Customer Management
+        </h3>
+
+        <p>
+          Keep customer information organized and accessible from one
+          central platform.
+        </p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">N</div>
+
+        <h3>
+          Notifications
+        </h3>
+
+        <p>
+          Prepare automated customer notifications and business
+          communication.
+        </p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">A</div>
+
+        <h3>
+          Automation
+        </h3>
+
+        <p>
+          Automate routine digital tasks and reduce unnecessary manual
+          work.
+        </p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">R</div>
+
+        <h3>
+          Reports & Insights
+        </h3>
+
+        <p>
+          View useful business information and operational insights as
+          your account grows.
+        </p>
+      </div>
+
+    </section>
+
+    <section class="subscription">
+
+      <div>
+        <h2>
+          Upgrade Your Account
+        </h2>
+
+        <p>
+          Choose a Sky Blue Digital Service subscription to activate
+          additional business features.
+        </p>
+      </div>
+
+      <a href="/subscribe.html" class="plans-button">
+        View Plans
+      </a>
+
+    </section>
+
+  </main>
+
+  <div id="loading" class="loading">
+    Loading your dashboard...
+  </div>
+
+  <script>
+    async function loadDashboard() {
+      try {
+        const response = await fetch(
+          "/api/auth/me",
+          {
+            method: "GET",
+            credentials: "same-origin"
+          }
+        );
+
+        if (!response.ok) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!data.success || !data.user) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const user = data.user;
+
+        document.getElementById("userName").textContent =
+          user.full_name || "Customer";
+
+        document.getElementById("userEmail").textContent =
+          user.email || "";
+
+        document.getElementById("plan").textContent =
+          user.plan || "No active plan";
+
+        const status =
+          user.subscription_status || "pending";
+
+        document.getElementById(
+          "subscriptionStatus"
+        ).textContent =
+          status.charAt(0).toUpperCase() +
+          status.slice(1);
+
+        document.getElementById("loading").style.display =
+          "none";
+
+        document.getElementById("dashboard").style.display =
+          "block";
+
+      } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("loading").style.display =
+          "none";
+
+        document.getElementById("dashboard").innerHTML = `
+          <div class="error">
+            <h2>Unable to load dashboard</h2>
+            <p>
+              Your account could not be loaded right now.
+              Please try logging in again.
+            </p>
+          </div>
+        `;
+
+        document.getElementById("dashboard").style.display =
+          "block";
+      }
+    }
+
+    document
+      .getElementById("logoutButton")
+      .addEventListener("click", async function () {
+
+        try {
+          await fetch(
+            "/api/auth/logout",
+            {
+              method: "POST",
+              credentials: "same-origin"
+            }
+          );
+        } catch (error) {
+          console.error(error);
+        }
+
+        window.location.href = "/login.html";
+      });
+
+    loadDashboard();
+  </script>
+
+</body>
+</html>
