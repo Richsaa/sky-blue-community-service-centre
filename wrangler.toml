@@ -9,3 +9,4 @@ database_id = "152bdc2c-c0c5-4352-a7a0-d076e55bcd92"
 
 [assets]
 directory = "./public"
+binding = "ASSETS"
