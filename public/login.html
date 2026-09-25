@@ -1,1 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Sign In | Sky Blue Digital Service</title>
+
+  <meta
+    name="description"
+    content="Sign in to your Sky Blue Digital Service business account."
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #f4f8ff 0%, #eef5ff 100%);
+      color: #172033;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5eaf2;
+      padding: 18px 20px;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      color: #1264d8;
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .signup-link {
+      color: #1264d8;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    main {
+      padding: 55px 20px 70px;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: auto;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e7f0ff;
+      color: #1264d8;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      margin-bottom: 15px;
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    .intro p {
+      color: #64748b;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e1e7f0;
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 15px 40px rgba(20, 60, 120, .08);
+    }
+
+    .message {
+      display: none;
+      padding: 13px 14px;
+      border-radius: 9px;
+      margin-bottom: 18px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.error {
+      display: block;
+      background: #fff1f2;
+      color: #b42318;
+      border: 1px solid #fecdd3;
+    }
+
+    .message.success {
+      display: block;
+      background: #ecfdf3;
+      color: #087443;
+      border: 1px solid #a7f3d0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #263449;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #ccd5e3;
+      border-radius: 9px;
+      background: #ffffff;
+      color: #172033;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #1264d8;
+      box-shadow: 0 0 0 3px rgba(18, 100, 216, .10);
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 9px;
+      padding: 14px;
+      background: #1264d8;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0d52b4;
+    }
+
+    button:disabled {
+      background: #91acd3;
+      cursor: not-allowed;
+    }
+
+    .forgot {
+      text-align: right;
+      margin-top: -8px;
+      margin-bottom: 20px;
+    }
+
+    .forgot a {
+      color: #1264d8;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .register {
+      text-align: center;
+      margin-top: 22px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .register a {
+      color: #1264d8;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 20px;
+      color: #8490a3;
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 35px 15px 50px;
+      }
+
+      .card {
+        padding: 22px;
+        border-radius: 15px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="brand">Sky Blue Digital Service</a>
+    <a href="/signup.html" class="signup-link">Create Account</a>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="intro">
+      <div class="badge">BUSINESS PORTAL</div>
+
+      <h1>Welcome back</h1>
+
+      <p>
+        Sign in to manage your business communication,
+        customer engagement and digital operations.
+      </p>
+    </div>
+
+    <div class="card">
+
+      <div id="message" class="message"></div>
+
+      <form id="loginForm">
+
+        <div class="form-group">
+          <label for="email">Business Email</label>
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@yourbusiness.com"
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <div class="forgot">
+          <a href="#" onclick="return false;">Forgot password?</a>
+        </div>
+
+        <button type="submit" id="loginButton">
+          Sign In
+        </button>
+
+      </form>
+
+      <div class="register">
+        Don't have an account?
+        <a href="/signup.html">Create your business account</a>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  © 2026 Sky Blue Solution (Pty) Ltd. All rights reserved.
+</footer>
+
+<script>
+  const form = document.getElementById("loginForm");
+  const message = document.getElementById("message");
+  const loginButton = document.getElementById("loginButton");
+
+  function showMessage(text, type) {
+    message.textContent = text;
+    message.className = "message " + type;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("registered") === "1") {
+    showMessage(
+      "Account created successfully. Sign in to continue.",
+      "success"
+    );
+  }
+
+  form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    message.className = "message";
+    message.textContent = "";
+
+    if (!email || !password) {
+      showMessage(
+        "Please enter your email and password.",
+        "error"
+      );
+      return;
+    }
+
+    loginButton.disabled = true;
+    loginButton.textContent = "Signing In...";
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "Invalid email or password."
+        );
+      }
+
+      showMessage(
+        "Login successful. Opening your dashboard...",
+        "success"
+      );
+
+      setTimeout(function() {
+        window.location.href = "/dashboard.html";
+      }, 700);
+
+    } catch (error) {
+      showMessage(
+        error.message ||
+        "Unable to sign in. Please try again.",
+        "error"
+      );
+
+      loginButton.disabled = false;
+      loginButton.textContent = "Sign In";
+    }
+  });
+</script>
+
+</body>
+  </html>
