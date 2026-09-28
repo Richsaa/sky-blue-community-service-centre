@@ -756,26 +756,36 @@ export default {
     // OWNER / ADMIN DASHBOARD
     // =========================================================
 
+    /*
+      IMPORTANT:
+      Admin authentication is intentionally stateless.
+
+      The previous version created and queried an
+      admin_sessions table in D1 during administrator login.
+
+      That meant owner login could fail because of a D1
+      table/index/session error even when ADMIN_EMAIL and
+      ADMIN_PASSWORD were correct.
+
+      The new system signs the admin cookie using HMAC-SHA256
+      with ADMIN_PASSWORD as the signing key.
+
+      The cookie is:
+      - HttpOnly
+      - Secure
+      - SameSite=Lax
+      - Path=/
+      - 12 hours lifetime
+
+      No admin_sessions table is required.
+    */
+
     async function ensureAdminTables() {
-      await env.DB.prepare(`
-        CREATE TABLE IF NOT EXISTS admin_sessions (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          token_hash TEXT NOT NULL UNIQUE,
-          email TEXT NOT NULL,
-          expires_at TEXT NOT NULL,
-          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )
-      `).run();
-
-      await env.DB.prepare(`
-        CREATE INDEX IF NOT EXISTS idx_admin_sessions_token_hash
-        ON admin_sessions(token_hash)
-      `).run();
-
-      await env.DB.prepare(`
-        CREATE INDEX IF NOT EXISTS idx_admin_sessions_expires_at
-        ON admin_sessions(expires_at)
-      `).run();
+      /*
+        The owner dashboard only needs the SaaS payment
+        ledger. Admin authentication no longer depends
+        on an admin_sessions table.
+      */
 
       await env.DB.prepare(`
         CREATE TABLE IF NOT EXISTS saas_payments (
@@ -817,9 +827,199 @@ export default {
       `).run();
     }
 
+    // =========================================================
+    // CREATE SIGNED ADMIN TOKEN
+    // =========================================================
+
+    async function createAdminToken(
+      email,
+      password
+    ) {
+      const expiresAt =
+        Date.now() +
+        12 * 60 * 60 * 1000;
+
+      const payload =
+        JSON.stringify({
+          email,
+          expiresAt
+        });
+
+      const payloadBase64 =
+        btoa(payload);
+
+      const encoder =
+        new TextEncoder();
+
+      const key =
+        await crypto.subtle.importKey(
+          "raw",
+          encoder.encode(password),
+          {
+            name: "HMAC",
+            hash: "SHA-256"
+          },
+          false,
+          ["sign"]
+        );
+
+      const signature =
+        await crypto.subtle.sign(
+          "HMAC",
+          key,
+          encoder.encode(
+            payloadBase64
+          )
+        );
+
+      return (
+        payloadBase64 +
+        "." +
+        bytesToBase64(
+          new Uint8Array(
+            signature
+          )
+        )
+      );
+    }
+
+    // =========================================================
+    // VERIFY SIGNED ADMIN TOKEN
+    // =========================================================
+
+    async function verifyAdminToken(
+      token,
+      configuredEmail,
+      configuredPassword
+    ) {
+      try {
+        if (!token) {
+          return null;
+        }
+
+        const parts =
+          token.split(".");
+
+        if (parts.length !== 2) {
+          return null;
+        }
+
+        const payloadBase64 =
+          parts[0];
+
+        const signatureBase64 =
+          parts[1];
+
+        const payload =
+          JSON.parse(
+            atob(payloadBase64)
+          );
+
+        if (
+          !payload ||
+          !payload.email ||
+          !payload.expiresAt
+        ) {
+          return null;
+        }
+
+        if (
+          String(
+            payload.email
+          ).toLowerCase() !==
+          String(
+            configuredEmail
+          ).toLowerCase()
+        ) {
+          return null;
+        }
+
+        if (
+          Number(
+            payload.expiresAt
+          ) <= Date.now()
+        ) {
+          return null;
+        }
+
+        const encoder =
+          new TextEncoder();
+
+        const key =
+          await crypto.subtle.importKey(
+            "raw",
+            encoder.encode(
+              configuredPassword
+            ),
+            {
+              name: "HMAC",
+              hash: "SHA-256"
+            },
+            false,
+            ["verify"]
+          );
+
+        const valid =
+          await crypto.subtle.verify(
+            "HMAC",
+            key,
+            base64ToBytes(
+              signatureBase64
+            ),
+            encoder.encode(
+              payloadBase64
+            )
+          );
+
+        if (!valid) {
+          return null;
+        }
+
+        return {
+          email:
+            configuredEmail,
+          expires_at:
+            new Date(
+              Number(
+                payload.expiresAt
+              )
+            ).toISOString()
+        };
+
+      } catch (error) {
+        console.error(
+          "Admin token verification error:",
+          error
+        );
+
+        return null;
+      }
+    }
+
+    // =========================================================
+    // GET ADMIN SESSION
+    // =========================================================
+
     async function getAdminSession(request) {
       try {
-        await ensureAdminTables();
+        const configuredEmail =
+          String(
+            env.ADMIN_EMAIL || ""
+          )
+            .trim()
+            .toLowerCase();
+
+        const configuredPassword =
+          String(
+            env.ADMIN_PASSWORD || ""
+          );
+
+        if (
+          !configuredEmail ||
+          !configuredPassword
+        ) {
+          return null;
+        }
 
         const token =
           getCookie(
@@ -831,22 +1031,11 @@ export default {
           return null;
         }
 
-        const tokenHash =
-          await hashSessionToken(token);
-
-        const session =
-          await env.DB
-            .prepare(`
-              SELECT *
-              FROM admin_sessions
-              WHERE token_hash = ?
-                AND expires_at > CURRENT_TIMESTAMP
-              LIMIT 1
-            `)
-            .bind(tokenHash)
-            .first();
-
-        return session || null;
+        return await verifyAdminToken(
+          token,
+          configuredEmail,
+          configuredPassword
+        );
 
       } catch (error) {
         console.error(
@@ -858,9 +1047,15 @@ export default {
       }
     }
 
+    // =========================================================
+    // REQUIRE ADMIN
+    // =========================================================
+
     async function requireAdmin(request) {
       const session =
-        await getAdminSession(request);
+        await getAdminSession(
+          request
+        );
 
       if (!session) {
         return json({
@@ -883,8 +1078,6 @@ export default {
       request.method === "POST"
     ) {
       try {
-        await ensureAdminTables();
-
         const configuredEmail =
           String(
             env.ADMIN_EMAIL || ""
@@ -924,6 +1117,17 @@ export default {
           );
 
         if (
+          !email ||
+          !password
+        ) {
+          return json({
+            success: false,
+            error:
+              "Email and password are required"
+          }, 400);
+        }
+
+        if (
           email !==
             configuredEmail ||
           password !==
@@ -937,47 +1141,10 @@ export default {
         }
 
         const token =
-          bytesToHex(
-            crypto.getRandomValues(
-              new Uint8Array(32)
-            )
-          );
-
-        const tokenHash =
-          await hashSessionToken(
-            token
-          );
-
-        const expiresAt =
-          new Date(
-            Date.now() +
-            12 * 60 * 60 * 1000
-          ).toISOString();
-
-        await env.DB
-          .prepare(`
-            DELETE FROM admin_sessions
-            WHERE expires_at <= CURRENT_TIMESTAMP
-          `)
-          .run();
-
-        await env.DB
-          .prepare(`
-            INSERT INTO admin_sessions
-            (
-              token_hash,
-              email,
-              expires_at,
-              created_at
-            )
-            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-          `)
-          .bind(
-            tokenHash,
+          await createAdminToken(
             configuredEmail,
-            expiresAt
-          )
-          .run();
+            configuredPassword
+          );
 
         return json(
           {
@@ -992,7 +1159,9 @@ export default {
           {
             "Set-Cookie":
               "sbs_admin=" +
-              encodeURIComponent(token) +
+              encodeURIComponent(
+                token
+              ) +
               "; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=43200"
           }
         );
@@ -1006,7 +1175,9 @@ export default {
         return json({
           success: false,
           error:
-            "Unable to sign in as administrator"
+            "Unable to sign in as administrator",
+          details:
+            String(error)
         }, 500);
       }
     }
@@ -1049,53 +1220,18 @@ export default {
       url.pathname === "/api/admin/logout" &&
       request.method === "POST"
     ) {
-      try {
-        const token =
-          getCookie(
-            request,
-            "sbs_admin"
-          );
-
-        if (token) {
-          const tokenHash =
-            await hashSessionToken(
-              token
-            );
-
-          await env.DB
-            .prepare(`
-              DELETE FROM admin_sessions
-              WHERE token_hash = ?
-            `)
-            .bind(tokenHash)
-            .run();
+      return json(
+        {
+          success: true,
+          message:
+            "Admin logged out"
+        },
+        200,
+        {
+          "Set-Cookie":
+            "sbs_admin=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"
         }
-
-        return json(
-          {
-            success: true,
-            message:
-              "Admin logged out"
-          },
-          200,
-          {
-            "Set-Cookie":
-              "sbs_admin=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"
-          }
-        );
-
-      } catch (error) {
-        console.error(
-          "Admin logout error:",
-          error
-        );
-
-        return json({
-          success: false,
-          error:
-            "Unable to log out"
-        }, 500);
-      }
+      );
     }
 
     // =========================================================
