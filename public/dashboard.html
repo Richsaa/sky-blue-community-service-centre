@@ -255,11 +255,11 @@
 
     .active-button {
       background: #15803d;
-      cursor: default;
+      cursor: pointer;
     }
 
     .active-button:hover {
-      background: #15803d;
+      background: #166534;
     }
 
     .activate-button {
@@ -931,10 +931,6 @@ async function loadModules() {
     }
 
 
-    /*
-     * Check NPO activation status before
-     * creating the module cards.
-     */
     await loadNPOStatus();
 
 
@@ -993,10 +989,6 @@ async function loadNPOStatus() {
 
     if (!response.ok) {
 
-      /*
-       * Do not break the entire dashboard if
-       * the NPO status endpoint is unavailable.
-       */
       npoModuleActive =
         false;
 
@@ -1081,9 +1073,8 @@ function createModuleCard(module) {
     "";
 
 
-  /*
-   * Community Service Centre
-   */
+  /* COMMUNITY SERVICE CENTRE */
+
   if (
     moduleCode ===
     "community-service-centre"
@@ -1125,9 +1116,8 @@ function createModuleCard(module) {
   }
 
 
-  /*
-   * NPO & NGO Management
-   */
+  /* NPO & NGO MANAGEMENT */
+
   if (
     moduleCode ===
     "npo-ngo"
@@ -1145,11 +1135,8 @@ function createModuleCard(module) {
   }
 
 
-  /*
-   * Other modules remain available
-   * in the catalogue but are not activated
-   * yet.
-   */
+  /* OTHER MODULES */
+
   return `
     <div class="feature">
 
@@ -1204,13 +1191,12 @@ function createNPOModuleCard(
   if (npoModuleActive) {
 
     buttonHtml = `
-      <button
-        type="button"
+      <a
+        href="/npo-dashboard.html"
         class="module-button active-button"
-        disabled
       >
-        ✓ Active
-      </button>
+        Open NPO Dashboard
+      </a>
 
       <span
         id="npoModuleMessage"
@@ -1349,21 +1335,17 @@ async function activateNPOModule() {
     }
 
 
-    /*
-     * Activation was successful.
-     */
     npoModuleActive =
       true;
 
 
     button.outerHTML = `
-      <button
-        type="button"
+      <a
+        href="/npo-dashboard.html"
         class="module-button active-button"
-        disabled
       >
-        ✓ Active
-      </button>
+        Open NPO Dashboard
+      </a>
     `;
 
 
@@ -1501,4 +1483,4 @@ loadDashboard();
 </script>
 
 </body>
-  </html>
+    </html>
