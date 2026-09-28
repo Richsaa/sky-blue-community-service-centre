@@ -1,1 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>SaaS Products & Pricing | Sky Blue Digital Service</title>
+
+  <meta
+    name="description"
+    content="Affordable SaaS solutions for small businesses, organisations and community services from R99 per month."
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f8fc;
+      color: #122033;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5eaf1;
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 21px;
+      font-weight: 800;
+      color: #1261d6;
+    }
+
+    .back {
+      color: #1261d6;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 65px 20px 35px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e8f1ff;
+      color: #1261d6;
+      padding: 8px 15px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(34px, 6vw, 56px);
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: auto;
+      color: #617086;
+      font-size: 18px;
+    }
+
+    .pricing {
+      max-width: 1050px;
+      margin: 35px auto 65px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .plan {
+      background: #ffffff;
+      border: 1px solid #e1e7ef;
+      border-radius: 20px;
+      padding: 30px 26px;
+      box-shadow: 0 12px 35px rgba(24, 55, 90, 0.07);
+    }
+
+    .plan.featured {
+      border: 2px solid #1261d6;
+      transform: translateY(-8px);
+      box-shadow: 0 18px 45px rgba(18, 97, 214, 0.15);
+    }
+
+    .popular {
+      display: inline-block;
+      background: #1261d6;
+      color: #ffffff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .plan h2 {
+      font-size: 27px;
+      margin-bottom: 7px;
+    }
+
+    .price {
+      font-size: 42px;
+      font-weight: 800;
+      color: #122033;
+    }
+
+    .price span {
+      font-size: 14px;
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .plan-description {
+      color: #68778b;
+      margin: 8px 0 20px;
+    }
+
+    .features {
+      list-style: none;
+    }
+
+    .features li {
+      margin-bottom: 10px;
+      padding-left: 22px;
+      position: relative;
+      color: #35465a;
+    }
+
+    .features li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #1261d6;
+      font-weight: 800;
+    }
+
+    .plan-button {
+      display: block;
+      width: 100%;
+      margin-top: 24px;
+      padding: 13px 18px;
+      border-radius: 10px;
+      background: #1261d6;
+      color: #ffffff;
+      text-decoration: none;
+      text-align: center;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .plan-button:hover {
+      background: #0d4fae;
+    }
+
+    .plan-button.secondary {
+      background: #edf4ff;
+      color: #1261d6;
+    }
+
+    .section {
+      max-width: 1150px;
+      margin: 0 auto 70px;
+      padding: 0 20px;
+    }
+
+    .section h2 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .section-intro {
+      color: #68778b;
+      margin-bottom: 25px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .product {
+      background: #ffffff;
+      border: 1px solid #e1e7ef;
+      border-radius: 16px;
+      padding: 23px;
+      transition: 0.2s ease;
+    }
+
+    .product:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(16, 35, 63, 0.08);
+    }
+
+    .product h3 {
+      font-size: 18px;
+      margin-bottom: 7px;
+    }
+
+    .pprice {
+      font-size: 25px;
+      font-weight: 800;
+      color: #1261d6;
+    }
+
+    .pprice span {
+      font-size: 12px;
+      color: #718096;
+      font-weight: 500;
+    }
+
+    .product p {
+      color: #68778b;
+      font-size: 13px;
+      margin-top: 7px;
+    }
+
+    .product-button {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 9px 14px;
+      border-radius: 8px;
+      background: #edf4ff;
+      color: #1261d6;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .notice {
+      background: #eaf2ff;
+      border-radius: 16px;
+      padding: 22px;
+      margin-top: 25px;
+      color: #52647b;
+    }
+
+    .notice strong {
+      color: #122033;
+    }
+
+    .status {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 55px;
+      padding: 20px;
+      background: #ffffff;
+      border: 1px solid #e1e7ef;
+      border-radius: 14px;
+      color: #617086;
+      font-size: 14px;
+    }
+
+    .status strong {
+      display: block;
+      color: #122033;
+      margin-bottom: 5px;
+    }
+
+    footer {
+      background: #0d1726;
+      color: #aebbd0;
+      text-align: center;
+      padding: 35px 20px;
+      font-size: 14px;
+    }
+
+    footer a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    footer p {
+      margin-top: 15px;
+    }
+
+    @media (max-width: 850px) {
+      .pricing,
+      .products {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+      }
+
+      .plan.featured {
+        transform: none;
+      }
+
+      .section h2 {
+        font-size: 27px;
+      }
+
+      header {
+        padding: 16px 5%;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Sky Blue Digital Service</div>
+
+    <a
+      class="back"
+      href="https://sky-blue-community-service-centre.skybluesolution30.workers.dev/"
+    >
+      Home
+    </a>
+  </header>
+
+  <section class="hero">
+
+    <div class="badge">
+      AFFORDABLE BUSINESS SOFTWARE
+    </div>
+
+    <h1>
+      Start your digital journey from R99/month.
+    </h1>
+
+    <p>
+      Simple, affordable SaaS solutions built for small businesses,
+      organisations and community services. Choose a solution today
+      and upgrade as your business grows.
+    </p>
+
+  </section>
+
+
+  <!-- PRICING PLANS -->
+
+  <section class="pricing">
+
+    <div class="plan">
+
+      <h2>Starter</h2>
+
+      <div class="price">
+        R99 <span>/ month</span>
+      </div>
+
+      <p class="plan-description">
+        For very small businesses getting started.
+      </p>
+
+      <ul class="features">
+        <li>1 business or organisation module</li>
+        <li>Customer management</li>
+        <li>Basic business records</li>
+        <li>WhatsApp-ready tools</li>
+        <li>Basic reports</li>
+        <li>Business dashboard</li>
+      </ul>
+
+      <a class="plan-button secondary" href="#products">
+        Choose Your Solution
+      </a>
+
+    </div>
+
+
+    <div class="plan featured">
+
+      <div class="popular">
+        MOST POPULAR
+      </div>
+
+      <h2>Business</h2>
+
+      <div class="price">
+        R199 <span>/ month</span>
+      </div>
+
+      <p class="plan-description">
+        For growing businesses that need more digital tools.
+      </p>
+
+      <ul class="features">
+        <li>Everything in Starter</li>
+        <li>Advanced industry features</li>
+        <li>More customers and users</li>
+        <li>Digital workflows</li>
+        <li>Automation</li>
+        <li>Documents and advanced reports</li>
+        <li>Priority support</li>
+      </ul>
+
+      <a class="plan-button" href="#products">
+        Choose Your Solution
+      </a>
+
+    </div>
+
+
+    <div class="plan">
+
+      <h2>Professional</h2>
+
+      <div class="price">
+        R299 <span>/ month</span>
+      </div>
+
+      <p class="plan-description">
+        For established businesses with broader needs.
+      </p>
+
+      <ul class="features">
+        <li>Everything in Business</li>
+        <li>Advanced automation</li>
+        <li>Multiple users</li>
+        <li>Advanced reporting</li>
+        <li>Expanded business tools</li>
+        <li>Additional modules</li>
+        <li>Priority business support</li>
+      </ul>
+
+      <a class="plan-button secondary" href="#products">
+        Choose Your Solution
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- PRODUCTS -->
+
+  <section class="section" id="products">
+
+    <h2>
+      Choose your business solution
+    </h2>
+
+    <p class="section-intro">
+      Each solution has a starting price. Choose the solution
+      that fits your business and upgrade as you grow.
+    </p>
+
+
+    <div class="products">
+
+
+      <div class="product">
+        <h3>💈 Salon & Barber</h3>
+
+        <div class="pprice">
+          R99 <span>/month starting</span>
+        </div>
+
+        <p>
+          Appointments, customers, services and daily records.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>👕 Laundry</h3>
+
+        <div class="pprice">
+          R99 <span>/month starting</span>
+        </div>
+
+        <p>
+          Orders, collections, deliveries and laundry workflow.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>🍔 Food Business</h3>
+
+        <div class="pprice">
+          R99 <span>/month starting</span>
+        </div>
+
+        <p>
+          Orders, products, customer records and operations.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>🛒 Wholesale & Grocery</h3>
+
+        <div class="pprice">
+          R149 <span>/month starting</span>
+        </div>
+
+        <p>
+          Products, customers, stock and wholesale operations.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>🚗 Transport</h3>
+
+        <div class="pprice">
+          R149 <span>/month starting</span>
+        </div>
+
+        <p>
+          Customers, trips, bookings and transport records.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>🖥️ IT Business</h3>
+
+        <div class="pprice">
+          R149 <span>/month starting</span>
+        </div>
+
+        <p>
+          Customers, service jobs, support and IT operations.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>🧱 Building Materials</h3>
+
+        <div class="pprice">
+          R149 <span>/month starting</span>
+        </div>
+
+        <p>
+          Products, customers, orders and supply operations.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>🚦 Driving School</h3>
+
+        <div class="pprice">
+          R149 <span>/month starting</span>
+        </div>
+
+        <p>
+          Learners, lessons, bookings and training records.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>🏘️ Community Service Centre</h3>
+
+        <div class="pprice">
+          R199 <span>/month starting</span>
+        </div>
+
+        <p>
+          Community reports, service requests and resident communication.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>❤️ NPO & NGO Management</h3>
+
+        <div class="pprice">
+          R199 <span>/month starting</span>
+        </div>
+
+        <p>
+          Beneficiaries, projects, donors, grants, volunteers and reports.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>🏫 School Management</h3>
+
+        <div class="pprice">
+          R199 <span>/month starting</span>
+        </div>
+
+        <p>
+          Learners, parents, communication and school administration.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>👶 Preschool & Day-care</h3>
+
+        <div class="pprice">
+          R149 <span>/month starting</span>
+        </div>
+
+        <p>
+          Children, parents, attendance and daily records.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>💊 Pharmacy Management</h3>
+
+        <div class="pprice">
+          R199 <span>/month starting</span>
+        </div>
+
+        <p>
+          Customer records, products, stock and pharmacy operations.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+      <div class="product">
+        <h3>⚙️ Other Service Businesses</h3>
+
+        <div class="pprice">
+          R99 <span>/month starting</span>
+        </div>
+
+        <p>
+          A flexible digital workspace for other small service businesses.
+        </p>
+
+        <a class="product-button" href="#plans">
+          Select Solution
+        </a>
+      </div>
+
+
+    </div>
+
+
+    <div class="notice">
+
+      <strong>Start small and grow.</strong>
+
+      Your solution's starting price does not limit you to basic
+      functionality forever. Upgrade from Starter to Business or
+      Professional whenever your business needs more users,
+      automation, reports or additional modules.
+
+    </div>
+
+  </section>
+
+
+  <!-- PAYMENT STATUS -->
+
+  <section class="status">
+
+    <strong>PayFast Subscription Payments</strong>
+
+    Online recurring subscriptions will be enabled through PayFast
+    once merchant verification is completed.
+
+    <br><br>
+
+    You can register your account now and choose your SaaS solution.
+    Payment activation will follow once the payment service is approved.
+
+  </section>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div>
+
+      <a href="/">
+        Home
+      </a>
+
+      <a href="/login.html">
+        Customer Login
+      </a>
+
+      <a href="/privacy-policy.html">
+        Privacy
+      </a>
+
+      <a href="/terms.html">
+        Terms
+      </a>
+
+      <a href="/refund.html">
+        Refunds
+      </a>
+
+      <a href="/cancellation.html">
+        Cancellation
+      </a>
+
+    </div>
+
+    <p>
+      © 2026 Sky Blue Solution (Pty) Ltd. All rights reserved.
+    </p>
+
+  </footer>
+
+</body>
+          </html>
