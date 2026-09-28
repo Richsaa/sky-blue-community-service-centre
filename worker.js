@@ -1,3 +1,14 @@
+import {
+  ensureWhatsAppSaaSTables,
+  getWhatsAppStatus,
+  getWhatsAppContacts,
+  getWhatsAppMessages,
+  createOrUpdateWhatsAppContact,
+  sendSaaSWhatsAppMessage,
+  queueWhatsAppNotification,
+  processWhatsAppNotification
+} from "./whatsapp-engine.js";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -3175,6 +3186,368 @@ export default {
         }, 500);
       }
     }
+
+        // =========================================================
+    // SHARED SAAS WHATSAPP ENGINE
+    // =========================================================
+
+    if (
+      url.pathname.startsWith("/api/whatsapp/") &&
+      url.pathname !== "/api/whatsapp"
+    ) {
+      try {
+        await ensureWhatsAppSaaSTables(env);
+
+        const account =
+          await getAuthenticatedAccount(request);
+
+        if (!account) {
+          return json({
+            success: false,
+            error: "Authentication required"
+          }, 401);
+        }
+
+        const accountId =
+          Number(account.account_id);
+
+        // -----------------------------------------------------
+        // WHATSAPP STATUS
+        // -----------------------------------------------------
+
+        if (
+          url.pathname === "/api/whatsapp/status" &&
+          request.method === "GET"
+        ) {
+          const status =
+            await getWhatsAppStatus(
+              env,
+              accountId
+            );
+
+          return json({
+            success: true,
+            whatsapp: status
+          });
+        }
+
+        // -----------------------------------------------------
+        // WHATSAPP CONTACTS
+        // -----------------------------------------------------
+
+        if (
+          url.pathname === "/api/whatsapp/contacts" &&
+          request.method === "GET"
+        ) {
+          const moduleCode =
+            url.searchParams.get(
+              "module_code"
+            );
+
+          const search =
+            url.searchParams.get(
+              "search"
+            );
+
+          const contacts =
+            await getWhatsAppContacts(
+              env,
+              {
+                accountId,
+                moduleCode,
+                search
+              }
+            );
+
+          return json({
+            success: true,
+            contacts
+          });
+        }
+
+        // -----------------------------------------------------
+        // CREATE / UPDATE WHATSAPP CONTACT
+        // -----------------------------------------------------
+
+        if (
+          url.pathname === "/api/whatsapp/contacts" &&
+          request.method === "POST"
+        ) {
+          const body =
+            await request.json();
+
+          const contact =
+            await createOrUpdateWhatsAppContact(
+              env,
+              {
+                accountId,
+                phone:
+                  body.phone,
+                name:
+                  body.name || null,
+                email:
+                  body.email || null,
+                whatsappName:
+                  body.whatsapp_name || null,
+                moduleCode:
+                  body.module_code || null,
+                customerId:
+                  body.customer_id || null,
+                optIn:
+                  body.opt_in !== false
+              }
+            );
+
+          return json({
+            success: true,
+            contact
+          }, 201);
+        }
+
+        // -----------------------------------------------------
+        // WHATSAPP MESSAGE HISTORY
+        // -----------------------------------------------------
+
+        if (
+          url.pathname === "/api/whatsapp/messages" &&
+          request.method === "GET"
+        ) {
+          const moduleCode =
+            url.searchParams.get(
+              "module_code"
+            );
+
+          const phone =
+            url.searchParams.get(
+              "phone"
+            );
+
+          const limit =
+            Number(
+              url.searchParams.get(
+                "limit"
+              ) || 100
+            );
+
+          const messages =
+            await getWhatsAppMessages(
+              env,
+              {
+                accountId,
+                moduleCode,
+                phone,
+                limit
+              }
+            );
+
+          return json({
+            success: true,
+            messages
+          });
+        }
+
+        // -----------------------------------------------------
+        // SEND WHATSAPP MESSAGE
+        // -----------------------------------------------------
+
+        if (
+          url.pathname === "/api/whatsapp/send" &&
+          request.method === "POST"
+        ) {
+          const body =
+            await request.json();
+
+          if (!body.phone) {
+            return json({
+              success: false,
+              error:
+                "phone is required"
+            }, 400);
+          }
+
+          if (!body.message) {
+            return json({
+              success: false,
+              error:
+                "message is required"
+            }, 400);
+          }
+
+          const result =
+            await sendSaaSWhatsAppMessage(
+              env,
+              {
+                accountId,
+                moduleCode:
+                  body.module_code || null,
+                customerId:
+                  body.customer_id || null,
+                contactId:
+                  body.contact_id || null,
+                phone:
+                  body.phone,
+                message:
+                  body.message,
+                messageType:
+                  body.message_type || "text"
+              }
+            );
+
+          return json(
+            result,
+            result.success
+              ? 200
+              : 400
+          );
+        }
+
+        // -----------------------------------------------------
+        // QUEUE WHATSAPP NOTIFICATION
+        // -----------------------------------------------------
+
+        if (
+          url.pathname === "/api/whatsapp/notify" &&
+          request.method === "POST"
+        ) {
+          const body =
+            await request.json();
+
+          if (!body.phone) {
+            return json({
+              success: false,
+              error:
+                "phone is required"
+            }, 400);
+          }
+
+          if (!body.event_type) {
+            return json({
+              success: false,
+              error:
+                "event_type is required"
+            }, 400);
+          }
+
+          if (!body.message) {
+            return json({
+              success: false,
+              error:
+                "message is required"
+            }, 400);
+          }
+
+          const queued =
+            await queueWhatsAppNotification(
+              env,
+              {
+                accountId,
+                moduleCode:
+                  body.module_code ||
+                  "other-services",
+                phone:
+                  body.phone,
+                eventType:
+                  body.event_type,
+                message:
+                  body.message,
+                customerId:
+                  body.customer_id || null,
+                contactId:
+                  body.contact_id || null,
+                scheduledAt:
+                  body.scheduled_at || null
+              }
+            );
+
+          return json(
+            queued,
+            201
+          );
+        }
+
+        // -----------------------------------------------------
+        // SEND QUEUED WHATSAPP NOTIFICATION
+        // -----------------------------------------------------
+
+        if (
+          url.pathname.startsWith(
+            "/api/whatsapp/notify/"
+          ) &&
+          request.method === "POST"
+        ) {
+          const notificationId =
+            Number(
+              url.pathname
+                .split("/")
+                .pop()
+            );
+
+          if (!notificationId) {
+            return json({
+              success: false,
+              error:
+                "Invalid notification ID"
+            }, 400);
+          }
+
+          const notification =
+            await env.DB
+              .prepare(`
+                SELECT *
+                FROM saas_whatsapp_notifications
+                WHERE id = ?
+                  AND account_id = ?
+                LIMIT 1
+              `)
+              .bind(
+                notificationId,
+                accountId
+              )
+              .first();
+
+          if (!notification) {
+            return json({
+              success: false,
+              error:
+                "Notification not found"
+            }, 404);
+          }
+
+          const result =
+            await processWhatsAppNotification(
+              env,
+              notification
+            );
+
+          return json(
+            result,
+            result.success
+              ? 200
+              : 400
+          );
+        }
+
+        return json({
+          success: false,
+          error:
+            "WhatsApp SaaS endpoint not found"
+        }, 404);
+
+      } catch (error) {
+        console.error(
+          "SaaS WhatsApp API error:",
+          error
+        );
+
+        return json({
+          success: false,
+          error:
+            "WhatsApp service error",
+          details:
+            String(error)
+        }, 500);
+      }
+            }
 
     // =========================================================
     // WHATSAPP WEBHOOK VERIFICATION
