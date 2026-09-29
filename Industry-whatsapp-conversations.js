@@ -22,7 +22,7 @@ import {
   detectIndustryCommand,
   buildIndustryHelp,
   buildIndustryCancel
-} from "./industry-whatsapp.js";
+} from "./Industry-Whatsapp.js";
 
 
 // ============================================================
