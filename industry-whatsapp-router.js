@@ -1,6 +1,6 @@
 import {
   processIndustryWhatsAppMessage
-} from "./industry-whatsapp-conversations.js";
+} from "./Industry-whatsapp-conversations.js";
 
 import {
   sendSaaSWhatsAppMessage
