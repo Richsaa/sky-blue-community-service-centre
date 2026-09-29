@@ -9,6 +9,11 @@ import {
   processWhatsAppNotification
 } from "./whatsapp-engine.js";
 
+import {
+  ensureIndustryWhatsAppRouterTables,
+  processIndustryWhatsAppValue
+} from "./industry-whatsapp-router.js";
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -3509,7 +3514,7 @@ export default {
             return json({
               success: false,
               error:
-                "Notification not found"
+                "Notificatìion not found"
             }, 404);
           }
 
@@ -4520,6 +4525,9 @@ export default {
     // =========================================================
     // WHATSAPP WEBHOOK RECEIVER
     // =========================================================
+    // =========================================================
+    // WHATSAPP WEBHOOK RECEIVER
+    // =========================================================
 
     if (
       url.pathname === "/api/whatsapp" &&
@@ -4532,6 +4540,18 @@ export default {
         console.log(
           "WhatsApp webhook received:",
           JSON.stringify(body)
+        );
+
+        /*
+          Initialise the industry WhatsApp router.
+
+          This creates the mapping table used to identify
+          which SaaS business/product owns an incoming
+          WhatsApp number.
+        */
+
+        await ensureIndustryWhatsAppRouterTables(
+          env
         );
 
         const entries =
@@ -4548,6 +4568,79 @@ export default {
             if (!value) {
               continue;
             }
+
+            /*
+              First give the message to the new
+              industry WhatsApp router.
+
+              If the WhatsApp phone number belongs to
+              a SaaS industry account, the router handles
+              the conversation.
+
+              If no industry mapping exists, handled=false
+              and the existing Community Service Centre
+              system continues below.
+            */
+
+            let industryResult = null;
+
+            try {
+              industryResult =
+                await processIndustryWhatsAppValue(
+                  env,
+                  value
+                );
+
+              console.log(
+                "Industry WhatsApp result:",
+                JSON.stringify(
+                  industryResult
+                )
+              );
+
+            } catch (industryError) {
+              console.error(
+                "Industry WhatsApp router error:",
+                industryError
+              );
+
+              industryResult = {
+                success: false,
+                handled: false,
+                error:
+                  String(
+                    industryError
+                  )
+              };
+            }
+
+
+            /*
+              If the industry router handled the message,
+              do NOT send it through the old civic workflow.
+
+              This prevents salon, church, pharmacy,
+              laundry, school, etc. messages from being
+              incorrectly treated as community reports.
+            */
+
+            if (
+              industryResult &&
+              industryResult.handled === true
+            ) {
+              continue;
+            }
+
+
+            /*
+              EXISTING COMMUNITY SERVICE CENTRE
+              WHATSAPP WORKFLOW
+
+              This remains intact.
+
+              Only messages that are not mapped to an
+              industry SaaS account reach this workflow.
+            */
 
             const messages =
               value.messages || [];
@@ -4568,6 +4661,7 @@ export default {
                   from,
                   message.text.body
                 );
+
               } else {
                 await sendWhatsAppMessage(
                   from,
@@ -4591,6 +4685,13 @@ export default {
           error
         );
 
+        /*
+          Always acknowledge the Meta webhook.
+
+          This prevents unnecessary webhook retries
+          while the error is logged for investigation.
+        */
+
         return new Response(
           "EVENT_RECEIVED",
           {
@@ -4599,6 +4700,7 @@ export default {
         );
       }
     }
+                
 
     // =========================================================
     // CATEGORIES
