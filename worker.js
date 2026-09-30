@@ -1,4 +1,9 @@
 import {
+  handleSaaSCoreRoute,
+  coreRouteError
+} from "./saas-core-routes.js";
+
+import {
   ensureWhatsAppSaaSTables,
   getWhatsAppStatus,
   getWhatsAppContacts,
@@ -1384,6 +1389,77 @@ export default {
           error:
             "Unable to log out"
         }, 500);
+
+            // =========================================================
+    // SKY BLUE SAAS CORE API
+    // =========================================================
+    //
+    // Shared business engine for all 16 SaaS modules.
+    //
+    // Business Workspace
+    //      ↓
+    // Core API
+    //      ↓
+    // D1
+    //
+    // Authentication is required for every Core endpoint.
+    // =========================================================
+
+    if (
+      url.pathname.startsWith("/api/core/")
+    ) {
+
+      try {
+
+        const account =
+          await getAuthenticatedAccount(
+            request
+          );
+
+        if (!account) {
+
+          return json({
+            success: false,
+            error:
+              "Authentication required"
+          }, 401);
+
+        }
+
+        const coreResponse =
+          await handleSaaSCoreRoute(
+            env,
+            request,
+            url,
+            account,
+            json
+          );
+
+        if (coreResponse) {
+          return coreResponse;
+        }
+
+        return json({
+          success: false,
+          error:
+            "Core API endpoint not found"
+        }, 404);
+
+      } catch (error) {
+
+        console.error(
+          "SaaS Core API error:",
+          error
+        );
+
+        return coreRouteError(
+          json,
+          error
+        );
+
+      }
+
+    }
       }
     }
 
