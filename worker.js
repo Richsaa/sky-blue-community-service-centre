@@ -1413,59 +1413,151 @@ export default {
 
         const account =
           await getAuthenticatedAccount(
-            request
-          );
+// =========================================================
+// CUSTOMER LOGOUT
+// =========================================================
 
-        if (!account) {
+if (
+  url.pathname === "/api/auth/logout" &&
+  request.method === "POST"
+) {
 
-          return json({
-            success: false,
-            error:
-              "Authentication required"
-          }, 401);
+  try {
 
-        }
+    const sessionToken =
+      getCookie(
+        request,
+        "sbs_session"
+      );
 
-        const coreResponse =
-          await handleSaaSCoreRoute(
-            env,
-            request,
-            url,
-            account,
-            json
-          );
+    if (sessionToken) {
 
-        if (coreResponse) {
-          return coreResponse;
-        }
+      await env.DB.prepare(
+        `
+        DELETE FROM customer_sessions
+        WHERE token = ?
+        `
+      )
+        .bind(sessionToken)
+        .run();
 
-        return json({
+    }
+
+    return json(
+      {
+        success: true,
+        message:
+          "Logged out successfully"
+      },
+      200,
+      {
+        "Set-Cookie":
+          "sbs_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+    return json(
+      {
+        success: false,
+        error:
+          "Unable to log out"
+      },
+      500
+    );
+
+  }
+
+}
+
+
+// =========================================================
+// SKY BLUE SAAS CORE API
+// =========================================================
+//
+// Shared business engine for all SaaS modules.
+//
+// Business Workspace
+//      ↓
+// Core API
+//      ↓
+// D1
+//
+// Authentication is required for every Core endpoint.
+// =========================================================
+
+if (
+  url.pathname.startsWith("/api/core/")
+) {
+
+  try {
+
+    const account =
+      await getAuthenticatedAccount(
+        request
+      );
+
+    if (!account) {
+
+      return json(
+        {
           success: false,
           error:
-            "Core API endpoint not found"
-        }, 404);
-
-      } catch (error) {
-
-        console.error(
-          "SaaS Core API error:",
-          error
-        );
-
-        return coreRouteError(
-          json,
-          error
-        );
-
-      }
+            "Authentication required"
+        },
+        401
+      );
 
     }
-      }
+
+    const coreResponse =
+      await handleSaaSCoreRoute(
+        env,
+        request,
+        url,
+        account,
+        json
+      );
+
+    if (coreResponse) {
+      return coreResponse;
     }
 
-    // =========================================================
-    // OWNER / ADMIN DASHBOARD
-    // =========================================================
+    return json(
+      {
+        success: false,
+        error:
+          "Core API endpoint not found"
+      },
+      404
+    );
+
+  } catch (error) {
+
+    console.error(
+      "SaaS Core API error:",
+      error
+    );
+
+    return coreRouteError(
+      json,
+      error
+    );
+
+  }
+
+}
+
+
+// =========================================================
+// OWNER / ADMIN DASHBOARD
+// =========================================================
 
     async function createAdminToken(
       email,
