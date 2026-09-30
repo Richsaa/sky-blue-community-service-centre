@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Sky Blue Business Workspace</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 250px;
+      background: #0b1f3a;
+      color: white;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    .brand {
+      padding: 24px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: #a9c4e8;
+    }
+
+    .business-mini {
+      margin: 18px 14px;
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+    }
+
+    .business-mini strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .business-mini span {
+      display: block;
+      margin-top: 5px;
+      color: #a9c4e8;
+      font-size: 12px;
+    }
+
+    .nav {
+      padding: 8px 10px 25px;
+    }
+
+    .nav-section {
+      color: #7fa1c9;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 14px 12px 7px;
+    }
+
+    .nav button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #dce9f8;
+      text-align: left;
+      padding: 12px;
+      border-radius: 9px;
+      margin-bottom: 3px;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      background: #1556a8;
+      color: white;
+    }
+
+    .logout {
+      margin-top: 12px !important;
+      color: #ffccd2 !important;
+    }
+
+    /* MAIN */
+
+    .main {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: white;
+      min-height: 70px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 25px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-title h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .topbar-title p {
+      margin: 4px 0 0;
+      color: #728096;
+      font-size: 12px;
+    }
+
+    .status-pill {
+      background: #e8f7ee;
+      color: #137a3c;
+      border-radius: 20px;
+      padding: 8px 13px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .content {
+      padding: 25px;
+      max-width: 1500px;
+      margin: auto;
+    }
+
+    /* VIEWS */
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .page-heading {
+      margin-bottom: 22px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .page-heading p {
+      margin: 7px 0 0;
+      color: #6f7c90;
+    }
+
+    /* CARDS */
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e3e9f1;
+      border-radius: 14px;
+      padding: 19px;
+      box-shadow: 0 2px 7px rgba(10, 30, 60, .03);
+    }
+
+    .metric-label {
+      color: #748196;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .metric-value {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .metric-note {
+      margin-top: 7px;
+      font-size: 11px;
+      color: #8b98a9;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .section-card {
+      background: white;
+      border: 1px solid #e3e9f1;
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .section-card h3 {
+      margin: 0 0 16px;
+      font-size: 16px;
+    }
+
+    /* QUICK ACTIONS */
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .quick-action {
+      border: 1px solid #dbe5f0;
+      background: #f8fbff;
+      border-radius: 11px;
+      padding: 15px;
+      text-align: left;
+    }
+
+    .quick-action:hover {
+      border-color: #2368bb;
+      background: #eef6ff;
+    }
+
+    .quick-action strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .quick-action span {
+      display: block;
+      margin-top: 5px;
+      font-size: 11px;
+      color: #748196;
+    }
+
+    /* MODULES */
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .module-card {
+      background: white;
+      border: 1px solid #e1e8f1;
+      border-radius: 14px;
+      padding: 19px;
+      position: relative;
+    }
+
+    .module-card.active-module {
+      border-color: #2873c7;
+      box-shadow: 0 4px 15px rgba(30, 90, 160, .08);
+    }
+
+    .module-icon {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eaf3ff;
+      border-radius: 11px;
+      font-size: 20px;
+      margin-bottom: 13px;
+    }
+
+    .module-card h3 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .module-card p {
+      color: #718096;
+      font-size: 12px;
+      line-height: 1.5;
+      min-height: 38px;
+    }
+
+    .module-price {
+      font-weight: bold;
+      margin: 12px 0;
+    }
+
+    .module-status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 15px;
+      font-size: 10px;
+      font-weight: bold;
+      background: #edf1f6;
+      color: #5f6c7d;
+    }
+
+    .module-status.active {
+      background: #e7f8ee;
+      color: #13783b;
+    }
+
+    /* TABLE */
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px 9px;
+      text-align: left;
+      border-bottom: 1px solid #edf0f4;
+      font-size: 12px;
+    }
+
+    th {
+      color: #69778c;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    /* FORMS */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid #d9e1eb;
+      border-radius: 9px;
+      padding: 11px;
+      outline: none;
+      background: white;
+    }
+
+    .field textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: #2873c7;
+    }
+
+    .primary-btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 17px;
+      background: #145ca8;
+      color: white;
+      font-weight: bold;
+    }
+
+    .secondary-btn {
+      border: 1px solid #ccd8e5;
+      border-radius: 9px;
+      padding: 10px 16px;
+      background: white;
+      color: #26364a;
+      font-weight: bold;
+    }
+
+    .message {
+      margin-top: 14px;
+      padding: 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #e9f8ef;
+      color: #13733a;
+    }
+
+    .message.error {
+      background: #fff0f1;
+      color: #a52936;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 35px 15px;
+      color: #8793a4;
+      font-size: 13px;
+    }
+
+    .notice {
+      background: #edf6ff;
+      border: 1px solid #cce3fa;
+      color: #24537f;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      margin-bottom: 18px;
+    }
+
+    /* MOBILE */
+
+    .mobile-menu {
+      display: none;
+      border: 0;
+      background: transparent;
+      font-size: 23px;
+    }
+
+    @media (max-width: 1100px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 750px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: .2s;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .mobile-menu {
+        display: block;
+      }
+
+      .topbar {
+        padding: 13px 16px;
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .module-grid,
+      .quick-actions,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .page-heading h1 {
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: 450px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+      <h1>SKY BLUE</h1>
+      <p>Business SaaS Workspace</p>
+    </div>
+
+    <div class="business-mini">
+      <strong id="businessNameSide">My Business</strong>
+      <span id="businessPlanSide">Loading account...</span>
+    </div>
+
+    <nav class="nav">
+
+      <div class="nav-section">Workspace</div>
+
+      <button class="active" data-view="overview">
+        📊 Overview
+      </button>
+
+      <button data-view="business">
+        🏢 My Business
+      </button>
+
+      <div class="nav-section">Business</div>
+
+      <button data-view="customers">
+        👥 Customers
+      </button>
+
+      <button data-view="products">
+        📦 Products
+      </button>
+
+      <button data-view="services">
+        🛠️ Services
+      </button>
+
+      <button data-view="sales">
+        💰 Sales / Orders
+      </button>
+
+      <button data-view="payments">
+        💳 Payments
+      </button>
+
+      <button data-view="quotes">
+        🧾 Quotes
+      </button>
+
+      <button data-view="invoices">
+        📄 Invoices
+      </button>
+
+      <button data-view="expenses">
+        💸 Expenses
+      </button>
+
+      <div class="nav-section">Management</div>
+
+      <button data-view="staff">
+        👨‍💼 Staff
+      </button>
+
+      <button data-view="documents">
+        📁 Documents
+      </button>
+
+      <button data-view="reports">
+        📈 Reports
+      </button>
+
+      <button data-view="activity">
+        📜 Activity
+      </button>
+
+      <button data-view="whatsapp">
+        📱 WhatsApp
+      </button>
+
+      <div class="nav-section">SaaS</div>
+
+      <button data-view="modules">
+        ⭐ My Modules
+      </button>
+
+      <button class="logout" id="logoutBtn">
+        🚪 Logout
+      </button>
+
+    </nav>
+
+  </aside>
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div style="display:flex;align-items:center;gap:12px">
+
+        <button class="mobile-menu" id="mobileMenu">
+          ☰
+        </button>
+
+        <div class="topbar-title">
+          <h2 id="topTitle">Overview</h2>
+          <p id="topSubtitle">
+            Manage your business from one place.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="status-pill" id="accountStatus">
+        Active
+      </div>
+
+    </header>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+
+      <section class="view active" id="view-overview">
+
+        <div class="page-heading">
+          <h1 id="welcomeTitle">
+            Welcome to your Business Workspace
+          </h1>
+
+          <p>
+            Everything you need to manage your business from one place.
+          </p>
+        </div>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="metric-label">Revenue</div>
+            <div class="metric-value" id="metricRevenue">R0.00</div>
+            <div class="metric-note">Recorded business revenue</div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Sales</div>
+            <div class="metric-value" id="metricSales">0</div>
+            <div class="metric-note">Sales / orders</div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Customers</div>
+            <div class="metric-value" id="metricCustomers">0</div>
+            <div class="metric-note">Business customers</div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Products</div>
+            <div class="metric-value" id="metricProducts">0</div>
+            <div class="metric-note">Products in your workspace</div>
+          </div>
+
+        </div>
+
+        <div class="section-grid">
+
+          <div class="section-card">
+
+            <h3>Quick Actions</h3>
+
+            <div class="quick-actions">
+
+              <button class="quick-action" data-open="customers">
+                <strong>👥 Add Customer</strong>
+                <span>Create a customer/contact record.</span>
+              </button>
+
+              <button class="quick-action" data-open="products">
+                <strong>📦 Add Product</strong>
+                <span>Add products and inventory.</span>
+              </button>
+
+              <button class="quick-action" data-open="services">
+                <strong>🛠 Add Service</strong>
+                <span>Add services and pricing.</span>
+              </button>
+
+              <button class="quick-action" data-open="sales">
+                <strong>💰 Record Sale</strong>
+                <span>Create a sale or order.</span>
+              </button>
+
+              <button class="quick-action" data-open="expenses">
+                <strong>💸 Record Expense</strong>
+                <span>Track business expenses.</span>
+              </button>
+
+              <button class="quick-action" data-open="business">
+                <strong>🏢 Business Setup</strong>
+                <span>Update your business profile.</span>
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="section-card">
+
+            <h3>Account</h3>
+
+            <div style="font-size:13px;line-height:1.8">
+
+              <strong id="accountBusinessName">
+                Loading...
+              </strong>
+
+              <br>
+
+              <span id="accountEmail">
+                —
+              </span>
+
+              <br>
+
+              <span id="accountPlan">
+                —
+              </span>
+
+              <br>
+
+              <span id="accountSubscription">
+                —
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="section-card">
+
+          <h3>Active SaaS Modules</h3>
+
+          <div class="module-grid" id="overviewModules">
+            <div class="empty">
+              Loading your modules...
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- BUSINESS -->
+
+      <section class="view" id="view-business">
+
+        <div class="page-heading">
+          <h1>My Business</h1>
+          <p>Manage your business information and branding.</p>
+        </div>
+
+        <div class="section-card">
+
+          <form id="businessForm">
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label>Business Name</label>
+                <input id="business_name" required>
+              </div>
+
+              <div class="field">
+                <label>Trading Name</label>
+                <input id="trading_name">
+              </div>
+
+              <div class="field">
+                <label>Business Type</label>
+                <input id="business_type">
+              </div>
+
+              <div class="field">
+                <label>Registration Number</label>
+                <input id="registration_number">
+              </div>
+
+              <div class="field">
+                <label>Email</label>
+                <input id="business_email" type="email">
+              </div>
+
+              <div class="field">
+                <label>Phone</label>
+                <input id="business_phone">
+              </div>
+
+              <div class="field">
+                <label>WhatsApp</label>
+                <input id="business_whatsapp">
+              </div>
+
+              <div class="field">
+                <label>Website</label>
+                <input id="business_website">
+              </div>
+
+              <div class="field full">
+                <label>Address</label>
+                <input id="business_address">
+              </div>
+
+              <div class="field">
+                <label>City</label>
+                <input id="business_city">
+              </div>
+
+              <div class="field">
+                <label>Province</label>
+                <input id="business_province">
+              </div>
+
+              <div class="field">
+                <label>Postal Code</label>
+                <input id="business_postal_code">
+              </div>
+
+              <div class="field">
+                <label>Country</label>
+                <input id="business_country" value="South Africa">
+              </div>
+
+              <div class="field full">
+                <label>Description</label>
+                <textarea id="business_description"></textarea>
+              </div>
+
+            </div>
+
+            <button class="primary-btn" type="submit">
+              Save Business Profile
+            </button>
+
+            <div class="message" id="businessMessage"></div>
+
+          </form>
+
+        </div>
+
+      </section>
+
+      <!-- CUSTOMERS -->
+
+      <section class="view" id="view-customers">
+
+        <div class="page-heading">
+          <h1>Customers</h1>
+          <p>Manage your customers and contacts.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div style="display:flex;gap:10px;margin-bottom:15px">
+
+            <input
+              id="customerSearch"
+              placeholder="Search customers..."
+              style="flex:1;padding:11px;border:1px solid #d9e1eb;border-radius:9px"
+            >
+
+            <button class="primary-btn" id="refreshCustomers">
+              Refresh
+            </button>
+
+          </div>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Business</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody id="customersTable">
+                <tr>
+                  <td colspan="5" class="empty">
+                    Loading customers...
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- PRODUCTS -->
+
+      <section class="view" id="view-products">
+
+        <div class="page-heading">
+          <h1>Products</h1>
+          <p>Manage products, pricing and inventory.</p>
+        </div>
+
+        <div class="notice">
+          Products are shared by the Sky Blue Core Engine and can be used by
+          industry-specific modules such as E-Commerce, Pharmacy, Food,
+          Wholesale and Building Materials.
+        </div>
+
+        <div class="section-card">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>SKU</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody id="productsTable">
+                <tr>
+                  <td colspan="6" class="empty">
+                    Select an active product-based module to view products.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SERVICES -->
+
+      <section class="view" id="view-services">
+
+        <div class="page-heading">
+          <h1>Services</h1>
+          <p>Manage services, prices and service information.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Category</th>
+                  <th>Duration</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody id="servicesTable">
+                <tr>
+                  <td colspan="5" class="empty">
+                    Select an active service-based module to view services.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SALES -->
+
+      <section class="view" id="view-sales">
+
+        <div class="page-heading">
+          <h1>Sales & Orders</h1>
+          <p>Manage sales, orders and payment status.</p>
+        </div>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="metric-label">Total Sales</div>
+            <div class="metric-value" id="salesCount">0</div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Revenue</div>
+            <div class="metric-value" id="salesRevenue">R0.00</div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Paid</div>
+            <div class="metric-value">R0.00</div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Pending</div>
+            <div class="metric-value">R0.00</div>
+          </div>
+
+        </div>
+
+        <div class="section-card">
+
+          <div class="empty">
+            Sales and order records will appear here as your business starts
+            using its industry module.
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- PAYMENTS -->
+
+      <section class="view" id="view-payments">
+
+        <div class="page-heading">
+          <h1>Payments</h1>
+          <p>Track payments received by your business.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Method</th>
+                  <th>Provider</th>
+                  <th>Status</th>
+                  <th>Reference</th>
+                </tr>
+              </thead>
+
+              <tbody id="paymentsTable">
+                <tr>
+                  <td colspan="6" class="empty">
+                    No business payments recorded yet.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- QUOTES -->
+
+      <section class="view" id="view-quotes">
+
+        <div class="page-heading">
+          <h1>Quotes</h1>
+          <p>Create and manage quotations for customers.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div class="empty">
+            Your quotation workspace will use the shared Sky Blue Core
+            quotation engine.
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- INVOICES -->
+
+      <section class="view" id="view-invoices">
+
+        <div class="page-heading">
+          <h1>Invoices</h1>
+          <p>Manage invoices, balances and payment status.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div class="empty">
+            Your invoice workspace will use the shared Sky Blue Core
+            invoice engine.
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- EXPENSES -->
+
+      <section class="view" id="view-expenses">
+
+        <div class="page-heading">
+          <h1>Expenses</h1>
+          <p>Track business expenses and expenditure.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Expense</th>
+                  <th>Supplier</th>
+                  <th>Category</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody id="expensesTable">
+                <tr>
+                  <td colspan="6" class="empty">
+                    No expenses recorded yet.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- STAFF -->
+
+      <section class="view" id="view-staff">
+
+        <div class="page-heading">
+          <h1>Staff</h1>
+          <p>Manage employees and business roles.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Job Title</th>
+                  <th>Department</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody id="staffTable">
+                <tr>
+                  <td colspan="5" class="empty">
+                    No staff members added yet.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- DOCUMENTS -->
+
+      <section class="view" id="view-documents">
+
+        <div class="page-heading">
+          <h1>Documents</h1>
+          <p>Keep important business documents organised.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div class="empty">
+            No business documents registered yet.
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- REPORTS -->
+
+      <section class="view" id="view-reports">
+
+        <div class="page-heading">
+          <h1>Reports & Insights</h1>
+          <p>Understand your business performance.</p>
+        </div>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="metric-label">Revenue</div>
+            <div class="metric-value" id="reportRevenue">
+              R0.00
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Expenses</div>
+            <div class="metric-value" id="reportExpenses">
+              R0.00
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Net Amount</div>
+            <div class="metric-value" id="reportNet">
+              R0.00
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Customers</div>
+            <div class="metric-value" id="reportCustomers">
+              0
+            </div>
+          </div>
+
+        </div>
+
+        <div class="section-card">
+
+          <h3>Business Performance</h3>
+
+          <div class="empty">
+            Detailed industry reports will appear here as each module is
+            activated and begins recording business data.
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ACTIVITY -->
+
+      <section class="view" id="view-activity">
+
+        <div class="page-heading">
+          <h1>Activity History</h1>
+          <p>Track important activity inside your business workspace.</p>
+        </div>
+
+        <div class="section-card">
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Module</th>
+                  <th>Action</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+
+              <tbody id="activityTable">
+                <tr>
+                  <td colspan="4" class="empty">
+                    No activity recorded yet.
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- WHATSAPP -->
+
+      <section class="view" id="view-whatsapp">
+
+        <div class="page-heading">
+          <h1>WhatsApp Business</h1>
+          <p>
+            Connect customer communication to your industry workflow.
+          </p>
+        </div>
+
+        <div class="notice">
+          WhatsApp functionality is industry-specific. A salon receives
+          appointment workflows, a pharmacy receives stock workflows, a
+          church receives prayer/programme workflows, and an online store
+          receives shopping/order workflows.
+        </div>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="metric-label">WhatsApp Status</div>
+            <div class="metric-value" id="waStatus">
+              Checking...
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Contacts</div>
+            <div class="metric-value" id="waContacts">
+              0
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Messages</div>
+            <div class="metric-value" id="waMessages">
+              0
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="metric-label">Active Modules</div>
+            <div class="metric-value" id="waModules">
+              0
+            </div>
+          </div>
+
+        </div>
+
+        <div class="section-card">
+
+          <h3>Industry WhatsApp Assistant</h3>
+
+          <p style="font-size:13px;color:#718096;line-height:1.6">
+
+            Your WhatsApp assistant will use the specific SaaS product
+            activated on your account. The same customer communication
+            channel can therefore handle bookings, orders, stock,
+            appointments, prayer requests, service requests and other
+            industry-specific workflows.
+
+          </p>
+
+          <button class="primary-btn" id="refreshWhatsApp">
+            Refresh WhatsApp Status
+          </button>
+
+        </div>
+
+      </section>
+
+      <!-- MODULES -->
+
+      <section class="view" id="view-modules">
+
+        <div class="page-heading">
+          <h1>My SaaS Modules</h1>
+          <p>
+            Manage the Sky Blue services available to your business.
+          </p>
+        </div>
+
+        <div class="module-grid" id="modulesGrid">
+
+          <div class="empty">
+            Loading modules...
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+  const AUTH_API = "/api/auth/me";
+  const LOGOUT_API = "/api/auth/logout";
+  const MODULES_API = "/api/saas/modules";
+  const WHATSAPP_STATUS_API = "/api/whatsapp/status";
+
+  let currentAccount = null;
+  let modules = [];
+
+  const moduleIcons = {
+    "community-service-centre": "🏛️",
+    "npo-ngo-management": "🤝",
+    "church-management": "⛪",
+    "ecommerce-online-store": "🛒",
+    "salon-barber-management": "💇",
+    "laundry-management": "🧺",
+    "food-business-management": "🍔",
+    "wholesale-grocery-management": "🛒",
+    "driving-school-management": "🚗",
+    "school-management": "🏫",
+    "preschool-daycare-management": "🧒",
+    "pharmacy-management": "💊",
+    "transport-management": "🚐",
+    "it-business-management": "💻",
+    "building-materials-management": "🧱",
+    "other-service-businesses": "🛠️"
+  };
+
+  function money(value) {
+    return "R" + Number(value || 0).toLocaleString(
+      "en-ZA",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
+    );
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function showMessage(element, message, type) {
+    element.textContent = message;
+    element.className = "message show " + type;
+  }
+
+  function activeModuleForBusiness() {
+    const active = modules.filter(
+      module =>
+        Number(module.active) === 1 &&
+        (
+          module.customer_module_status === "active" ||
+          module.customer_visible === 1
+        )
+    );
+
+    return active[0] || null;
+  }
+
+  async function api(url, options = {}) {
+
+    const response = await fetch(
+      url,
+      {
+        credentials: "include",
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      }
+    );
+
+    let data = {};
+
+    try {
+      data = await response.json();
+    } catch {
+      data = {};
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        data.message ||
+        "Request failed"
+      );
+    }
+
+    return data;
+  }
+
+  /* -------------------------------------------------------
+     AUTH
+  ------------------------------------------------------- */
+
+  async function loadAccount() {
+
+    try {
+
+      const data = await api(AUTH_API);
+
+      currentAccount =
+        data.account ||
+        data.customer ||
+        data.user ||
+        data;
+
+      if (!currentAccount) {
+        throw new Error("Account not found");
+      }
+
+      renderAccount();
+
+    } catch (error) {
+
+      window.location.href = "/login.html";
+
+    }
+  }
+
+  function renderAccount() {
+
+    const businessName =
+      currentAccount.business_name ||
+      currentAccount.businessName ||
+      currentAccount.name ||
+      "My Business";
+
+    const email =
+      currentAccount.email ||
+      "—";
+
+    const plan =
+      currentAccount.plan ||
+      "SaaS Customer";
+
+    const status =
+      currentAccount.subscription_status ||
+      currentAccount.subscriptionStatus ||
+      "active";
+
+    document.getElementById(
+      "businessNameSide"
+    ).textContent = businessName;
+
+    document.getElementById(
+      "businessPlanSide"
+    ).textContent = plan;
+
+    document.getElementById(
+      "welcomeTitle"
+    ).textContent =
+      "Welcome, " + businessName;
+
+    document.getElementById(
+      "accountBusinessName"
+    ).textContent = businessName;
+
+    document.getElementById(
+      "accountEmail"
+    ).textContent = email;
+
+    document.getElementById(
+      "accountPlan"
+    ).textContent = "Plan: " + plan;
+
+    document.getElementById(
+      "accountSubscription"
+    ).textContent =
+      "Subscription: " + status;
+
+    document.getElementById(
+      "accountStatus"
+    ).textContent =
+      status === "active"
+        ? "Active"
+        : status;
+
+    loadBusinessProfile();
+  }
+
+  /* -------------------------------------------------------
+     MODULES
+  ------------------------------------------------------- */
+
+  async function loadModules() {
+
+    try {
+
+      const data = await api(MODULES_API);
+
+      modules =
+        Array.isArray(data.modules)
+          ? data.modules
+          : Array.isArray(data.results)
+            ? data.results
+            : [];
+
+      renderModules();
+
+      updateWhatsAppModuleCount();
+
+    } catch (error) {
+
+      document.getElementById(
+        "modulesGrid"
+      ).innerHTML = `
+        <div class="empty">
+          Unable to load modules.
+        </div>
+      `;
+    }
+  }
+
+  function renderModules() {
+
+    const grid =
+      document.getElementById("modulesGrid");
+
+    const overview =
+      document.getElementById("overviewModules");
+
+    if (!modules.length) {
+
+      grid.innerHTML =
+        `<div class="empty">No SaaS modules found.</div>`;
+
+      overview.innerHTML =
+        `<div class="empty">No modules available.</div>`;
+
+      return;
+    }
+
+    const html = modules.map(module => {
+
+      const code =
+        module.module_code ||
+        module.code ||
+        "";
+
+      const name =
+        module.module_name ||
+        module.name ||
+        code;
+
+      const description =
+        module.description ||
+        "Sky Blue business management module.";
+
+      const price =
+        Number(module.monthly_price || 0);
+
+      const active =
+        Number(module.active) === 1;
+
+      const customerActive =
+        module.customer_module_status === "active";
+
+      const isActive =
+        active && (
+          customerActive ||
+          currentAccount?.plan === name
+        );
+
+      const icon =
+        moduleIcons[code] ||
+        "⭐";
+
+      return `
+        <div class="module-card ${isActive ? "active-module" : ""}">
+
+          <div class="module-icon">
+            ${icon}
+          </div>
+
+          <h3>
+            ${escapeHTML(name)}
+          </h3>
+
+          <p>
+            ${escapeHTML(description)}
+          </p>
+
+          <div class="module-price">
+            R${price.toFixed(2)} / month
+          </div>
+
+          <span class="module-status ${isActive ? "active" : ""}">
+            ${isActive ? "ACTIVE" : "AVAILABLE"}
+          </span>
+
+        </div>
+      `;
+
+    }).join("");
+
+    grid.innerHTML = html;
+
+    overview.innerHTML =
+      modules
+        .filter(module =>
+          Number(module.active) === 1
+        )
+        .slice(0, 6)
+        .map(module => {
+
+          const code =
+            module.module_code ||
+            module.code ||
+            "";
+
+          const name =
+            module.module_name ||
+            module.name ||
+            code;
+
+          const active =
+            module.customer_module_status === "active";
+
+          return `
+            <div class="module-card ${active ? "active-module" : ""}">
+
+              <div class="module-icon">
+                ${moduleIcons[code] || "⭐"}
+              </div>
+
+              <h3>
+                ${escapeHTML(name)}
+              </h3>
+
+              <p>
+                ${escapeHTML(
+                  module.description ||
+                  "Sky Blue SaaS module."
+                )}
+              </p>
+
+              <span class="module-status ${active ? "active" : ""}">
+                ${active ? "ACTIVE" : "AVAILABLE"}
+              </span>
+
+            </div>
+          `;
+
+        }).join("");
+
+  }
+
+  function updateWhatsAppModuleCount() {
+
+    const count =
+      modules.filter(module =>
+        Number(module.active) === 1
+      ).length;
+
+    document.getElementById(
+      "waModules"
+    ).textContent = count;
+  }
+
+  /* -------------------------------------------------------
+     BUSINESS PROFILE
+  ------------------------------------------------------- */
+
+  async function loadBusinessProfile() {
+
+    /*
+     * The Core API is already deployed as the business engine.
+     * The public API route will be connected during the
+     * controlled Worker integration stage.
+     *
+     * For now, prefill the fields available from the
+     * authenticated customer account.
+     */
+
+    if (!currentAccount) {
+      return;
+    }
+
+    document.getElementById(
+      "business_name"
+    ).value =
+      currentAccount.business_name ||
+      currentAccount.businessName ||
+      "";
+
+    document.getElementById(
+      "business_email"
+    ).value =
+      currentAccount.email ||
+      "";
+
+    document.getElementById(
+      "business_phone"
+    ).value =
+      currentAccount.phone ||
+      "";
+
+    document.getElementById(
+      "business_whatsapp"
+    ).value =
+      currentAccount.phone ||
+      "";
+  }
+
+  document.getElementById(
+    "businessForm"
+  ).addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      const message =
+        document.getElementById(
+          "businessMessage"
+        );
+
+      /*
+       * The shared Core API is deployed.
+       * Its authenticated Worker routes will be connected
+       * in the next integration stage.
+       */
+
+      showMessage(
+        message,
+        "Business workspace is ready. Core API integration is the next stage.",
+        "success"
+      );
+
+    }
+  );
+
+  /* -------------------------------------------------------
+     DASHBOARD DATA
+  ------------------------------------------------------- */
+
+  async function loadDashboardData() {
+
+    /*
+     * The Core API dashboard functions are deployed.
+     * The authenticated API endpoints will be connected
+     * during Worker integration.
+     *
+     * Existing dashboard data remains untouched.
+     */
+
+    document.getElementById(
+      "metricRevenue"
+    ).textContent = "R0.00";
+
+    document.getElementById(
+      "metricSales"
+    ).textContent = "0";
+
+    document.getElementById(
+      "metricCustomers"
+    ).textContent = "0";
+
+    document.getElementById(
+      "metricProducts"
+    ).textContent = "0";
+
+    document.getElementById(
+      "reportRevenue"
+    ).textContent = "R0.00";
+
+    document.getElementById(
+      "reportExpenses"
+    ).textContent = "R0.00";
+
+    document.getElementById(
+      "reportNet"
+    ).textContent = "R0.00";
+
+    document.getElementById(
+      "reportCustomers"
+    ).textContent = "0";
+
+  }
+
+  /* -------------------------------------------------------
+     WHATSAPP
+  ------------------------------------------------------- */
+
+  async function loadWhatsAppStatus() {
+
+    try {
+
+      const data =
+        await api(
+          WHATSAPP_STATUS_API
+        );
+
+      const configured =
+        data.configured === true;
+
+      document.getElementById(
+        "waStatus"
+      ).textContent =
+        configured
+          ? "Configured"
+          : "Not Configured";
+
+    } catch {
+
+      document.getElementById(
+        "waStatus"
+      ).textContent =
+        "Not Configured";
+    }
+
+  }
+
+  /* -------------------------------------------------------
+     NAVIGATION
+  ------------------------------------------------------- */
+
+  const titles = {
+
+    overview: [
+      "Overview",
+      "Manage your business from one place."
+    ],
+
+    business: [
+      "My Business",
+      "Manage your business profile."
+    ],
+
+    customers: [
+      "Customers",
+      "Manage your customers and contacts."
+    ],
+
+    products: [
+      "Products",
+      "Manage products and inventory."
+    ],
+
+    services: [
+      "Services",
+      "Manage services and pricing."
+    ],
+
+    sales: [
+      "Sales / Orders",
+      "Manage sales and orders."
+    ],
+
+    payments: [
+      "Payments",
+      "Track business payments."
+    ],
+
+    quotes: [
+      "Quotes",
+      "Manage quotations."
+    ],
+
+    invoices: [
+      "Invoices",
+      "Manage invoices."
+    ],
+
+    expenses: [
+      "Expenses",
+      "Track business expenditure."
+    ],
+
+    staff: [
+      "Staff",
+      "Manage staff and roles."
+    ],
+
+    documents: [
+      "Documents",
+      "Manage business documents."
+    ],
+
+    reports: [
+      "Reports",
+      "View business performance."
+    ],
+
+    activity: [
+      "Activity",
+      "View business activity history."
+    ],
+
+    whatsapp: [
+      "WhatsApp",
+      "Industry-specific business communication."
+    ],
+
+    modules: [
+      "My Modules",
+      "Manage your Sky Blue SaaS modules."
+    ]
+
+  };
+
+  function openView(view) {
+
+    document.querySelectorAll(
+      ".view"
+    ).forEach(element => {
+      element.classList.remove("active");
+    });
+
+    const target =
+      document.getElementById(
+        "view-" + view
+      );
+
+    if (target) {
+      target.classList.add("active");
+    }
+
+    document.querySelectorAll(
+      ".nav button[data-view]"
+    ).forEach(button => {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.view === view
+      );
+
+    });
+
+    const title =
+      titles[view] ||
+      ["Workspace", "Sky Blue Business Workspace"];
+
+    document.getElementById(
+      "topTitle"
+    ).textContent = title[0];
+
+    document.getElementById(
+      "topSubtitle"
+    ).textContent = title[1];
+
+    document.getElementById(
+      "sidebar"
+    ).classList.remove("open");
+
+    if (view === "whatsapp") {
+      loadWhatsAppStatus();
+    }
+
+  }
+
+  document.querySelectorAll(
+    ".nav button[data-view]"
+  ).forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => openView(
+        button.dataset.view
+      )
+    );
+
+  });
+
+  document.querySelectorAll(
+    "[data-open]"
+  ).forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => openView(
+        button.dataset.open
+      )
+    );
+
+  });
+
+  /* -------------------------------------------------------
+     CUSTOMER SEARCH
+  ------------------------------------------------------- */
+
+  document.getElementById(
+    "customerSearch"
+  ).addEventListener(
+    "input",
+    function() {
+
+      const search =
+        this.value.toLowerCase();
+
+      document.querySelectorAll(
+        "#customersTable tr"
+      ).forEach(row => {
+
+        row.style.display =
+          row.textContent
+            .toLowerCase()
+            .includes(search)
+            ? ""
+            : "none";
+
+      });
+
+    }
+  );
+
+  document.getElementById(
+    "refreshCustomers"
+  ).addEventListener(
+    "click",
+    () => {
+
+      document.getElementById(
+        "customersTable"
+      ).innerHTML = `
+        <tr>
+          <td colspan="5" class="empty">
+            Customer API integration will populate this table.
+          </td>
+        </tr>
+      `;
+
+    }
+  );
+
+  /* -------------------------------------------------------
+     WHATSAPP REFRESH
+  ------------------------------------------------------- */
+
+  document.getElementById(
+    "refreshWhatsApp"
+  ).addEventListener(
+    "click",
+    loadWhatsAppStatus
+  );
+
+  /* -------------------------------------------------------
+     MOBILE MENU
+  ------------------------------------------------------- */
+
+  document.getElementById(
+    "mobileMenu"
+  ).addEventListener(
+    "click",
+    () => {
+
+      document.getElementById(
+        "sidebar"
+      ).classList.toggle("open");
+
+    }
+  );
+
+  /* -------------------------------------------------------
+     LOGOUT
+  ------------------------------------------------------- */
+
+  document.getElementById(
+    "logoutBtn"
+  ).addEventListener(
+    "click",
+    async function() {
+
+      try {
+        await api(
+          LOGOUT_API,
+          {
+            method: "POST"
+          }
+        );
+      } catch {
+        // Continue to login even if logout request fails.
+      }
+
+      window.location.href =
+        "/login.html";
+
+    }
+  );
+
+  /* -------------------------------------------------------
+     START
+  ------------------------------------------------------- */
+
+  async function start() {
+
+    await loadAccount();
+
+    await loadModules();
+
+    await loadDashboardData();
+
+    await loadWhatsAppStatus();
+
+  }
+
+  start();
+
+</script>
+
+</body>
+  </html>
