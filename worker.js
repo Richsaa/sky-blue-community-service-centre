@@ -1334,86 +1334,8 @@ export default {
           publicAccount(account)
       });
     }
-
-    // =========================================================
-    // CUSTOMER LOGOUT
-    // =========================================================
-
-    if (
-      url.pathname === "/api/auth/logout" &&
-      request.method === "POST"
-    ) {
-      try {
-        const sessionToken =
-          getCookie(
-            request,
-            "sbs_session"
-          );
-
-        if (sessionToken) {
-          const tokenHash =
-            await hashSessionToken(
-              sessionToken
-            );
-
-          await env.DB
-            .prepare(`
-              DELETE FROM customer_sessions
-              WHERE token_hash = ?
-            `)
-            .bind(tokenHash)
-            .run();
-        }
-
-        return json(
-          {
-            success: true,
-            message:
-              "Logged out successfully"
-          },
-          200,
-          {
-            "Set-Cookie":
-              "sbs_session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0"
-          }
-        );
-
-      } catch (error) {
-        console.error(
-          "Logout error:",
-          error
-        );
-
-        return json({
-          success: false,
-          error:
-            "Unable to log out"
-        }, 500);
-
-            // =========================================================
-    // SKY BLUE SAAS CORE API
-    // =========================================================
-    //
-    // Shared business engine for all 16 SaaS modules.
-    //
-    // Business Workspace
-    //      ↓
-    // Core API
-    //      ↓
-    // D1
-    //
-    // Authentication is required for every Core endpoint.
-    // =========================================================
-
-    if (
-      url.pathname.startsWith("/api/core/")
-    ) {
-
-      try {
-
-        const account =
-          await getAuthenticatedAccount(
-// =========================================================
+    
+ // =========================================================
 // CUSTOMER LOGOUT
 // =========================================================
 
@@ -1432,14 +1354,17 @@ if (
 
     if (sessionToken) {
 
-      await env.DB.prepare(
-        `
+      const tokenHash =
+        await hashToken(
+          sessionToken
+        );
+
+      await env.DB.prepare(`
         DELETE FROM customer_sessions
-        WHERE token = ?
-        `
-      )
-        .bind(sessionToken)
-        .run();
+        WHERE token_hash = ?
+      `)
+      .bind(tokenHash)
+      .run();
 
     }
 
@@ -1552,7 +1477,7 @@ if (
 
   }
 
-}
+        }
 
 
 // =========================================================
