@@ -1,1 +1,1831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sky Blue Digital Service</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --blue: #1261d6;
+      --blue-dark: #0b3f91;
+      --blue-light: #eaf3ff;
+      --white: #ffffff;
+      --bg: #f4f7fb;
+      --text: #172033;
+      --muted: #6b7280;
+      --border: #e2e8f0;
+      --green: #16a34a;
+      --red: #dc2626;
+      --shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* LOGIN */
+
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at top right, #dcecff 0, transparent 35%),
+        linear-gradient(135deg, #f4f8ff, #ffffff);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      padding: 32px;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      width: 70px;
+      height: 70px;
+      margin: auto;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 14px;
+    }
+
+    .brand h1 {
+      font-size: 25px;
+      color: var(--blue-dark);
+    }
+
+    .brand p {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 17px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: var(--blue);
+    }
+
+    .primary-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 14px;
+      background: var(--blue);
+      color: white;
+      font-weight: 700;
+    }
+
+    .primary-btn:hover {
+      background: var(--blue-dark);
+    }
+
+    .login-message {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    /* APP */
+
+    #app {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 70px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: var(--blue-dark);
+    }
+
+    .mini-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: var(--blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .menu-button {
+      border: 0;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      padding: 9px 12px;
+      border-radius: 9px;
+      display: none;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 70px);
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 18px 12px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 12px;
+      letter-spacing: .08em;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: left;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      font-weight: 700;
+    }
+
+    .content {
+      flex: 1;
+      padding: 25px;
+      min-width: 0;
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-header h2 {
+      font-size: 25px;
+    }
+
+    .page-header p {
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* DASHBOARD */
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 3px 12px rgba(15, 23, 42, .04);
+    }
+
+    .stat-card .label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stat-card .value {
+      font-size: 25px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, .04);
+    }
+
+    .panel h3 {
+      margin-bottom: 15px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .quick-btn {
+      padding: 15px;
+      background: var(--blue-light);
+      color: var(--blue-dark);
+      border: 0;
+      border-radius: 11px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    /* MODULE CARDS */
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .module-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: .2s;
+    }
+
+    .module-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .module-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      background: var(--blue-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      margin-bottom: 13px;
+    }
+
+    .module-card h3 {
+      margin-bottom: 7px;
+    }
+
+    .module-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .module-card button {
+      margin-top: 14px;
+      border: 0;
+      background: var(--blue);
+      color: white;
+      padding: 9px 13px;
+      border-radius: 8px;
+    }
+
+    /* TABLE */
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .status.active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status.inactive {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* ECOMMERCE */
+
+    .store-builder {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 18px;
+    }
+
+    .builder-menu {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 15px;
+    }
+
+    .builder-option {
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      border-radius: 9px;
+      margin-bottom: 4px;
+    }
+
+    .builder-option:hover {
+      background: var(--blue-light);
+    }
+
+    .store-preview {
+      min-height: 500px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .store-preview-header {
+      padding: 20px;
+      background: var(--blue);
+      color: white;
+    }
+
+    .store-products {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .store-product {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .product-image {
+      height: 130px;
+      background: #eef2f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-price {
+      font-weight: 800;
+      margin-top: 7px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 1000px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .menu-button {
+        display: block;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 70px;
+        bottom: 0;
+        left: -260px;
+        z-index: 30;
+        transition: .2s;
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .content {
+        padding: 18px 14px 90px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .stat-card .value {
+        font-size: 21px;
+      }
+
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .store-builder {
+        grid-template-columns: 1fr;
+      }
+
+      .store-products {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN -->
+
+  <section id="loginScreen">
+
+    <div class="login-card">
+
+      <div class="brand">
+        <div class="brand-logo">SB</div>
+        <h1>Sky Blue Digital Service</h1>
+        <p>Smart technology. Reliable business solutions.</p>
+      </div>
+
+      <form id="loginForm">
+
+        <div class="form-group">
+          <label>Email or Username</label>
+          <input
+            id="loginIdentifier"
+            type="text"
+            placeholder="Enter your email or username"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input
+            id="loginPassword"
+            type="password"
+            placeholder="Enter your password"
+            required
+          >
+        </div>
+
+        <button class="primary-btn" type="submit">
+          Sign In
+        </button>
+
+        <div id="loginMessage" class="login-message"></div>
+
+      </form>
+
+    </div>
+
+  </section>
+
+
+  <!-- APPLICATION -->
+
+  <section id="app" class="hidden">
+
+    <header class="topbar">
+
+      <div class="topbar-brand">
+        <div class="mini-logo">SB</div>
+        <span>Sky Blue Digital Service</span>
+      </div>
+
+      <button
+        class="menu-button"
+        onclick="toggleSidebar()"
+      >
+        ☰
+      </button>
+
+    </header>
+
+
+    <div class="layout">
+
+      <!-- SIDEBAR -->
+
+      <aside id="sidebar" class="sidebar">
+
+        <div class="sidebar-title">
+          Main
+        </div>
+
+        <button class="nav-btn active" onclick="showPage('dashboard')">
+          📊 Dashboard
+        </button>
+
+        <button class="nav-btn" onclick="showPage('customers')">
+          👥 Customers
+        </button>
+
+        <button class="nav-btn" onclick="showPage('products')">
+          📦 Products
+        </button>
+
+        <button class="nav-btn" onclick="showPage('services')">
+          🛠 Services
+        </button>
+
+        <button class="nav-btn" onclick="showPage('sales')">
+          💰 Sales
+        </button>
+
+        <button class="nav-btn" onclick="showPage('expenses')">
+          💳 Expenses
+        </button>
+
+        <button class="nav-btn" onclick="showPage('payments')">
+          💵 Payments
+        </button>
+
+
+        <div class="sidebar-title">
+          Ecommerce
+        </div>
+
+        <button class="nav-btn" onclick="showPage('ecommerce')">
+          🛒 Online Store
+        </button>
+
+        <button class="nav-btn" onclick="showPage('orders')">
+          📋 Orders
+        </button>
+
+        <button class="nav-btn" onclick="showPage('whatsapp')">
+          📱 WhatsApp
+        </button>
+
+
+        <div class="sidebar-title">
+          Management
+        </div>
+
+        <button class="nav-btn" onclick="showPage('staff')">
+          👨‍💼 Staff
+        </button>
+
+        <button class="nav-btn" onclick="showPage('business')">
+          🏢 Business Profile
+        </button>
+
+        <button class="nav-btn" onclick="showPage('modules')">
+          🧩 Modules
+        </button>
+
+        <button class="nav-btn" onclick="showPage('settings')">
+          ⚙️ Settings
+        </button>
+
+        <button class="nav-btn" onclick="logout()">
+          🚪 Logout
+        </button>
+
+      </aside>
+
+
+      <!-- CONTENT -->
+
+      <main class="content">
+
+
+        <!-- DASHBOARD -->
+
+        <section id="page-dashboard" class="page">
+
+          <div class="page-header">
+            <h2>Dashboard</h2>
+            <p>Overview of your business activity.</p>
+          </div>
+
+          <div class="stats-grid">
+
+            <div class="stat-card">
+              <div class="label">Sales Revenue</div>
+              <div id="statRevenue" class="value">R0.00</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="label">Expenses</div>
+              <div id="statExpenses" class="value">R0.00</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="label">Customers</div>
+              <div id="statCustomers" class="value">0</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="label">Products</div>
+              <div id="statProducts" class="value">0</div>
+            </div>
+
+          </div>
+
+
+          <div class="dashboard-grid">
+
+            <div class="panel">
+
+              <h3>Business Overview</h3>
+
+              <p>
+                Your Sky Blue business management system is connected
+                to the SaaS Core.
+              </p>
+
+              <br>
+
+              <strong>Gross Balance</strong>
+
+              <div
+                id="grossBalance"
+                style="font-size:32px;font-weight:800;margin-top:8px;"
+              >
+                R0.00
+              </div>
+
+            </div>
+
+
+            <div class="panel">
+
+              <h3>Quick Actions</h3>
+
+              <div class="quick-actions">
+
+                <button
+                  class="quick-btn"
+                  onclick="showPage('customers')"
+                >
+                  Add Customer
+                </button>
+
+                <button
+                  class="quick-btn"
+                  onclick="showPage('products')"
+                >
+                  Add Product
+                </button>
+
+                <button
+                  class="quick-btn"
+                  onclick="showPage('ecommerce')"
+                >
+                  Build Store
+                </button>
+
+                <button
+                  class="quick-btn"
+                  onclick="showPage('whatsapp')"
+                >
+                  WhatsApp
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- CUSTOMERS -->
+
+        <section id="page-customers" class="page hidden">
+
+          <div class="page-header">
+            <h2>Customers</h2>
+            <p>Manage your customers and contacts.</p>
+          </div>
+
+          <div class="panel">
+
+            <div class="table-wrap">
+
+              <table>
+
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+
+                <tbody id="customersTable">
+                  <tr>
+                    <td colspan="4">Loading customers...</td>
+                  </tr>
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- PRODUCTS -->
+
+        <section id="page-products" class="page hidden">
+
+          <div class="page-header">
+            <h2>Products</h2>
+            <p>Manage products for your business and online store.</p>
+          </div>
+
+          <div class="panel">
+
+            <p>
+              Products will be connected to the selected SaaS module.
+            </p>
+
+            <br>
+
+            <button
+              class="primary-btn"
+              style="max-width:200px;"
+              onclick="showPage('ecommerce')"
+            >
+              Open Store Builder
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- SERVICES -->
+
+        <section id="page-services" class="page hidden">
+
+          <div class="page-header">
+            <h2>Services</h2>
+            <p>Manage services offered by your business.</p>
+          </div>
+
+          <div class="panel">
+            Services management will be connected to the SaaS Core.
+          </div>
+
+        </section>
+
+
+        <!-- SALES -->
+
+        <section id="page-sales" class="page hidden">
+
+          <div class="page-header">
+            <h2>Sales</h2>
+            <p>Track business sales and revenue.</p>
+          </div>
+
+          <div class="panel">
+            Sales management will be connected to the SaaS Core.
+          </div>
+
+        </section>
+
+
+        <!-- EXPENSES -->
+
+        <section id="page-expenses" class="page hidden">
+
+          <div class="page-header">
+            <h2>Expenses</h2>
+            <p>Track business expenses.</p>
+          </div>
+
+          <div class="panel">
+            Expense management will be connected to the SaaS Core.
+          </div>
+
+        </section>
+
+
+        <!-- PAYMENTS -->
+
+        <section id="page-payments" class="page hidden">
+
+          <div class="page-header">
+            <h2>Payments</h2>
+            <p>Manage payment transactions.</p>
+          </div>
+
+          <div class="panel">
+            Payment management will be connected to the SaaS Core.
+          </div>
+
+        </section>
+
+
+        <!-- ECOMMERCE -->
+
+        <section id="page-ecommerce" class="page hidden">
+
+          <div class="page-header">
+
+            <h2>Online Store Builder</h2>
+
+            <p>
+              Create your own online store and sell products online.
+            </p>
+
+          </div>
+
+
+          <div class="store-builder">
+
+            <div class="builder-menu">
+
+              <h3 style="margin-bottom:15px;">
+                Store Builder
+              </h3>
+
+              <button class="builder-option">
+                🏪 Store Information
+              </button>
+
+              <button class="builder-option">
+                🖼️ Store Logo
+              </button>
+
+              <button class="builder-option">
+                🎨 Store Design
+              </button>
+
+              <button class="builder-option">
+                📦 Products
+              </button>
+
+              <button class="builder-option">
+                🗂️ Categories
+              </button>
+
+              <button class="builder-option">
+                💳 Payments
+              </button>
+
+              <button class="builder-option">
+                🚚 Delivery
+              </button>
+
+              <button class="builder-option">
+                📱 WhatsApp
+              </button>
+
+              <button class="builder-option">
+                🌐 Domain
+              </button>
+
+              <button class="builder-option">
+                🚀 Publish Store
+              </button>
+
+            </div>
+
+
+            <div class="store-preview">
+
+              <div class="store-preview-header">
+
+                <h2>Your Online Store</h2>
+
+                <p style="margin-top:5px;">
+                  Your store preview will appear here.
+                </p>
+
+              </div>
+
+
+              <div class="store-products">
+
+                <div class="store-product">
+
+                  <div class="product-image">
+                    Product Image
+                  </div>
+
+                  <div class="product-info">
+
+                    <strong>Example Product</strong>
+
+                    <div class="product-price">
+                      R0.00
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <div class="store-product">
+
+                  <div class="product-image">
+                    Product Image
+                  </div>
+
+                  <div class="product-info">
+
+                    <strong>Example Product</strong>
+
+                    <div class="product-price">
+                      R0.00
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <div class="store-product">
+
+                  <div class="product-image">
+                    Product Image
+                  </div>
+
+                  <div class="product-info">
+
+                    <strong>Example Product</strong>
+
+                    <div class="product-price">
+                      R0.00
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ORDERS -->
+
+        <section id="page-orders" class="page hidden">
+
+          <div class="page-header">
+            <h2>Orders</h2>
+            <p>Manage online store orders.</p>
+          </div>
+
+          <div class="panel">
+            Ecommerce orders will appear here.
+          </div>
+
+        </section>
+
+
+        <!-- WHATSAPP -->
+
+        <section id="page-whatsapp" class="page hidden">
+
+          <div class="page-header">
+            <h2>WhatsApp</h2>
+            <p>Connect your business with customers through WhatsApp.</p>
+          </div>
+
+          <div class="module-grid">
+
+            <div class="module-card">
+
+              <div class="module-icon">📱</div>
+
+              <h3>WhatsApp Business</h3>
+
+              <p>
+                Connect your WhatsApp Business account to your SaaS system.
+              </p>
+
+              <button>
+                Configure
+              </button>
+
+            </div>
+
+
+            <div class="module-card">
+
+              <div class="module-icon">🛒</div>
+
+              <h3>WhatsApp Orders</h3>
+
+              <p>
+                Allow customers to order products directly through WhatsApp.
+              </p>
+
+              <button>
+                Configure
+              </button>
+
+            </div>
+
+
+            <div class="module-card">
+
+              <div class="module-icon">🔔</div>
+
+              <h3>Notifications</h3>
+
+              <p>
+                Send order and payment notifications through WhatsApp.
+              </p>
+
+              <button>
+                Configure
+              </button>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- STAFF -->
+
+        <section id="page-staff" class="page hidden">
+
+          <div class="page-header">
+            <h2>Staff</h2>
+            <p>Manage employees and team members.</p>
+          </div>
+
+          <div class="panel">
+            Staff management will be connected to the SaaS Core.
+          </div>
+
+        </section>
+
+
+        <!-- BUSINESS -->
+
+        <section id="page-business" class="page hidden">
+
+          <div class="page-header">
+
+            <h2>Business Profile</h2>
+
+            <p>
+              Manage your business information.
+            </p>
+
+          </div>
+
+          <div class="panel">
+
+            <div id="businessProfile">
+              Loading business profile...
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- MODULES -->
+
+        <section id="page-modules" class="page hidden">
+
+          <div class="page-header">
+
+            <h2>SaaS Modules</h2>
+
+            <p>
+              Activate the tools your business needs.
+            </p>
+
+          </div>
+
+
+          <div class="module-grid">
+
+            <div class="module-card">
+
+              <div class="module-icon">🛒</div>
+
+              <h3>Ecommerce</h3>
+
+              <p>
+                Build an online store, sell products and receive orders.
+              </p>
+
+              <button onclick="showPage('ecommerce')">
+                Open
+              </button>
+
+            </div>
+
+
+            <div class="module-card">
+
+              <div class="module-icon">🏢</div>
+
+              <h3>Business Management</h3>
+
+              <p>
+                Customers, products, sales, expenses and business records.
+              </p>
+
+              <button>
+                Open
+              </button>
+
+            </div>
+
+
+            <div class="module-card">
+
+              <div class="module-icon">📱</div>
+
+              <h3>WhatsApp</h3>
+
+              <p>
+                Customer communication and automated notifications.
+              </p>
+
+              <button onclick="showPage('whatsapp')">
+                Open
+              </button>
+
+            </div>
+
+
+            <div class="module-card">
+
+              <div class="module-icon">🏘️</div>
+
+              <h3>Community Service</h3>
+
+              <p>
+                Manage community reports and service requests.
+              </p>
+
+              <button>
+                Open
+              </button>
+
+            </div>
+
+
+            <div class="module-card">
+
+              <div class="module-icon">🤝</div>
+
+              <h3>NPO / NGO</h3>
+
+              <p>
+                Manage organisations, beneficiaries and programmes.
+              </p>
+
+              <button>
+                Open
+              </button>
+
+            </div>
+
+
+            <div class="module-card">
+
+              <div class="module-icon">➕</div>
+
+              <h3>More Modules</h3>
+
+              <p>
+                Additional industry modules can be added to the platform.
+              </p>
+
+              <button>
+                Explore
+              </button>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- SETTINGS -->
+
+        <section id="page-settings" class="page hidden">
+
+          <div class="page-header">
+
+            <h2>Settings</h2>
+
+            <p>
+              Manage your Sky Blue Digital Service account.
+            </p>
+
+          </div>
+
+          <div class="panel">
+
+            <h3>Account</h3>
+
+            <br>
+
+            <p>
+              Account settings and subscription management will be added here.
+            </p>
+
+          </div>
+
+        </section>
+
+
+      </main>
+
+    </div>
+
+  </section>
+
+
+<script>
+
+  const API_BASE = "";
+
+  function formatMoney(value) {
+    return "R" + Number(value || 0).toFixed(2);
+  }
+
+
+  function toggleSidebar() {
+
+    document
+      .getElementById("sidebar")
+      .classList.toggle("open");
+
+  }
+
+
+  function showPage(page) {
+
+    document
+      .querySelectorAll(".page")
+      .forEach(function(section) {
+
+        section.classList.add("hidden");
+
+      });
+
+
+    const target =
+      document.getElementById("page-" + page);
+
+    if (target) {
+      target.classList.remove("hidden");
+    }
+
+
+    document
+      .querySelectorAll(".nav-btn")
+      .forEach(function(button) {
+
+        button.classList.remove("active");
+
+      });
+
+
+    if (window.innerWidth <= 760) {
+
+      document
+        .getElementById("sidebar")
+        .classList.remove("open");
+
+    }
+
+
+    if (page === "dashboard") {
+      loadDashboard();
+    }
+
+    if (page === "customers") {
+      loadCustomers();
+    }
+
+    if (page === "business") {
+      loadBusinessProfile();
+    }
+
+  }
+
+
+  async function loadDashboard() {
+
+    try {
+
+      const response =
+        await fetch("/api/core/dashboard", {
+          credentials: "include"
+        });
+
+      const data = await response.json();
+
+      if (!data.success || !data.dashboard) {
+        return;
+      }
+
+      const dashboard = data.dashboard;
+
+      document.getElementById("statRevenue").textContent =
+        formatMoney(dashboard.sales?.revenue);
+
+      document.getElementById("statExpenses").textContent =
+        formatMoney(dashboard.expenses?.amount);
+
+      document.getElementById("statCustomers").textContent =
+        dashboard.customers || 0;
+
+      document.getElementById("statProducts").textContent =
+        dashboard.products || 0;
+
+      document.getElementById("grossBalance").textContent =
+        formatMoney(dashboard.gross_balance);
+
+    } catch (error) {
+
+      console.error("Dashboard error:", error);
+
+    }
+
+  }
+
+
+  async function loadCustomers() {
+
+    const table =
+      document.getElementById("customersTable");
+
+    table.innerHTML =
+      '<tr><td colspan="4">Loading customers...</td></tr>';
+
+
+    try {
+
+      const response =
+        await fetch("/api/core/customers", {
+          credentials: "include"
+        });
+
+      const data = await response.json();
+
+
+      if (!data.success) {
+
+        table.innerHTML =
+          '<tr><td colspan="4">' +
+          (data.error || "Unable to load customers") +
+          "</td></tr>";
+
+        return;
+
+      }
+
+
+      if (!data.customers || data.customers.length === 0) {
+
+        table.innerHTML =
+          '<tr><td colspan="4">No customers found.</td></tr>';
+
+        return;
+
+      }
+
+
+      table.innerHTML = data.customers
+        .map(function(customer) {
+
+          const status =
+            customer.status || "inactive";
+
+          return `
+            <tr>
+              <td>
+                <strong>
+                  ${escapeHtml(
+                    customer.business_name ||
+                    customer.name ||
+                    "Unnamed"
+                  )}
+                </strong>
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  customer.phone ||
+                  customer.whatsapp ||
+                  "-"
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  customer.email || "-"
+                )}
+              </td>
+
+              <td>
+                <span class="status ${status}">
+                  ${escapeHtml(status)}
+                </span>
+              </td>
+            </tr>
+          `;
+
+        })
+        .join("");
+
+    } catch (error) {
+
+      table.innerHTML =
+        '<tr><td colspan="4">Connection error.</td></tr>';
+
+      console.error(error);
+
+    }
+
+  }
+
+
+  async function loadBusinessProfile() {
+
+    const container =
+      document.getElementById("businessProfile");
+
+    container.textContent =
+      "Loading business profile...";
+
+
+    try {
+
+      const response =
+        await fetch("/api/core/business", {
+          credentials: "include"
+        });
+
+      const data = await response.json();
+
+
+      if (!data.success) {
+
+        container.textContent =
+          data.error || "Unable to load profile.";
+
+        return;
+
+      }
+
+
+      if (!data.profile) {
+
+        container.innerHTML = `
+          <h3>No Business Profile Yet</h3>
+          <p style="margin-top:8px;color:#6b7280;">
+            Your account is working, but a business profile
+            has not been created yet.
+          </p>
+        `;
+
+        return;
+
+      }
+
+
+      container.innerHTML = `
+        <h3>
+          ${escapeHtml(
+            data.profile.business_name ||
+            "Business"
+          )}
+        </h3>
+
+        <p style="margin-top:8px;">
+          ${escapeHtml(
+            data.profile.email || ""
+          )}
+        </p>
+      `;
+
+    } catch (error) {
+
+      container.textContent =
+        "Connection error.";
+
+      console.error(error);
+
+    }
+
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  async function checkSession() {
+
+    try {
+
+      const response =
+        await fetch("/api/core/status", {
+          credentials: "include"
+        });
+
+      const data = await response.json();
+
+
+      if (data.success) {
+
+        document
+          .getElementById("loginScreen")
+          .classList.add("hidden");
+
+        document
+          .getElementById("app")
+          .classList.remove("hidden");
+
+        loadDashboard();
+
+        return true;
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+    return false;
+
+  }
+
+
+  document
+    .getElementById("loginForm")
+    .addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+
+      const identifier =
+        document
+          .getElementById("loginIdentifier")
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById("loginPassword")
+          .value;
+
+
+      const message =
+        document.getElementById("loginMessage");
+
+      message.textContent =
+        "Signing in...";
+
+
+      try {
+
+        const response =
+          await fetch("/api/auth/login", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            credentials: "include",
+
+            body: JSON.stringify({
+              identifier,
+              email: identifier,
+              username: identifier,
+              password
+            })
+
+          });
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+          message.textContent =
+            data.error ||
+            "Login failed.";
+
+          message.style.color =
+            "#dc2626";
+
+          return;
+
+        }
+
+
+        message.textContent =
+          "Login successful.";
+
+        message.style.color =
+          "#16a34a";
+
+
+        document
+          .getElementById("loginScreen")
+          .classList.add("hidden");
+
+        document
+          .getElementById("app")
+          .classList.remove("hidden");
+
+
+        loadDashboard();
+
+      } catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+          "Unable to connect to the server.";
+
+        message.style.color =
+          "#dc2626";
+
+      }
+
+    });
+
+
+  async function logout() {
+
+    try {
+
+      await fetch("/api/auth/logout", {
+
+        method: "POST",
+
+        credentials: "include"
+
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+
+    location.reload();
+
+  }
+
+
+  checkSession();
+
+</script>
+
+</body>
+  </html>
