@@ -170,9 +170,10 @@ async function repairSaaSCoreSchema(db) {
    * -------------------------------------------------------
    *
    * Older versions of the database may have created
-   * saas_customers without some of the newer columns.
+   * saas_customers without newer customer fields.
    *
-   * Add every column required by the current Customer API.
+   * Only add columns that can safely be added to an
+   * existing SQLite/D1 table.
    */
 
   const customerColumns = [
@@ -230,15 +231,7 @@ async function repairSaaSCoreSchema(db) {
     },
     {
       name: "status",
-      definition: "TEXT NOT NULL DEFAULT 'active'"
-    },
-    {
-      name: "created_at",
-      definition: "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
-    },
-    {
-      name: "updated_at",
-      definition: "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+      definition: "TEXT DEFAULT 'active'"
     }
   ];
 
@@ -259,7 +252,6 @@ async function repairSaaSCoreSchema(db) {
         `Added ${column.name} column to saas_customers`
       );
     }
-  }
     }
 
 /* ---------------------------------------------------------
