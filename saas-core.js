@@ -122,36 +122,7 @@ async function repairSaaSCoreSchema(db) {
   }
 }
 
-  const moduleTables = [
-    "saas_products",
-    "saas_services",
-    "saas_sales",
-    "saas_expenses",
-    "saas_quotes",
-    "saas_invoices",
-    "saas_documents",
-    "saas_activity_log",
-    "saas_notifications"
-  ];
-
-  for (const table of moduleTables) {
-    const exists = await hasColumn(
-      db,
-      table,
-      "module_code"
-    );
-
-    if (!exists) {
-      await db.prepare(`
-        ALTER TABLE ${table}
-        ADD COLUMN module_code TEXT DEFAULT ''
-      `).run();
-
-      console.log(
-        `Added module_code column to ${table}`
-      );
-    }
-    }
+  
 
 /* ---------------------------------------------------------
    DATABASE SETUP
