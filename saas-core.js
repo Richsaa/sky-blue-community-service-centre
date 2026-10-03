@@ -1062,35 +1062,764 @@ async function repairSaaSCoreSchema(db) {
 
     [
       "provider_reference",
-      "TEXT DEFAULT ''"
-    ],
+      
+/* ---------------------------------------------------------
+   DATABASE SCHEMA REPAIR
+--------------------------------------------------------- */
 
-    [
-      "internal_reference",
-      "TEXT DEFAULT ''"
-    ],
+async function ensureColumn(
+  db,
+  tableName,
+  columnName,
+  definition
+) {
+  const exists = await hasColumn(
+    db,
+    tableName,
+    columnName
+  );
 
-    [
-      "status",
-      "TEXT DEFAULT 'paid'"
-    ],
+  if (exists) {
+    return false;
+  }
 
-    [
-      "paid_at",
-      "TEXT DEFAULT ''"
-    ],
+  await db.prepare(`
+    ALTER TABLE ${tableName}
+    ADD COLUMN ${columnName} ${definition}
+  `).run();
 
-    [
-      "notes",
-      "TEXT DEFAULT ''"
-    ]
+  console.log(
+    `Added ${columnName} column to ${tableName}`
+  );
 
+  return true;
+}
+
+
+async function repairSaaSCoreSchema(db) {
+
+  /*
+   * IMPORTANT
+   *
+   * This repair is ADDITIVE.
+   *
+   * It does NOT:
+   *
+   * - drop tables
+   * - drop columns
+   * - delete records
+   * - overwrite existing data
+   *
+   * It only adds columns that are missing
+   * from older D1 database schemas.
+   */
+
+
+  /*
+   * ACCOUNT ID
+   */
+
+  const accountTables = [
+    "saas_business_profiles",
+    "saas_staff",
+    "saas_roles",
+    "saas_customers",
+    "saas_products",
+    "saas_services",
+    "saas_sales",
+    "saas_sale_items",
+    "saas_business_payments",
+    "saas_expenses",
+    "saas_quotes",
+    "saas_quote_items",
+    "saas_invoices",
+    "saas_invoice_items",
+    "saas_documents",
+    "saas_activity_log",
+    "saas_notifications"
   ];
+
+  for (const table of accountTables) {
+    await ensureAccountIdColumn(
+      db,
+      table
+    );
+  }
+
+
+  /*
+   * TIMESTAMP COLUMNS
+   */
+
+  const timestampColumns = {
+
+    saas_business_profiles: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_staff: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_roles: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_customers: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_products: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_services: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_sales: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_sale_items: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_business_payments: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_expenses: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_quotes: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_quote_items: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_invoices: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_invoice_items: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_documents: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      updated_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_activity_log: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+
+    saas_notifications: {
+      created_at:
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    }
+
+  };
+
+
+  for (
+    const [table, columns]
+    of Object.entries(timestampColumns)
+  ) {
+
+    for (
+      const [column, definition]
+      of Object.entries(columns)
+    ) {
+
+      await ensureColumn(
+        db,
+        table,
+        column,
+        definition
+      );
+
+    }
+
+  }
+
+
+  /*
+   * MODULE CODE
+   */
+
+  const moduleTables = [
+    "saas_products",
+    "saas_services",
+    "saas_sales",
+    "saas_expenses",
+    "saas_quotes",
+    "saas_invoices",
+    "saas_documents",
+    "saas_activity_log",
+    "saas_notifications"
+  ];
+
+  for (const table of moduleTables) {
+
+    await ensureColumn(
+      db,
+      table,
+      "module_code",
+      "TEXT DEFAULT ''"
+    );
+
+  }
+
+
+  /*
+   * CUSTOMERS
+   */
+
+  const customerColumns = {
+
+    customer_code:
+      "TEXT DEFAULT ''",
+
+    customer_type:
+      "TEXT DEFAULT 'individual'",
+
+    first_name:
+      "TEXT DEFAULT ''",
+
+    last_name:
+      "TEXT DEFAULT ''",
+
+    business_name:
+      "TEXT DEFAULT ''",
+
+    email:
+      "TEXT DEFAULT ''",
+
+    phone:
+      "TEXT DEFAULT ''",
+
+    whatsapp:
+      "TEXT DEFAULT ''",
+
+    address:
+      "TEXT DEFAULT ''",
+
+    city:
+      "TEXT DEFAULT ''",
+
+    province:
+      "TEXT DEFAULT ''",
+
+    postal_code:
+      "TEXT DEFAULT ''",
+
+    notes:
+      "TEXT DEFAULT ''",
+
+    status:
+      "TEXT DEFAULT 'active'"
+
+  };
 
 
   for (
     const [column, definition]
-    of paymentColumns
+    of Object.entries(customerColumns)
+  ) {
+
+    await ensureColumn(
+      db,
+      "saas_customers",
+      column,
+      definition
+    );
+
+  }
+
+
+  /*
+   * PRODUCTS
+   *
+   * Fixes missing product_code
+   * and other older product columns.
+   */
+
+  const productColumns = {
+
+    product_code:
+      "TEXT DEFAULT ''",
+
+    sku:
+      "TEXT DEFAULT ''",
+
+    name:
+      "TEXT DEFAULT ''",
+
+    category:
+      "TEXT DEFAULT ''",
+
+    description:
+      "TEXT DEFAULT ''",
+
+    image_url:
+      "TEXT DEFAULT ''",
+
+    unit:
+      "TEXT DEFAULT 'unit'",
+
+    cost_price:
+      "REAL NOT NULL DEFAULT 0",
+
+    selling_price:
+      "REAL NOT NULL DEFAULT 0",
+
+    wholesale_price:
+      "REAL NOT NULL DEFAULT 0",
+
+    stock_quantity:
+      "REAL NOT NULL DEFAULT 0",
+
+    low_stock_level:
+      "REAL NOT NULL DEFAULT 0",
+
+    reorder_level:
+      "REAL NOT NULL DEFAULT 0",
+
+    track_inventory:
+      "INTEGER NOT NULL DEFAULT 1",
+
+    active:
+      "INTEGER NOT NULL DEFAULT 1"
+
+  };
+
+
+  for (
+    const [column, definition]
+    of Object.entries(productColumns)
+  ) {
+
+    await ensureColumn(
+      db,
+      "saas_products",
+      column,
+      definition
+    );
+
+  }
+
+
+  /*
+   * SERVICES
+   *
+   * Fixes missing service_code
+   * and other older service columns.
+   */
+
+  const serviceColumns = {
+
+    service_code:
+      "TEXT DEFAULT ''",
+
+    name:
+      "TEXT DEFAULT ''",
+
+    category:
+      "TEXT DEFAULT ''",
+
+    description:
+      "TEXT DEFAULT ''",
+
+    duration_minutes:
+      "INTEGER DEFAULT 0",
+
+    price:
+      "REAL NOT NULL DEFAULT 0",
+
+    active:
+      "INTEGER NOT NULL DEFAULT 1"
+
+  };
+
+
+  for (
+    const [column, definition]
+    of Object.entries(serviceColumns)
+  ) {
+
+    await ensureColumn(
+      db,
+      "saas_services",
+      column,
+      definition
+    );
+
+  }
+
+
+  /*
+   * SALES
+   */
+
+  const salesColumns = {
+
+    sale_number:
+      "TEXT DEFAULT ''",
+
+    customer_id:
+      "INTEGER",
+
+    sale_type:
+      "TEXT DEFAULT 'sale'",
+
+    status:
+      "TEXT DEFAULT 'completed'",
+
+    payment_status:
+      "TEXT DEFAULT 'pending'",
+
+    subtotal:
+      "REAL NOT NULL DEFAULT 0",
+
+    discount_amount:
+      "REAL NOT NULL DEFAULT 0",
+
+    tax_amount:
+      "REAL NOT NULL DEFAULT 0",
+
+    delivery_amount:
+      "REAL NOT NULL DEFAULT 0",
+
+    total_amount:
+      "REAL NOT NULL DEFAULT 0",
+
+    payment_method:
+      "TEXT DEFAULT ''",
+
+    reference:
+      "TEXT DEFAULT ''",
+
+    source:
+      "TEXT DEFAULT 'dashboard'",
+
+    notes:
+      "TEXT DEFAULT ''",
+
+    sale_date:
+      "TEXT DEFAULT CURRENT_TIMESTAMP"
+
+  };
+
+
+  for (
+    const [column, definition]
+    of Object.entries(salesColumns)
+  ) {
+
+    await ensureColumn(
+      db,
+      "saas_sales",
+      column,
+      definition
+    );
+
+  }
+
+
+  /*
+   * SALE ITEMS
+   */
+
+  const saleItemColumns = {
+
+    sale_id:
+      "INTEGER",
+
+    product_id:
+      "INTEGER",
+
+    service_id:
+      "INTEGER",
+
+    description:
+      "TEXT DEFAULT ''",
+
+    quantity:
+      "REAL NOT NULL DEFAULT 1",
+
+    unit_price:
+      "REAL NOT NULL DEFAULT 0",
+
+    discount_amount:
+      "REAL NOT NULL DEFAULT 0",
+
+    tax_amount:
+      "REAL NOT NULL DEFAULT 0",
+
+    total_amount:
+      "REAL NOT NULL DEFAULT 0"
+
+  };
+
+
+  for (
+    const [column, definition]
+    of Object.entries(saleItemColumns)
+  ) {
+
+    await ensureColumn(
+      db,
+      "saas_sale_items",
+      column,
+      definition
+    );
+
+  }
+
+
+  /*
+   * STAFF
+   *
+   * Fixes missing full_name.
+   */
+
+  const staffColumns = {
+
+    full_name:
+      "TEXT DEFAULT ''",
+
+    email:
+      "TEXT DEFAULT ''",
+
+    phone:
+      "TEXT DEFAULT ''",
+
+    job_title:
+      "TEXT DEFAULT ''",
+
+    department:
+      "TEXT DEFAULT ''",
+
+    role_code:
+      "TEXT DEFAULT 'staff'",
+
+    status:
+      "TEXT DEFAULT 'active'",
+
+    start_date:
+      "TEXT DEFAULT ''",
+
+    notes:
+      "TEXT DEFAULT ''"
+
+  };
+
+
+  for (
+    const [column, definition]
+    of Object.entries(staffColumns)
+  ) {
+
+    await ensureColumn(
+      db,
+      "saas_staff",
+      column,
+      definition
+    );
+
+  }
+
+
+  /*
+   * NOTIFICATIONS
+   *
+   * Fixes missing customer_id.
+   */
+
+  const notificationColumns = {
+
+    customer_id:
+      "INTEGER",
+
+    channel:
+      "TEXT DEFAULT 'dashboard'",
+
+    notification_type:
+      "TEXT DEFAULT ''",
+
+    title:
+      "TEXT DEFAULT ''",
+
+    message:
+      "TEXT DEFAULT ''",
+
+    status:
+      "TEXT DEFAULT 'pending'",
+
+    sent_at:
+      "TEXT DEFAULT ''"
+
+  };
+
+
+  for (
+    const [column, definition]
+    of Object.entries(notificationColumns)
+  ) {
+
+    await ensureColumn(
+      db,
+      "saas_notifications",
+      column,
+      definition
+    );
+
+  }
+
+
+  /*
+   * EXPENSES
+   */
+
+  const expenseColumns = {
+
+    expense_number:
+      "TEXT DEFAULT ''",
+
+    category:
+      "TEXT DEFAULT ''",
+
+    description:
+      "TEXT DEFAULT ''",
+
+    supplier_name:
+      "TEXT DEFAULT ''",
+
+    amount:
+      "REAL NOT NULL DEFAULT 0",
+
+    payment_method:
+      "TEXT DEFAULT ''",
+
+    reference:
+      "TEXT DEFAULT ''",
+
+    expense_date:
+      "TEXT DEFAULT CURRENT_TIMESTAMP",
+
+    status:
+      "TEXT DEFAULT 'paid'",
+
+    notes:
+      "TEXT DEFAULT ''"
+
+  };
+
+
+  for (
+    const [column, definition]
+    of Object.entries(expenseColumns)
+  ) {
+
+    await ensureColumn(
+      db,
+      "saas_expenses",
+      column,
+      definition
+    );
+
+  }
+
+
+  /*
+   * BUSINESS PAYMENTS
+   */
+
+  const paymentColumns = {
+
+    customer_id:
+      "INTEGER",
+
+    sale_id:
+      "INTEGER",
+
+    invoice_id:
+      "INTEGER",
+
+    amount:
+      "REAL NOT NULL DEFAULT 0",
+
+    payment_method:
+      "TEXT DEFAULT ''",
+
+    payment_provider:
+      "TEXT DEFAULT ''",
+
+    provider_reference:
+      "TEXT DEFAULT ''",
+
+    internal_reference:
+      "TEXT DEFAULT ''",
+
+    status:
+      "TEXT DEFAULT 'paid'",
+
+    paid_at:
+      "TEXT DEFAULT ''",
+
+    notes:
+      "TEXT DEFAULT ''"
+
+  };
+
+
+  for (
+    const [column, definition]
+    of Object.entries(paymentColumns)
   ) {
 
     await ensureColumn(
@@ -1102,6 +1831,12 @@ async function repairSaaSCoreSchema(db) {
 
   }
 
+
+  console.log(
+    "Sky Blue SaaS Core schema repair completed"
+  );
+
+  return true;
   }
 
 /* ---------------------------------------------------------
