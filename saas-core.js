@@ -114,12 +114,24 @@ async function repairSaaSCoreSchema(db) {
     "saas_notifications"
   ];
 
+  /*
+   * -------------------------------------------------------
+   * REPAIR account_id
+   * -------------------------------------------------------
+   */
+
   for (const table of tables) {
     await ensureAccountIdColumn(
       db,
       table
     );
   }
+
+  /*
+   * -------------------------------------------------------
+   * REPAIR module_code
+   * -------------------------------------------------------
+   */
 
   const moduleTables = [
     "saas_products",
@@ -151,9 +163,104 @@ async function repairSaaSCoreSchema(db) {
       );
     }
   }
-  }
 
-  
+  /*
+   * -------------------------------------------------------
+   * REPAIR CUSTOMER TABLE
+   * -------------------------------------------------------
+   *
+   * Older versions of the database may have created
+   * saas_customers without some of the newer columns.
+   *
+   * Add every column required by the current Customer API.
+   */
+
+  const customerColumns = [
+    {
+      name: "customer_code",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "customer_type",
+      definition: "TEXT DEFAULT 'individual'"
+    },
+    {
+      name: "first_name",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "last_name",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "business_name",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "email",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "phone",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "whatsapp",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "address",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "city",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "province",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "postal_code",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "notes",
+      definition: "TEXT DEFAULT ''"
+    },
+    {
+      name: "status",
+      definition: "TEXT NOT NULL DEFAULT 'active'"
+    },
+    {
+      name: "created_at",
+      definition: "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    },
+    {
+      name: "updated_at",
+      definition: "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    }
+  ];
+
+  for (const column of customerColumns) {
+    const exists = await hasColumn(
+      db,
+      "saas_customers",
+      column.name
+    );
+
+    if (!exists) {
+      await db.prepare(`
+        ALTER TABLE saas_customers
+        ADD COLUMN ${column.name} ${column.definition}
+      `).run();
+
+      console.log(
+        `Added ${column.name} column to saas_customers`
+      );
+    }
+  }
+    }
 
 /* ---------------------------------------------------------
    DATABASE SETUP
