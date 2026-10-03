@@ -248,11 +248,11 @@ async function repairSaaSCoreSchema(db) {
         ADD COLUMN ${column.name} ${column.definition}
       `).run();
 
-      console.log(
-        `Added ${column.name} column to saas_customers`
-      );
-    }
-    }
+          console.log(
+      `Added ${column.name} column to saas_customers`
+    );
+  }
+}
 
 /* ---------------------------------------------------------
    DATABASE SETUP
