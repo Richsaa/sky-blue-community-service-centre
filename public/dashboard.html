@@ -1,1 +1,4222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Sky Blue Digital Service — Dashboard</title>
 
+  <style>
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:#f4f7fb;
+      color:#172033;
+    }
+
+    button,input,select,textarea{
+      font:inherit;
+    }
+
+    button{
+      cursor:pointer;
+    }
+
+    .app{
+      min-height:100vh;
+      display:flex;
+    }
+
+    .sidebar{
+      width:250px;
+      background:#0b3d91;
+      color:#fff;
+      min-height:100vh;
+      position:fixed;
+      left:0;
+      top:0;
+      bottom:0;
+      overflow-y:auto;
+      z-index:20;
+    }
+
+    .brand{
+      padding:22px 18px;
+      border-bottom:1px solid rgba(255,255,255,.15);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:21px;
+    }
+
+    .brand p{
+      margin:6px 0 0;
+      font-size:12px;
+      opacity:.8;
+    }
+
+    .nav{
+      padding:12px;
+    }
+
+    .nav button{
+      display:block;
+      width:100%;
+      text-align:left;
+      border:0;
+      background:transparent;
+      color:#fff;
+      padding:12px 13px;
+      border-radius:8px;
+      margin-bottom:4px;
+    }
+
+    .nav button:hover,
+    .nav button.active{
+      background:rgba(255,255,255,.16);
+    }
+
+    .main{
+      margin-left:250px;
+      width:calc(100% - 250px);
+      min-height:100vh;
+    }
+
+    .topbar{
+      background:#fff;
+      border-bottom:1px solid #e4e8ef;
+      padding:17px 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+
+    .topbar h2{
+      margin:0;
+      font-size:20px;
+    }
+
+    .content{
+      padding:22px;
+      max-width:1500px;
+      margin:auto;
+    }
+
+    .page{
+      display:none;
+    }
+
+    .page.active{
+      display:block;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+
+    .card{
+      background:#fff;
+      border:1px solid #e3e8ef;
+      border-radius:12px;
+      padding:18px;
+      box-shadow:0 2px 7px rgba(20,40,80,.04);
+      margin-bottom:18px;
+    }
+
+    .stat{
+      padding:18px;
+    }
+
+    .stat .label{
+      font-size:13px;
+      color:#6b7280;
+    }
+
+    .stat .value{
+      font-size:28px;
+      font-weight:700;
+      margin-top:8px;
+    }
+
+    .card h3{
+      margin:0 0 15px;
+    }
+
+    .card h4{
+      margin:0 0 10px;
+    }
+
+    .muted{
+      color:#6b7280;
+      font-size:13px;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .form-grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .field{
+      margin-bottom:12px;
+    }
+
+    .field.full{
+      grid-column:1/-1;
+    }
+
+    label{
+      display:block;
+      font-weight:600;
+      font-size:13px;
+      margin-bottom:6px;
+    }
+
+    input,
+    select,
+    textarea{
+      width:100%;
+      border:1px solid #ccd4df;
+      border-radius:8px;
+      padding:10px 11px;
+      background:#fff;
+      color:#172033;
+    }
+
+    textarea{
+      min-height:100px;
+      resize:vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus{
+      outline:none;
+      border-color:#0b67d1;
+      box-shadow:0 0 0 3px rgba(11,103,209,.08);
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+      align-items:center;
+    }
+
+    .btn{
+      border:0;
+      border-radius:8px;
+      padding:10px 14px;
+      font-weight:600;
+    }
+
+    .btn-primary{
+      background:#0b67d1;
+      color:#fff;
+    }
+
+    .btn-secondary{
+      background:#eef3f8;
+      color:#17324d;
+    }
+
+    .btn-danger{
+      background:#c62828;
+      color:#fff;
+    }
+
+    .btn-success{
+      background:#168447;
+      color:#fff;
+    }
+
+    .btn-small{
+      padding:7px 9px;
+      font-size:12px;
+    }
+
+    .status{
+      padding:10px 12px;
+      border-radius:8px;
+      margin:10px 0;
+      font-size:13px;
+      display:none;
+    }
+
+    .status.show{
+      display:block;
+    }
+
+    .status.success{
+      background:#e8f7ee;
+      color:#126536;
+    }
+
+    .status.error{
+      background:#fdecec;
+      color:#9d1c1c;
+    }
+
+    .status.info{
+      background:#eaf3ff;
+      color:#12549a;
+    }
+
+    .table-wrap{
+      overflow-x:auto;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:760px;
+    }
+
+    th,
+    td{
+      text-align:left;
+      padding:11px 10px;
+      border-bottom:1px solid #e9edf2;
+      font-size:13px;
+      vertical-align:middle;
+    }
+
+    th{
+      background:#f7f9fc;
+      font-weight:700;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      background:#eef2f7;
+      color:#405064;
+    }
+
+    .badge-green{
+      background:#e7f7ed;
+      color:#126536;
+    }
+
+    .badge-red{
+      background:#fdeaea;
+      color:#a31e1e;
+    }
+
+    .badge-orange{
+      background:#fff2df;
+      color:#985500;
+    }
+
+    .store-status{
+      background:#eef7ff;
+      border:1px solid #cfe6ff;
+      border-radius:10px;
+      padding:14px;
+      margin-bottom:18px;
+    }
+
+    .module-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .module-card{
+      border:1px solid #e2e7ee;
+      border-radius:10px;
+      padding:15px;
+      background:#fff;
+    }
+
+    .module-card h4{
+      margin:0 0 7px;
+    }
+
+    .product-preview{
+      width:52px;
+      height:52px;
+      border-radius:8px;
+      object-fit:cover;
+      background:#edf1f5;
+      display:block;
+    }
+
+    .empty{
+      text-align:center;
+      padding:35px 15px;
+      color:#718096;
+    }
+
+    .hidden{
+      display:none!important;
+    }
+
+    .check-row{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:9px 0;
+    }
+
+    .check-row input{
+      width:auto;
+    }
+
+    .section-title{
+      margin:22px 0 12px;
+      font-size:16px;
+      font-weight:700;
+    }
+
+    .media-row,
+    .variant-row{
+      border:1px solid #e2e7ee;
+      border-radius:9px;
+      padding:12px;
+      margin-bottom:10px;
+      background:#fafbfd;
+    }
+
+    .media-row-grid{
+      display:grid;
+      grid-template-columns:100px 1fr;
+      gap:12px;
+      align-items:start;
+    }
+
+    .media-preview{
+      width:100px;
+      height:80px;
+      object-fit:cover;
+      border-radius:7px;
+      background:#e9edf2;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.48);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:100;
+    }
+
+    .modal.show{
+      display:flex;
+    }
+
+    .modal-box{
+      background:#fff;
+      width:min(1000px,100%);
+      max-height:92vh;
+      overflow-y:auto;
+      border-radius:13px;
+      padding:20px;
+    }
+
+    .modal-head{
+      display:flex;
+      justify-content:space-between;
+      gap:15px;
+      align-items:center;
+      margin-bottom:15px;
+    }
+
+    .modal-head h3{
+      margin:0;
+    }
+
+    .close{
+      border:0;
+      background:#eef2f6;
+      width:35px;
+      height:35px;
+      border-radius:50%;
+      font-size:20px;
+    }
+
+    .product-tools{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:15px;
+    }
+
+    .product-tools input{
+      max-width:360px;
+    }
+
+    .info-box{
+      border:1px solid #d9e5f2;
+      background:#f5faff;
+      padding:12px;
+      border-radius:8px;
+      font-size:13px;
+      margin-bottom:15px;
+    }
+
+    @media(max-width:1100px){
+      .grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+
+      .module-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media(max-width:800px){
+      .sidebar{
+        width:210px;
+      }
+
+      .main{
+        margin-left:210px;
+        width:calc(100% - 210px);
+      }
+
+      .form-grid,
+      .form-grid-3,
+      .grid-2{
+        grid-template-columns:1fr;
+      }
+
+      .grid{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .module-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media(max-width:620px){
+      .sidebar{
+        width:72px;
+      }
+
+      .brand{
+        padding:16px 8px;
+        text-align:center;
+      }
+
+      .brand h1{
+        font-size:12px;
+      }
+
+      .brand p{
+        display:none;
+      }
+
+      .nav{
+        padding:7px;
+      }
+
+      .nav button{
+        padding:12px 5px;
+        text-align:center;
+        font-size:0;
+      }
+
+      .nav button::first-letter{
+        font-size:18px;
+      }
+
+      .main{
+        margin-left:72px;
+        width:calc(100% - 72px);
+      }
+
+      .content{
+        padding:12px;
+      }
+
+      .topbar{
+        padding:13px;
+      }
+
+      .grid{
+        grid-template-columns:1fr;
+      }
+
+      .actions .btn{
+        width:100%;
+      }
+
+      .product-tools input{
+        max-width:none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>SKY BLUE</h1>
+      <p>Digital Service</p>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-btn active" data-page="dashboard">🏠 Dashboard</button>
+      <button class="nav-btn" data-page="business">🏢 Business Profile</button>
+      <button class="nav-btn" data-page="customers">👥 Customers</button>
+      <button class="nav-btn" data-page="products">📦 Products</button>
+      <button class="nav-btn" data-page="services">🛠 Services</button>
+      <button class="nav-btn" data-page="sales">💰 Sales</button>
+      <button class="nav-btn" data-page="expenses">💳 Expenses</button>
+      <button class="nav-btn" data-page="payments">💵 Payments</button>
+      <button class="nav-btn" data-page="staff">👨‍💼 Staff</button>
+      <button class="nav-btn" data-page="online-store">🛒 Online Store</button>
+      <button class="nav-btn" data-page="store-products">🛍 Store Products</button>
+      <button class="nav-btn" data-page="orders">📋 Orders</button>
+      <button class="nav-btn" data-page="whatsapp">💬 WhatsApp</button>
+      <button class="nav-btn" data-page="modules">🧩 Modules</button>
+      <button class="nav-btn" data-page="activity">📊 Activity</button>
+      <button class="nav-btn" data-page="settings">⚙️ Settings</button>
+      <button id="logoutBtn">🚪 Logout</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <h2 id="pageTitle">Dashboard</h2>
+      <div class="muted">Sky Blue Digital Service</div>
+    </header>
+
+    <div class="content">
+
+      <!-- ===================================================== -->
+      <!-- DASHBOARD -->
+      <!-- ===================================================== -->
+
+      <section class="page active" id="page-dashboard">
+
+        <div class="grid">
+          <div class="card stat">
+            <div class="label">Customers</div>
+            <div class="value" id="dashboardCustomers">0</div>
+          </div>
+
+          <div class="card stat">
+            <div class="label">Products</div>
+            <div class="value" id="dashboardProducts">0</div>
+          </div>
+
+          <div class="card stat">
+            <div class="label">Sales</div>
+            <div class="value" id="dashboardSales">0</div>
+          </div>
+
+          <div class="card stat">
+            <div class="label">Revenue</div>
+            <div class="value" id="dashboardRevenue">R0.00</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Business Overview</h3>
+          <p class="muted">
+            Manage your business, ecommerce store, customers, products,
+            orders and digital services from one platform.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Ecommerce Overview</h3>
+
+          <div id="ecommerceDashboardStatus" class="status"></div>
+
+          <div class="grid">
+            <div class="stat">
+              <div class="label">Store Products</div>
+              <div class="value" id="ecomProductCount">0</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Orders</div>
+              <div class="value" id="ecomOrderCount">0</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Pending Orders</div>
+              <div class="value" id="ecomPendingOrders">0</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Store Revenue</div>
+              <div class="value" id="ecomRevenue">R0.00</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- BUSINESS PROFILE -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-business">
+
+        <div class="card">
+          <h3>Business Profile</h3>
+
+          <div id="businessStatus" class="status"></div>
+
+          <div class="form-grid">
+
+            <div class="field">
+              <label>Business Name</label>
+              <input id="businessName" type="text">
+            </div>
+
+            <div class="field">
+              <label>Trading Name</label>
+              <input id="businessTradingName" type="text">
+            </div>
+
+            <div class="field">
+              <label>Email</label>
+              <input id="businessEmail" type="email">
+            </div>
+
+            <div class="field">
+              <label>Phone</label>
+              <input id="businessPhone" type="text">
+            </div>
+
+            <div class="field full">
+              <label>Address</label>
+              <textarea id="businessAddress"></textarea>
+            </div>
+
+            <div class="field">
+              <label>Website</label>
+              <input id="businessWebsite" type="url">
+            </div>
+
+            <div class="field">
+              <label>Industry</label>
+              <input id="businessIndustry" type="text">
+            </div>
+
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="saveBusinessBtn">
+              Save Business Profile
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- CUSTOMERS -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-customers">
+
+        <div class="card">
+          <h3>Customers</h3>
+
+          <div id="customersStatus" class="status"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody id="customersTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- CORE PRODUCTS -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-products">
+
+        <div class="card">
+          <h3>Business Products</h3>
+
+          <div id="coreProductsStatus" class="status"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>SKU</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="coreProductsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- SERVICES -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-services">
+
+        <div class="card">
+          <h3>Services</h3>
+          <p class="muted">
+            Service management is connected to the SaaS Core and ready
+            for service catalogue functionality.
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- SALES -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-sales">
+
+        <div class="card">
+          <h3>Sales</h3>
+          <p class="muted">
+            Sales management will use the SaaS Core sales engine.
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- EXPENSES -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-expenses">
+
+        <div class="card">
+          <h3>Expenses</h3>
+          <p class="muted">
+            Business expenses will be managed through the SaaS Core.
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- PAYMENTS -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-payments">
+
+        <div class="card">
+          <h3>Payments</h3>
+          <p class="muted">
+            Payment records and payment-provider integrations will appear here.
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- STAFF -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-staff">
+
+        <div class="card">
+          <h3>Staff</h3>
+          <p class="muted">
+            Staff and business users will be managed through the SaaS Core.
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- ONLINE STORE -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-online-store">
+
+        <div class="card">
+          <h3>Online Store</h3>
+
+          <div id="storeStatus" class="status"></div>
+
+          <div class="store-status">
+            <strong>Store configured</strong>
+            <div class="muted" id="storeStatusText">
+              Loading store settings...
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="field">
+              <label>Store Name</label>
+              <input id="storeName" type="text">
+            </div>
+
+            <div class="field">
+              <label>Store Email</label>
+              <input id="storeEmail" type="email">
+            </div>
+
+            <div class="field">
+              <label>Store Phone / WhatsApp</label>
+              <input id="storePhone" type="text">
+            </div>
+
+            <div class="field">
+              <label>Currency</label>
+              <select id="storeCurrency">
+                <option value="ZAR">ZAR — South African Rand</option>
+                <option value="USD">USD — US Dollar</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="GBP">GBP — British Pound</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label>Store Description</label>
+              <textarea id="storeDescription"></textarea>
+            </div>
+
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="saveStoreBtn">
+              Save Store
+            </button>
+
+            <button class="btn btn-secondary" data-page-link="store-products">
+              Manage Products
+            </button>
+
+            <button class="btn btn-secondary" data-page-link="orders">
+              View Orders
+            </button>
+
+            <button class="btn btn-secondary" data-page-link="whatsapp">
+              WhatsApp
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- ECOMMERCE STORE PRODUCTS -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-store-products">
+
+        <div class="card">
+
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div>
+              <h3 style="margin-bottom:5px;">Store Products</h3>
+              <div class="muted">
+                Create and manage products for your online store.
+              </div>
+            </div>
+
+            <button class="btn btn-primary" id="addProductBtn">
+              + Add Product
+            </button>
+          </div>
+
+          <div id="storeProductsStatus" class="status"></div>
+
+          <div class="product-tools" style="margin-top:18px;">
+            <input
+              id="productSearch"
+              type="search"
+              placeholder="Search products..."
+            >
+
+            <select id="productStatusFilter">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+              <option value="hidden">Hidden</option>
+            </select>
+
+            <button class="btn btn-secondary" id="refreshProductsBtn">
+              Refresh
+            </button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Product</th>
+                  <th>SKU</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="ecommerceProductsTable"></tbody>
+            </table>
+          </div>
+
+        </div>
+
+
+        <!-- Categories -->
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div>
+              <h3>Store Categories</h3>
+              <div class="muted">
+                Organise products into categories and subcategories.
+              </div>
+            </div>
+
+            <button class="btn btn-secondary" id="addCategoryBtn">
+              + Add Category
+            </button>
+          </div>
+
+          <div id="categoryStatus" class="status"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Parent</th>
+                  <th>Slug</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="categoriesTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- ORDERS -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-orders">
+
+        <div class="card">
+          <h3>Orders</h3>
+
+          <div id="ordersStatus" class="status"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Order Status</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+
+              <tbody id="ordersTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- WHATSAPP -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-whatsapp">
+
+        <div class="card">
+          <h3>WhatsApp Commerce</h3>
+
+          <div class="module-grid">
+
+            <div class="module-card">
+              <h4>Product Media</h4>
+              <p class="muted">
+                Product images and videos can be marked for WhatsApp publishing.
+              </p>
+            </div>
+
+            <div class="module-card">
+              <h4>Orders</h4>
+              <p class="muted">
+                WhatsApp order workflows can be connected to the ecommerce engine.
+              </p>
+            </div>
+
+            <div class="module-card">
+              <h4>Notifications</h4>
+              <p class="muted">
+                Customer and business notifications can be handled through the
+                existing WhatsApp engine.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- MODULES -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-modules">
+
+        <div class="card">
+          <h3>SaaS Modules</h3>
+
+          <div class="module-grid">
+
+            <div class="module-card">
+              <h4>🛒 Ecommerce</h4>
+              <p class="muted">Online stores, products, orders and payments.</p>
+            </div>
+
+            <div class="module-card">
+              <h4>🏘 Community Service</h4>
+              <p class="muted">Community reports and service management.</p>
+            </div>
+
+            <div class="module-card">
+              <h4>🤝 NPO / NGO</h4>
+              <p class="muted">Organisation, projects and beneficiary management.</p>
+            </div>
+
+            <div class="module-card">
+              <h4>💈 Salon / Barber</h4>
+              <p class="muted">Appointments, customers and services.</p>
+            </div>
+
+            <div class="module-card">
+              <h4>🍔 Restaurant</h4>
+              <p class="muted">Menus, orders, delivery and customer management.</p>
+            </div>
+
+            <div class="module-card">
+              <h4>🚚 Transport</h4>
+              <p class="muted">Transport, bookings and fleet workflows.</p>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- ACTIVITY -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-activity">
+
+        <div class="card">
+          <h3>Activity</h3>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Action</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+
+              <tbody id="activityTable">
+                <tr>
+                  <td colspan="3" class="empty">
+                    No activity loaded.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- ===================================================== -->
+      <!-- SETTINGS -->
+      <!-- ===================================================== -->
+
+      <section class="page" id="page-settings">
+
+        <div class="card">
+          <h3>Settings</h3>
+
+          <p class="muted">
+            Account, subscription, payment-provider and platform settings
+            will be managed here.
+          </p>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- PRODUCT MODAL -->
+<!-- ========================================================= -->
+
+<div class="modal" id="productModal">
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+      <h3 id="productModalTitle">Add Store Product</h3>
+      <button class="close" id="closeProductModal">×</button>
+    </div>
+
+    <div id="productFormStatus" class="status"></div>
+
+    <form id="productForm">
+
+      <input type="hidden" id="productId">
+
+      <div class="section-title">Basic Product Information</div>
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Product Name *</label>
+          <input id="productName" required>
+        </div>
+
+        <div class="field">
+          <label>SKU</label>
+          <input id="productSku">
+        </div>
+
+        <div class="field">
+          <label>Barcode</label>
+          <input id="productBarcode">
+        </div>
+
+        <div class="field">
+          <label>Category</label>
+          <select id="productCategory">
+            <option value="">Select category</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>Short Description</label>
+          <textarea id="productShortDescription"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Full Description</label>
+          <textarea id="productDescription"></textarea>
+        </div>
+
+      </div>
+
+
+      <div class="section-title">Pricing</div>
+
+      <div class="form-grid-3">
+
+        <div class="field">
+          <label>Selling Price *</label>
+          <input id="productSellingPrice" type="number" min="0" step="0.01" required>
+        </div>
+
+        <div class="field">
+          <label>Cost Price</label>
+          <input id="productCostPrice" type="number" min="0" step="0.01">
+        </div>
+
+        <div class="field">
+          <label>Sale Price</label>
+          <input id="productSalePrice" type="number" min="0" step="0.01">
+        </div>
+
+      </div>
+
+
+      <div class="section-title">Tax & Inventory</div>
+
+      <div class="form-grid-3">
+
+        <div class="field">
+          <label>Tax / VAT Rate (%)</label>
+          <input id="productTaxRate" type="number" min="0" step="0.01" value="0">
+        </div>
+
+        <div class="field">
+          <label>Stock Quantity</label>
+          <input id="productStock" type="number" min="0" step="1" value="0">
+        </div>
+
+        <div class="field">
+          <label>Low Stock Threshold</label>
+          <input id="productLowStock" type="number" min="0" step="1" value="0">
+        </div>
+
+      </div>
+
+      <div class="check-row">
+        <input id="productTrackInventory" type="checkbox" checked>
+        <label for="productTrackInventory">Track inventory</label>
+      </div>
+
+
+      <div class="section-title">Physical Product</div>
+
+      <div class="form-grid-3">
+
+        <div class="field">
+          <label>Weight</label>
+          <input id="productWeight" type="number" min="0" step="0.01">
+        </div>
+
+        <div class="field">
+          <label>Length</label>
+          <input id="productLength" type="number" min="0" step="0.01">
+        </div>
+
+        <div class="field">
+          <label>Width</label>
+          <input id="productWidth" type="number" min="0" step="0.01">
+        </div>
+
+        <div class="field">
+          <label>Height</label>
+          <input id="productHeight" type="number" min="0" step="0.01">
+        </div>
+
+      </div>
+
+
+      <div class="section-title">Product URL & SEO</div>
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Product Slug</label>
+          <input id="productSlug" placeholder="my-product">
+        </div>
+
+        <div class="field">
+          <label>Brand</label>
+          <input id="productBrand">
+        </div>
+
+        <div class="field">
+          <label>SEO Title</label>
+          <input id="productSeoTitle">
+        </div>
+
+        <div class="field">
+          <label>SEO Description</label>
+          <input id="productSeoDescription">
+        </div>
+
+      </div>
+
+
+      <div class="section-title">Product Status</div>
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Status</label>
+          <select id="productStatus">
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Product Type</label>
+          <select id="productType">
+            <option value="physical">Physical</option>
+            <option value="digital">Digital</option>
+          </select>
+        </div>
+
+      </div>
+
+
+      <div class="check-row">
+        <input id="productFeatured" type="checkbox">
+        <label for="productFeatured">Featured product</label>
+      </div>
+
+      <div class="check-row">
+        <input id="productDownloadable" type="checkbox">
+        <label for="productDownloadable">Digital / downloadable product</label>
+      </div>
+
+
+      <div class="section-title">Product Media</div>
+
+      <div class="info-box">
+        Add image or video URLs here. Images and videos can be marked for
+        WhatsApp publishing. The existing backend media engine supports
+        both image and video records.
+      </div>
+
+      <div id="mediaContainer"></div>
+
+      <button type="button" class="btn btn-secondary" id="addMediaBtn">
+        + Add Image / Video
+      </button>
+
+
+      <div class="section-title">Product Variants</div>
+
+      <div class="info-box">
+        Use variants for sizes, colours, models or other product options.
+      </div>
+
+      <div id="variantsContainer"></div>
+
+      <button type="button" class="btn btn-secondary" id="addVariantBtn">
+        + Add Variant
+      </button>
+
+
+      <div class="section-title">Actions</div>
+
+      <div class="actions">
+
+        <button type="submit" class="btn btn-primary" id="saveProductBtn">
+          Save Product
+        </button>
+
+        <button type="button" class="btn btn-secondary" id="cancelProductBtn">
+          Cancel
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CATEGORY MODAL -->
+<!-- ========================================================= -->
+
+<div class="modal" id="categoryModal">
+
+  <div class="modal-box" style="max-width:600px;">
+
+    <div class="modal-head">
+      <h3 id="categoryModalTitle">Add Category</h3>
+      <button class="close" id="closeCategoryModal">×</button>
+    </div>
+
+    <div id="categoryFormStatus" class="status"></div>
+
+    <form id="categoryForm">
+
+      <input type="hidden" id="categoryId">
+
+      <div class="field">
+        <label>Category Name *</label>
+        <input id="categoryName" required>
+      </div>
+
+      <div class="field">
+        <label>Parent Category</label>
+        <select id="categoryParent">
+          <option value="">No parent — main category</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Slug</label>
+        <input id="categorySlug" placeholder="category-name">
+      </div>
+
+      <div class="field">
+        <label>Description</label>
+        <textarea id="categoryDescription"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Image URL</label>
+        <input id="categoryImageUrl" type="url">
+      </div>
+
+      <div class="check-row">
+        <input id="categoryActive" type="checkbox" checked>
+        <label for="categoryActive">Active</label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">
+          Save Category
+        </button>
+
+        <button type="button" class="btn btn-secondary" id="cancelCategoryBtn">
+          Cancel
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+
+<script>
+  "use strict";
+
+  const API = "/api/core";
+
+  const $ = id => document.getElementById(id);
+
+  let ecommerceProducts = [];
+  let ecommerceCategories = [];
+  let editingProductId = null;
+  let editingCategoryId = null;
+
+
+  /* ==========================================================
+     BASIC HELPERS
+     ========================================================== */
+
+  function escapeHTML(value){
+    if(value === null || value === undefined) return "";
+
+    return String(value)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;")
+      .replace(/'/g,"&#039;");
+  }
+
+
+  function formatMoney(value){
+    const amount = Number(value || 0);
+
+    return new Intl.NumberFormat("en-ZA",{
+      style:"currency",
+      currency:"ZAR"
+    }).format(amount);
+  }
+
+
+  function formatDate(value){
+    if(!value) return "-";
+
+    try{
+      return new Date(value).toLocaleString("en-ZA");
+    }catch{
+      return value;
+    }
+  }
+
+
+  function setStatus(id,message,type="info"){
+    const el = $(id);
+
+    if(!el) return;
+
+    el.className = "status show " + type;
+    el.textContent = message;
+  }
+
+
+  function clearStatus(id){
+    const el = $(id);
+
+    if(!el) return;
+
+    el.className = "status";
+    el.textContent = "";
+  }
+
+
+  async function apiFetch(path,options={}){
+    const response = await fetch(API + path,{
+      credentials:"include",
+      ...options,
+      headers:{
+        "Content-Type":"application/json",
+        ...(options.headers || {})
+      }
+    });
+
+    let data = null;
+
+    try{
+      data = await response.json();
+    }catch{
+      data = {
+        success:false,
+        error:"Invalid server response"
+      };
+    }
+
+    if(!response.ok){
+      throw new Error(
+        data?.error ||
+        data?.message ||
+        "Request failed"
+      );
+    }
+
+    return data;
+  }
+
+
+  function getArray(data,...keys){
+    for(const key of keys){
+      if(Array.isArray(data?.[key])){
+        return data[key];
+      }
+    }
+
+    if(Array.isArray(data)){
+      return data;
+    }
+
+    return [];
+  }
+
+
+  /* ==========================================================
+     NAVIGATION
+     ========================================================== */
+
+  const pageTitles = {
+    dashboard:"Dashboard",
+    business:"Business Profile",
+    customers:"Customers",
+    products:"Products",
+    services:"Services",
+    sales:"Sales",
+    expenses:"Expenses",
+    payments:"Payments",
+    staff:"Staff",
+    "online-store":"Online Store",
+    "store-products":"Store Products",
+    orders:"Orders",
+    whatsapp:"WhatsApp",
+    modules:"Modules",
+    activity:"Activity",
+    settings:"Settings"
+  };
+
+
+  async function showPage(page){
+
+    document.querySelectorAll(".page").forEach(section=>{
+      section.classList.remove("active");
+    });
+
+    document.querySelectorAll(".nav-btn").forEach(button=>{
+      button.classList.remove("active");
+    });
+
+    const target = $("page-" + page);
+
+    if(!target){
+      return;
+    }
+
+    target.classList.add("active");
+
+    const navButton = document.querySelector(
+      '.nav-btn[data-page="' + page + '"]'
+    );
+
+    if(navButton){
+      navButton.classList.add("active");
+    }
+
+    $("pageTitle").textContent =
+      pageTitles[page] || "Sky Blue Digital Service";
+
+    if(page === "dashboard"){
+      await loadDashboard();
+      await loadEcommerceDashboard();
+    }
+
+    if(page === "business"){
+      await loadBusiness();
+    }
+
+    if(page === "customers"){
+      await loadCustomers();
+    }
+
+    if(page === "products"){
+      await loadCoreProducts();
+    }
+
+    if(page === "online-store"){
+      await loadEcommerceStore();
+    }
+
+    if(page === "store-products"){
+      await loadCategories();
+      await loadEcommerceProducts();
+    }
+
+    if(page === "orders"){
+      await loadOrders();
+    }
+  }
+
+
+  document.querySelectorAll(".nav-btn").forEach(button=>{
+    button.addEventListener("click",()=>{
+      showPage(button.dataset.page);
+    });
+  });
+
+
+  document.querySelectorAll("[data-page-link]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      showPage(button.dataset.pageLink);
+    });
+  });
+
+
+  /* ==========================================================
+     DASHBOARD
+     ========================================================== */
+
+  async function loadDashboard(){
+
+    try{
+
+      const data = await apiFetch("/dashboard");
+
+      const dashboard =
+        data.dashboard ||
+        data.summary ||
+        data.data ||
+        data;
+
+      if($("dashboardCustomers")){
+        $("dashboardCustomers").textContent =
+          dashboard.customers ??
+          dashboard.customer_count ??
+          0;
+      }
+
+      if($("dashboardProducts")){
+        $("dashboardProducts").textContent =
+          dashboard.products ??
+          dashboard.product_count ??
+          0;
+      }
+
+      if($("dashboardSales")){
+        $("dashboardSales").textContent =
+          dashboard.sales ??
+          dashboard.sale_count ??
+          0;
+      }
+
+      if($("dashboardRevenue")){
+        $("dashboardRevenue").textContent =
+          formatMoney(
+            dashboard.revenue ??
+            dashboard.total_revenue ??
+            0
+          );
+      }
+
+    }catch(error){
+
+      console.error("Dashboard error:",error);
+
+    }
+  }
+
+
+  async function loadEcommerceDashboard(){
+
+    try{
+
+      const data =
+        await apiFetch("/ecommerce/dashboard");
+
+      const dashboard =
+        data.dashboard ||
+        data.summary ||
+        data.data ||
+        data;
+
+      $("ecomProductCount").textContent =
+        dashboard.products ??
+        dashboard.product_count ??
+        0;
+
+      $("ecomOrderCount").textContent =
+        dashboard.orders ??
+        dashboard.order_count ??
+        0;
+
+      $("ecomPendingOrders").textContent =
+        dashboard.pending_orders ??
+        dashboard.pendingOrderCount ??
+        0;
+
+      $("ecomRevenue").textContent =
+        formatMoney(
+          dashboard.revenue ??
+          dashboard.total_revenue ??
+          0
+        );
+
+      clearStatus("ecommerceDashboardStatus");
+
+    }catch(error){
+
+      setStatus(
+        "ecommerceDashboardStatus",
+        error.message,
+        "error"
+      );
+
+    }
+  }
+
+
+  /* ==========================================================
+     BUSINESS PROFILE
+     ========================================================== */
+
+  async function loadBusiness(){
+
+    try{
+
+      const data =
+        await apiFetch("/business");
+
+      const business =
+        data.business ||
+        data.data ||
+        data;
+
+      $("businessName").value =
+        business.business_name ||
+        business.name ||
+        "";
+
+      $("businessTradingName").value =
+        business.trading_name ||
+        "";
+
+      $("businessEmail").value =
+        business.email ||
+        "";
+
+      $("businessPhone").value =
+        business.phone ||
+        "";
+
+      $("businessAddress").value =
+        business.address ||
+        "";
+
+      $("businessWebsite").value =
+        business.website ||
+        "";
+
+      $("businessIndustry").value =
+        business.industry ||
+        "";
+
+      clearStatus("businessStatus");
+
+    }catch(error){
+
+      setStatus(
+        "businessStatus",
+        error.message,
+        "error"
+      );
+    }
+  }
+
+
+  $("saveBusinessBtn").addEventListener("click",async()=>{
+
+    try{
+
+      setStatus(
+        "businessStatus",
+        "Saving business profile...",
+        "info"
+      );
+
+      await apiFetch("/business",{
+        method:"POST",
+        body:JSON.stringify({
+
+          business_name:$("businessName").value.trim(),
+
+          trading_name:
+            $("businessTradingName").value.trim(),
+
+          email:
+            $("businessEmail").value.trim(),
+
+          phone:
+            $("businessPhone").value.trim(),
+
+          address:
+            $("businessAddress").value.trim(),
+
+          website:
+            $("businessWebsite").value.trim(),
+
+          industry:
+            $("businessIndustry").value.trim()
+
+        })
+      });
+
+      setStatus(
+        "businessStatus",
+        "Business profile saved successfully.",
+        "success"
+      );
+
+    }catch(error){
+
+      setStatus(
+        "businessStatus",
+        error.message,
+        "error"
+      );
+    }
+
+  });
+
+
+  /* ==========================================================
+     CUSTOMERS
+     ========================================================== */
+
+  async function loadCustomers(){
+
+    const table = $("customersTable");
+
+    if(!table) return;
+
+    table.innerHTML =
+      '<tr><td colspan="5" class="empty">Loading...</td></tr>';
+
+    try{
+
+      const data =
+        await apiFetch("/customers");
+
+      const customers =
+        getArray(
+          data,
+          "customers",
+          "data"
+        );
+
+      if(!customers.length){
+
+        table.innerHTML =
+          '<tr><td colspan="5" class="empty">No customers found.</td></tr>';
+
+        return;
+      }
+
+      table.innerHTML =
+        customers.map(customer=>`
+
+          <tr>
+            <td>${escapeHTML(customer.id ?? "-")}</td>
+            <td>${escapeHTML(
+              customer.name ||
+              customer.full_name ||
+              "-"
+            )}</td>
+            <td>${escapeHTML(customer.email || "-")}</td>
+            <td>${escapeHTML(customer.phone || "-")}</td>
+            <td>${escapeHTML(
+              formatDate(customer.created_at)
+            )}</td>
+          </tr>
+
+        `).join("");
+
+    }catch(error){
+
+      table.innerHTML =
+        '<tr><td colspan="5" class="empty">' +
+        escapeHTML(error.message) +
+        "</td></tr>";
+
+    }
+  }
+
+
+  /* ==========================================================
+     CORE PRODUCTS
+     ========================================================== */
+
+  async function loadCoreProducts(){
+
+    const table = $("coreProductsTable");
+
+    if(!table) return;
+
+    table.innerHTML =
+      '<tr><td colspan="7" class="empty">Loading...</td></tr>';
+
+    try{
+
+      const data =
+        await apiFetch("/products");
+
+      const products =
+        getArray(
+          data,
+          "products",
+          "data"
+        );
+
+      if(!products.length){
+
+        table.innerHTML =
+          '<tr><td colspan="7" class="empty">No business products found.</td></tr>';
+
+        return;
+      }
+
+      table.innerHTML =
+        products.map(product=>`
+
+          <tr>
+            <td>${escapeHTML(product.id ?? "-")}</td>
+
+            <td>${escapeHTML(
+              product.name || "-"
+            )}</td>
+
+            <td>${escapeHTML(
+              product.sku ||
+              product.product_code ||
+              "-"
+            )}</td>
+
+            <td>${escapeHTML(
+              product.category ||
+              "-"
+            )}</td>
+
+            <td>${formatMoney(
+              product.selling_price
+            )}</td>
+
+            <td>${escapeHTML(
+              product.stock_quantity ??
+              0
+            )}</td>
+
+            <td>
+              ${
+                product.active === 0
+                  ? '<span class="badge badge-red">Inactive</span>'
+                  : '<span class="badge badge-green">Active</span>'
+              }
+            </td>
+          </tr>
+
+        `).join("");
+
+    }catch(error){
+
+      table.innerHTML =
+        '<tr><td colspan="7" class="empty">' +
+        escapeHTML(error.message) +
+        "</td></tr>";
+
+      setStatus(
+        "coreProductsStatus",
+        error.message,
+        "error"
+      );
+    }
+  }
+
+
+  /* ==========================================================
+     ONLINE STORE
+     ========================================================== */
+
+  async function loadEcommerceStore(){
+
+    try{
+
+      const data =
+        await apiFetch("/ecommerce/store");
+
+      const store =
+        data.store ||
+        data.data ||
+        data;
+
+      $("storeName").value =
+        store.store_name || "";
+
+      $("storeEmail").value =
+        store.email || "";
+
+      $("storePhone").value =
+        store.phone ||
+        store.whatsapp ||
+        "";
+
+      $("storeCurrency").value =
+        store.currency ||
+        "ZAR";
+
+      $("storeDescription").value =
+        store.description ||
+        "";
+
+      $("storeStatusText").textContent =
+        store.published
+          ? "Your store is published."
+          : "Your store is configured and ready.";
+
+      clearStatus("storeStatus");
+
+    }catch(error){
+
+      setStatus(
+        "storeStatus",
+        error.message,
+        "error"
+      );
+
+      $("storeStatusText").textContent =
+        "Unable to load store settings.";
+    }
+  }
+
+
+  $("saveStoreBtn").addEventListener("click",async()=>{
+
+    try{
+
+      setStatus(
+        "storeStatus",
+        "Saving...",
+        "info"
+      );
+
+      await apiFetch("/ecommerce/store",{
+        method:"POST",
+        body:JSON.stringify({
+
+          store_name:
+            $("storeName").value.trim(),
+
+          email:
+            $("storeEmail").value.trim(),
+
+          phone:
+            $("storePhone").value.trim(),
+
+          whatsapp:
+            $("storePhone").value.trim(),
+
+          currency:
+            $("storeCurrency").value,
+
+          description:
+            $("storeDescription").value.trim()
+
+        })
+      });
+
+      setStatus(
+        "storeStatus",
+        "Store saved successfully. Your Ecommerce store settings are now stored in the database.",
+        "success"
+      );
+
+      $("storeStatusText").textContent =
+        "Store settings saved successfully.";
+
+    }catch(error){
+
+      setStatus(
+        "storeStatus",
+        error.message,
+        "error"
+      );
+    }
+
+  });
+
+
+  /* ==========================================================
+     ECOMMERCE CATEGORIES
+     ========================================================== */
+
+  async function loadCategories(){
+
+    try{
+
+      const data =
+        await apiFetch("/ecommerce/categories");
+
+      ecommerceCategories =
+        getArray(
+          data,
+          "categories",
+          "data"
+        );
+
+      renderCategories();
+
+      populateCategorySelects();
+
+    }catch(error){
+
+      ecommerceCategories = [];
+
+      $("categoriesTable").innerHTML =
+        '<tr><td colspan="5" class="empty">' +
+        escapeHTML(error.message) +
+        "</td></tr>";
+
+      populateCategorySelects();
+
+      setStatus(
+        "categoryStatus",
+        error.message,
+        "error"
+      );
+    }
+  }
+
+
+  function categoryById(id){
+
+    if(id === null || id === undefined || id === ""){
+      return null;
+    }
+
+    return ecommerceCategories.find(
+      category =>
+        String(category.id) === String(id)
+    ) || null;
+  }
+
+
+  function categoryName(id){
+
+    const category =
+      categoryById(id);
+
+    return category
+      ? category.name
+      : "-";
+  }
+
+
+  function renderCategories(){
+
+    const table =
+      $("categoriesTable");
+
+    if(!table) return;
+
+    if(!ecommerceCategories.length){
+
+      table.innerHTML =
+        '<tr><td colspan="5" class="empty">No categories yet.</td></tr>';
+
+      return;
+    }
+
+    table.innerHTML =
+      ecommerceCategories.map(category=>`
+
+        <tr>
+
+          <td>${escapeHTML(
+            category.name || "-"
+          )}</td>
+
+          <td>${escapeHTML(
+            categoryName(category.parent_id)
+          )}</td>
+
+          <td>${escapeHTML(
+            category.slug || "-"
+          )}</td>
+
+          <td>
+            ${
+              Number(category.active ?? 1)
+                ? '<span class="badge badge-green">Active</span>'
+                : '<span class="badge badge-red">Inactive</span>'
+            }
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              <button
+                class="btn btn-secondary btn-small"
+                onclick="editCategory(${Number(category.id)})">
+                Edit
+              </button>
+
+              <button
+                class="btn btn-danger btn-small"
+                onclick="deleteCategory(${Number(category.id)})">
+                Delete
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      `).join("");
+  }
+
+
+  function populateCategorySelects(){
+
+    const productSelect =
+      $("productCategory");
+
+    const parentSelect =
+      $("categoryParent");
+
+    if(productSelect){
+
+      const current =
+        productSelect.value;
+
+      productSelect.innerHTML =
+        '<option value="">Select category</option>' +
+
+        ecommerceCategories.map(category=>`
+
+          <option value="${escapeHTML(category.id)}">
+            ${escapeHTML(category.name)}
+          </option>
+
+        `).join("");
+
+      productSelect.value = current;
+    }
+
+    if(parentSelect){
+
+      const current =
+        parentSelect.value;
+
+      parentSelect.innerHTML =
+        '<option value="">No parent — main category</option>' +
+
+        ecommerceCategories
+          .filter(category =>
+            String(category.id) !==
+            String(editingCategoryId || "")
+          )
+          .map(category=>`
+
+            <option value="${escapeHTML(category.id)}">
+              ${escapeHTML(category.name)}
+            </option>
+
+          `).join("");
+
+      parentSelect.value = current;
+    }
+  }
+
+
+  $("addCategoryBtn").addEventListener("click",()=>{
+
+    editingCategoryId = null;
+
+    $("categoryModalTitle").textContent =
+      "Add Category";
+
+    $("categoryId").value = "";
+
+    $("categoryName").value = "";
+
+    $("categoryParent").value = "";
+
+    $("categorySlug").value = "";
+
+    $("categoryDescription").value = "";
+
+    $("categoryImageUrl").value = "";
+
+    $("categoryActive").checked = true;
+
+    clearStatus("categoryFormStatus");
+
+    $("categoryModal").classList.add("show");
+
+  });
+
+
+  function closeCategoryModal(){
+    $("categoryModal").classList.remove("show");
+  }
+
+
+  $("closeCategoryModal").addEventListener(
+    "click",
+    closeCategoryModal
+  );
+
+  $("cancelCategoryBtn").addEventListener(
+    "click",
+    closeCategoryModal
+  );
+
+
+  $("categoryForm").addEventListener("submit",async event=>{
+
+    event.preventDefault();
+
+    try{
+
+      setStatus(
+        "categoryFormStatus",
+        "Saving category...",
+        "info"
+      );
+
+      const payload = {
+
+        name:
+          $("categoryName").value.trim(),
+
+        parent_id:
+          $("categoryParent").value
+            ? Number($("categoryParent").value)
+            : null,
+
+        slug:
+          $("categorySlug").value.trim(),
+
+        description:
+          $("categoryDescription").value.trim(),
+
+        image_url:
+          $("categoryImageUrl").value.trim(),
+
+        active:
+          $("categoryActive").checked ? 1 : 0
+
+      };
+
+      if(!payload.name){
+
+        throw new Error(
+          "Category name is required."
+        );
+      }
+
+      if(editingCategoryId){
+
+        await apiFetch(
+          "/ecommerce/categories/" +
+          encodeURIComponent(editingCategoryId),
+          {
+            method:"PATCH",
+            body:JSON.stringify(payload)
+          }
+        );
+
+      }else{
+
+        await apiFetch(
+          "/ecommerce/categories",
+          {
+            method:"POST",
+            body:JSON.stringify(payload)
+          }
+        );
+
+      }
+
+      closeCategoryModal();
+
+      await loadCategories();
+
+      setStatus(
+        "categoryStatus",
+        "Category saved successfully.",
+        "success"
+      );
+
+    }catch(error){
+
+      setStatus(
+        "categoryFormStatus",
+        error.message,
+        "error"
+      );
+    }
+
+  });
+
+
+  window.editCategory = async function(id){
+
+    const category =
+      categoryById(id);
+
+    if(!category) return;
+
+    editingCategoryId = id;
+
+    $("categoryModalTitle").textContent =
+      "Edit Category";
+
+    $("categoryId").value =
+      category.id;
+
+    $("categoryName").value =
+      category.name || "";
+
+    populateCategorySelects();
+
+    $("categoryParent").value =
+      category.parent_id || "";
+
+    $("categorySlug").value =
+      category.slug || "";
+
+    $("categoryDescription").value =
+      category.description || "";
+
+    $("categoryImageUrl").value =
+      category.image_url || "";
+
+    $("categoryActive").checked =
+      Number(category.active ?? 1) === 1;
+
+    clearStatus("categoryFormStatus");
+
+    $("categoryModal").classList.add("show");
+  };
+
+
+  window.deleteCategory = async function(id){
+
+    const category =
+      categoryById(id);
+
+    if(!category) return;
+
+    if(!confirm(
+      'Delete category "' +
+      category.name +
+      '"?'
+    )){
+      return;
+    }
+
+    try{
+
+      setStatus(
+        "categoryStatus",
+        "Deleting category...",
+        "info"
+      );
+
+      await apiFetch(
+        "/ecommerce/categories/" +
+        encodeURIComponent(id),
+        {
+          method:"DELETE"
+        }
+      );
+
+      await loadCategories();
+
+      setStatus(
+        "categoryStatus",
+        "Category deleted successfully.",
+        "success"
+      );
+
+    }catch(error){
+
+      setStatus(
+        "categoryStatus",
+        error.message,
+        "error"
+      );
+    }
+  };
+
+
+  /* ==========================================================
+     ECOMMERCE PRODUCTS
+     ========================================================== */
+
+  async function loadEcommerceProducts(){
+
+    const table =
+      $("ecommerceProductsTable");
+
+    if(!table) return;
+
+    table.innerHTML =
+      '<tr><td colspan="8" class="empty">Loading products...</td></tr>';
+
+    try{
+
+      const data =
+        await apiFetch("/ecommerce/products");
+
+      ecommerceProducts =
+        getArray(
+          data,
+          "products",
+          "data"
+        );
+
+      renderEcommerceProducts();
+
+      clearStatus("storeProductsStatus");
+
+    }catch(error){
+
+      ecommerceProducts = [];
+
+      table.innerHTML =
+        '<tr><td colspan="8" class="empty">' +
+        escapeHTML(error.message) +
+        "</td></tr>";
+
+      setStatus(
+        "storeProductsStatus",
+        error.message,
+        "error"
+      );
+    }
+  }
+
+
+  function getProductMedia(product){
+
+    if(Array.isArray(product.media)){
+      return product.media;
+    }
+
+    if(Array.isArray(product.media_items)){
+      return product.media_items;
+    }
+
+    return [];
+  }
+
+
+  function productImage(product){
+
+    if(product.image_url){
+      return product.image_url;
+    }
+
+    const media =
+      getProductMedia(product);
+
+    const primary =
+      media.find(
+        item =>
+          Number(item.is_primary) === 1
+      );
+
+    if(primary?.media_url){
+      return primary.media_url;
+    }
+
+    const image =
+      media.find(
+        item =>
+          String(item.media_type || "")
+            .toLowerCase() === "image"
+      );
+
+    return image?.media_url || "";
+  }
+
+
+  function getProductStatus(product){
+
+    if(product.status){
+      return String(product.status).toLowerCase();
+    }
+
+    if(
+      product.active === false ||
+      Number(product.active) === 0
+    ){
+      return "hidden";
+    }
+
+    return "active";
+  }
+
+
+  function renderEcommerceProducts(){
+
+    const table =
+      $("ecommerceProductsTable");
+
+    if(!table) return;
+
+    const search =
+      $("productSearch").value
+        .trim()
+        .toLowerCase();
+
+    const statusFilter =
+      $("productStatusFilter").value;
+
+    const filtered =
+      ecommerceProducts.filter(product=>{
+
+        const text = [
+          product.name,
+          product.sku,
+          product.barcode,
+          product.slug,
+          product.brand,
+          product.category
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        const matchesSearch =
+          !search ||
+          text.includes(search);
+
+        const matchesStatus =
+          !statusFilter ||
+          getProductStatus(product) ===
+            statusFilter;
+
+        return matchesSearch &&
+               matchesStatus;
+      });
+
+    if(!filtered.length){
+
+      table.innerHTML =
+        '<tr><td colspan="8" class="empty">No products found.</td></tr>';
+
+      return;
+    }
+
+    table.innerHTML =
+      filtered.map(product=>{
+
+        const image =
+          productImage(product);
+
+        const stock =
+          Number(
+            product.stock_quantity ??
+            product.stock ??
+            0
+          );
+
+        const lowStock =
+          Number(
+            product.low_stock_threshold ??
+            product.low_stock_level ??
+            product.reorder_level ??
+            0
+          );
+
+        const status =
+          getProductStatus(product);
+
+        let stockBadge =
+          '<span class="badge badge-green">' +
+          escapeHTML(stock) +
+          "</span>";
+
+        if(
+          lowStock > 0 &&
+          stock <= lowStock
+        ){
+          stockBadge =
+            '<span class="badge badge-orange">' +
+            escapeHTML(stock) +
+            " Low</span>";
+        }
+
+        if(stock <= 0){
+
+          stockBadge =
+            '<span class="badge badge-red">0 Out</span>';
+        }
+
+        let statusBadge =
+          '<span class="badge badge-green">Active</span>';
+
+        if(status === "draft"){
+          statusBadge =
+            '<span class="badge badge-orange">Draft</span>';
+        }
+
+        if(status === "hidden"){
+          statusBadge =
+            '<span class="badge badge-red">Hidden</span>';
+        }
+
+        return `
+
+          <tr>
+
+            <td>
+              ${
+                image
+                  ? `
+                    <img
+                      class="product-preview"
+                      src="${escapeHTML(image)}"
+                      alt="${escapeHTML(product.name || "Product")}"
+                      onerror="this.style.display='none';"
+                    >
+                  `
+                  : `
+                    <div class="product-preview"></div>
+                  `
+              }
+            </td>
+
+            <td>
+              <strong>
+                ${escapeHTML(product.name || "-")}
+              </strong>
+
+              ${
+                product.featured ||
+                product.is_featured
+                  ? '<div><span class="badge">Featured</span></div>'
+                  : ""
+              }
+            </td>
+
+            <td>${escapeHTML(
+              product.sku ||
+              product.product_code ||
+              "-"
+            )}</td>
+
+            <td>${escapeHTML(
+              product.category_name ||
+              categoryName(product.category_id) ||
+              product.category ||
+              "-"
+            )}</td>
+
+            <td>
+              ${formatMoney(
+                product.sale_price ??
+                product.selling_price ??
+                product.price ??
+                0
+              )}
+
+              ${
+                product.sale_price &&
+                Number(product.sale_price) <
+                Number(product.selling_price || 0)
+                  ? `
+                    <div class="muted">
+                      <s>${formatMoney(product.selling_price)}</s>
+                    </div>
+                  `
+                  : ""
+              }
+            </td>
+
+            <td>${stockBadge}</td>
+
+            <td>${statusBadge}</td>
+
+            <td>
+
+              <div class="actions">
+
+                <button
+                  class="btn btn-secondary btn-small"
+                  onclick="editProduct(${Number(product.id)})">
+                  Edit
+                </button>
+
+                <button
+                  class="btn btn-danger btn-small"
+                  onclick="deleteProduct(${Number(product.id)})">
+                  Delete
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+      }).join("");
+  }
+
+
+  $("productSearch").addEventListener(
+    "input",
+    renderEcommerceProducts
+  );
+
+  $("productStatusFilter").addEventListener(
+    "change",
+    renderEcommerceProducts
+  );
+
+  $("refreshProductsBtn").addEventListener(
+    "click",
+    async()=>{
+      await loadCategories();
+      await loadEcommerceProducts();
+    }
+  );
+
+
+  /* ==========================================================
+     PRODUCT FORM
+     ========================================================== */
+
+  function resetProductForm(){
+
+    editingProductId = null;
+
+    $("productModalTitle").textContent =
+      "Add Store Product";
+
+    $("productId").value = "";
+
+    $("productName").value = "";
+
+    $("productSku").value = "";
+
+    $("productBarcode").value = "";
+
+    $("productCategory").value = "";
+
+    $("productShortDescription").value = "";
+
+    $("productDescription").value = "";
+
+    $("productSellingPrice").value = "";
+
+    $("productCostPrice").value = "";
+
+    $("productSalePrice").value = "";
+
+    $("productTaxRate").value = "0";
+
+    $("productStock").value = "0";
+
+    $("productLowStock").value = "0";
+
+    $("productTrackInventory").checked = true;
+
+    $("productWeight").value = "";
+
+    $("productLength").value = "";
+
+    $("productWidth").value = "";
+
+    $("productHeight").value = "";
+
+    $("productSlug").value = "";
+
+    $("productBrand").value = "";
+
+    $("productSeoTitle").value = "";
+
+    $("productSeoDescription").value = "";
+
+    $("productStatus").value = "active";
+
+    $("productType").value = "physical";
+
+    $("productFeatured").checked = false;
+
+    $("productDownloadable").checked = false;
+
+    $("mediaContainer").innerHTML = "";
+
+    $("variantsContainer").innerHTML = "";
+
+    clearStatus("productFormStatus");
+
+  }
+
+
+  function openProductModal(){
+
+    $("productModal").classList.add("show");
+  }
+
+
+  function closeProductModal(){
+
+    $("productModal").classList.remove("show");
+  }
+
+
+  $("addProductBtn").addEventListener("click",()=>{
+
+    resetProductForm();
+
+    populateCategorySelects();
+
+    openProductModal();
+
+  });
+
+
+  $("closeProductModal").addEventListener(
+    "click",
+    closeProductModal
+  );
+
+
+  $("cancelProductBtn").addEventListener(
+    "click",
+    closeProductModal
+  );
+
+
+  /* ==========================================================
+     MEDIA ROWS
+     ========================================================== */
+
+  function addMediaRow(media={}){
+
+    const id =
+      "media_" +
+      Date.now() +
+      "_" +
+      Math.floor(Math.random()*10000);
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "media-row";
+
+    row.dataset.mediaId =
+      media.id || "";
+
+    row.innerHTML = `
+
+      <div class="media-row-grid">
+
+        <div>
+
+          ${
+            media.media_url
+              ? `
+                ${
+                  String(media.media_type).toLowerCase() === "video"
+                    ? `
+                      <video
+                        class="media-preview"
+                        src="${escapeHTML(media.media_url)}"
+                        controls>
+                      </video>
+                    `
+                    : `
+                      <img
+                        class="media-preview"
+                        src="${escapeHTML(media.media_url)}"
+                        alt=""
+                        onerror="this.style.display='none';">
+                    `
+                }
+              `
+              : `
+                <div class="media-preview"></div>
+              `
+          }
+
+        </div>
+
+        <div>
+
+          <div class="form-grid">
+
+            <div class="field">
+              <label>Media Type</label>
+
+              <select class="media-type">
+                <option value="image"
+                  ${media.media_type === "image" ? "selected" : ""}>
+                  Image
+                </option>
+
+                <option value="video"
+                  ${media.media_type === "video" ? "selected" : ""}>
+                  Video
+                </option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Media URL</label>
+
+              <input
+                class="media-url"
+                type="url"
+                value="${escapeHTML(media.media_url || "")}"
+                placeholder="https://...">
+            </div>
+
+            <div class="field">
+              <label>Thumbnail URL</label>
+
+              <input
+                class="media-thumbnail"
+                type="url"
+                value="${escapeHTML(media.thumbnail_url || "")}">
+            </div>
+
+            <div class="field">
+              <label>Alt Text</label>
+
+              <input
+                class="media-alt"
+                value="${escapeHTML(media.alt_text || "")}">
+            </div>
+
+            <div class="field full">
+              <label>Caption</label>
+
+              <input
+                class="media-caption"
+                value="${escapeHTML(media.caption || "")}">
+            </div>
+
+          </div>
+
+          <div class="check-row">
+
+            <input
+              class="media-primary"
+              type="checkbox"
+              ${Number(media.is_primary || 0) === 1 ? "checked" : ""}>
+
+            <label>Featured / main media</label>
+
+          </div>
+
+          <div class="check-row">
+
+            <input
+              class="media-whatsapp"
+              type="checkbox"
+              ${Number(media.whatsapp_publish || 0) === 1 ? "checked" : ""}>
+
+            <label>Publish to WhatsApp</label>
+
+          </div>
+
+          <div class="actions">
+
+            <button
+              type="button"
+              class="btn btn-danger btn-small remove-media">
+              Remove
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    $("mediaContainer").appendChild(row);
+
+    row.querySelector(".remove-media")
+      .addEventListener("click",()=>{
+        row.remove();
+      });
+
+    row.querySelector(".media-url")
+      .addEventListener("input",()=>{
+        updateMediaPreview(row);
+      });
+
+    row.querySelector(".media-type")
+      .addEventListener("change",()=>{
+        updateMediaPreview(row);
+      });
+  }
+
+
+  function updateMediaPreview(row){
+
+    const preview =
+      row.querySelector(".media-preview");
+
+    const type =
+      row.querySelector(".media-type").value;
+
+    const url =
+      row.querySelector(".media-url").value.trim();
+
+    if(!url){
+
+      preview.outerHTML =
+        '<div class="media-preview"></div>';
+
+      return;
+    }
+
+    if(type === "video"){
+
+      preview.outerHTML =
+        '<video class="media-preview" src="' +
+        escapeHTML(url) +
+        '" controls></video>';
+
+    }else{
+
+      preview.outerHTML =
+        '<img class="media-preview" src="' +
+        escapeHTML(url) +
+        '" alt="" onerror="this.style.display=\'none\';">';
+
+    }
+  }
+
+
+  $("addMediaBtn").addEventListener(
+    "click",
+    ()=>addMediaRow()
+  );
+
+
+  function collectMedia(){
+
+    return [
+      ...$("mediaContainer")
+        .querySelectorAll(".media-row")
+    ]
+      .map(row=>({
+
+        id:
+          row.dataset.mediaId
+            ? Number(row.dataset.mediaId)
+            : null,
+
+        media_type:
+          row.querySelector(".media-type").value,
+
+        media_url:
+          row.querySelector(".media-url").value.trim(),
+
+        thumbnail_url:
+          row.querySelector(".media-thumbnail").value.trim(),
+
+        alt_text:
+          row.querySelector(".media-alt").value.trim(),
+
+        caption:
+          row.querySelector(".media-caption").value.trim(),
+
+        is_primary:
+          row.querySelector(".media-primary").checked
+            ? 1
+            : 0,
+
+        whatsapp_publish:
+          row.querySelector(".media-whatsapp").checked
+            ? 1
+            : 0
+
+      }))
+      .filter(item=>item.media_url);
+  }
+
+
+  /* ==========================================================
+     VARIANT ROWS
+     ========================================================== */
+
+  function addVariantRow(variant={}){
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "variant-row";
+
+    row.dataset.variantId =
+      variant.id || "";
+
+    row.innerHTML = `
+
+      <div class="form-grid-3">
+
+        <div class="field">
+          <label>Variant Name</label>
+
+          <input
+            class="variant-name"
+            value="${escapeHTML(
+              variant.variant_name ||
+              variant.name ||
+              ""
+            )}"
+            placeholder="Large / Red">
+        </div>
+
+        <div class="field">
+          <label>SKU</label>
+
+          <input
+            class="variant-sku"
+            value="${escapeHTML(
+              variant.sku || ""
+            )}">
+        </div>
+
+        <div class="field">
+          <label>Barcode</label>
+
+          <input
+            class="variant-barcode"
+            value="${escapeHTML(
+              variant.barcode || ""
+            )}">
+        </div>
+
+        <div class="field">
+          <label>Price</label>
+
+          <input
+            class="variant-price"
+            type="number"
+            min="0"
+            step="0.01"
+            value="${escapeHTML(
+              variant.selling_price ??
+              variant.price ??
+              ""
+            )}">
+        </div>
+
+        <div class="field">
+          <label>Sale Price</label>
+
+          <input
+            class="variant-sale-price"
+            type="number"
+            min="0"
+            step="0.01"
+            value="${escapeHTML(
+              variant.sale_price ?? ""
+            )}">
+        </div>
+
+        <div class="field">
+          <label>Stock</label>
+
+          <input
+            class="variant-stock"
+            type="number"
+            min="0"
+            step="1"
+            value="${escapeHTML(
+              variant.stock_quantity ??
+              0
+            )}">
+        </div>
+
+        <div class="field full">
+          <label>Option Values JSON</label>
+
+          <input
+            class="variant-options"
+            value="${escapeHTML(
+              variant.option_values_json || ""
+            )}"
+            placeholder='{"size":"Large","colour":"Blue"}'>
+        </div>
+
+      </div>
+
+      <div class="actions">
+
+        <button
+          type="button"
+          class="btn btn-danger btn-small remove-variant">
+          Remove
+        </button>
+
+      </div>
+
+    `;
+
+    $("variantsContainer")
+      .appendChild(row);
+
+    row.querySelector(".remove-variant")
+      .addEventListener("click",()=>{
+        row.remove();
+      });
+  }
+
+
+  $("addVariantBtn").addEventListener(
+    "click",
+    ()=>addVariantRow()
+  );
+
+
+  function collectVariants(){
+
+    return [
+      ...$("variantsContainer")
+        .querySelectorAll(".variant-row")
+    ]
+      .map(row=>({
+
+        id:
+          row.dataset.variantId
+            ? Number(row.dataset.variantId)
+            : null,
+
+        variant_name:
+          row.querySelector(".variant-name").value.trim(),
+
+        sku:
+          row.querySelector(".variant-sku").value.trim(),
+
+        barcode:
+          row.querySelector(".variant-barcode").value.trim(),
+
+        selling_price:
+          numberOrNull(
+            row.querySelector(".variant-price").value
+          ),
+
+        sale_price:
+          numberOrNull(
+            row.querySelector(".variant-sale-price").value
+          ),
+
+        stock_quantity:
+          numberOrNull(
+            row.querySelector(".variant-stock").value
+          ),
+
+        option_values_json:
+          row.querySelector(".variant-options").value.trim()
+
+      }))
+      .filter(
+        variant =>
+          variant.variant_name
+      );
+  }
+
+
+  function numberOrNull(value){
+
+    if(
+      value === null ||
+      value === undefined ||
+      String(value).trim() === ""
+    ){
+      return null;
+    }
+
+    const number =
+      Number(value);
+
+    return Number.isFinite(number)
+      ? number
+      : null;
+  }
+
+
+  /* ==========================================================
+     PRODUCT CREATE / UPDATE
+     ========================================================== */
+
+  function buildProductPayload(){
+
+    const sellingPrice =
+      numberOrNull(
+        $("productSellingPrice").value
+      );
+
+    if(
+      !$("productName").value.trim()
+    ){
+      throw new Error(
+        "Product name is required."
+      );
+    }
+
+    if(
+      sellingPrice === null
+    ){
+      throw new Error(
+        "Selling price is required."
+      );
+    }
+
+    const payload = {
+
+      name:
+        $("productName").value.trim(),
+
+      sku:
+        $("productSku").value.trim(),
+
+      barcode:
+        $("productBarcode").value.trim(),
+
+      category_id:
+        $("productCategory").value
+          ? Number($("productCategory").value)
+          : null,
+
+      short_description:
+        $("productShortDescription")
+          .value.trim(),
+
+      description:
+        $("productDescription")
+          .value.trim(),
+
+      selling_price:
+        sellingPrice,
+
+      cost_price:
+        numberOrNull(
+          $("productCostPrice").value
+        ),
+
+      sale_price:
+        numberOrNull(
+          $("productSalePrice").value
+        ),
+
+      tax_rate:
+        numberOrNull(
+          $("productTaxRate").value
+        ) ?? 0,
+
+      stock_quantity:
+        numberOrNull(
+          $("productStock").value
+        ) ?? 0,
+
+      low_stock_threshold:
+        numberOrNull(
+          $("productLowStock").value
+        ) ?? 0,
+
+      track_inventory:
+        $("productTrackInventory").checked
+          ? 1
+          : 0,
+
+      weight:
+        numberOrNull(
+          $("productWeight").value
+        ),
+
+      length:
+        numberOrNull(
+          $("productLength").value
+        ),
+
+      width:
+        numberOrNull(
+          $("productWidth").value
+        ),
+
+      height:
+        numberOrNull(
+          $("productHeight").value
+        ),
+
+      slug:
+        $("productSlug").value.trim(),
+
+      brand:
+        $("productBrand").value.trim(),
+
+      seo_title:
+        $("productSeoTitle").value.trim(),
+
+      seo_description:
+        $("productSeoDescription").value.trim(),
+
+      status:
+        $("productStatus").value,
+
+      product_type:
+        $("productType").value,
+
+      featured:
+        $("productFeatured").checked
+          ? 1
+          : 0,
+
+      is_featured:
+        $("productFeatured").checked
+          ? 1
+          : 0,
+
+      downloadable:
+        $("productDownloadable").checked
+          ? 1
+          : 0,
+
+      media:
+        collectMedia(),
+
+      variants:
+        collectVariants()
+
+    };
+
+    return payload;
+  }
+
+
+  $("productForm").addEventListener(
+    "submit",
+    async event=>{
+
+      event.preventDefault();
+
+      const saveButton =
+        $("saveProductBtn");
+
+      try{
+
+        const payload =
+          buildProductPayload();
+
+        saveButton.disabled = true;
+        saveButton.textContent =
+          editingProductId
+            ? "Updating..."
+            : "Saving...";
+
+        setStatus(
+          "productFormStatus",
+          editingProductId
+            ? "Updating product..."
+            : "Creating product...",
+          "info"
+        );
+
+        let response;
+
+        if(editingProductId){
+
+          response =
+            await apiFetch(
+              "/ecommerce/products/" +
+              encodeURIComponent(
+                editingProductId
+              ),
+              {
+                method:"PATCH",
+                body:JSON.stringify(payload)
+              }
+            );
+
+        }else{
+
+          response =
+            await apiFetch(
+              "/ecommerce/products",
+              {
+                method:"POST",
+                body:JSON.stringify(payload)
+              }
+            );
+
+        }
+
+        console.log(
+          "Product saved:",
+          response
+        );
+
+        closeProductModal();
+
+        await loadEcommerceProducts();
+
+        setStatus(
+          "storeProductsStatus",
+          editingProductId
+            ? "Product updated successfully."
+            : "Product created successfully.",
+          "success"
+        );
+
+        editingProductId = null;
+
+      }catch(error){
+
+        console.error(
+          "Product save error:",
+          error
+        );
+
+        setStatus(
+          "productFormStatus",
+          error.message,
+          "error"
+        );
+
+      }finally{
+
+        saveButton.disabled = false;
+
+        saveButton.textContent =
+          "Save Product";
+      }
+
+    }
+  );
+
+
+  /* ==========================================================
+     EDIT PRODUCT
+     ========================================================== */
+
+  window.editProduct = async function(id){
+
+    try{
+
+      setStatus(
+        "storeProductsStatus",
+        "Loading product...",
+        "info"
+      );
+
+      const data =
+        await apiFetch(
+          "/ecommerce/products/" +
+          encodeURIComponent(id)
+        );
+
+      const product =
+        data.product ||
+        data.data ||
+        data;
+
+      editingProductId =
+        product.id || id;
+
+      $("productModalTitle").textContent =
+        "Edit Store Product";
+
+      $("productId").value =
+        product.id || id;
+
+      $("productName").value =
+        product.name || "";
+
+      $("productSku").value =
+        product.sku || "";
+
+      $("productBarcode").value =
+        product.barcode || "";
+
+      populateCategorySelects();
+
+      $("productCategory").value =
+        product.category_id || "";
+
+      $("productShortDescription").value =
+        product.short_description || "";
+
+      $("productDescription").value =
+        product.description || "";
+
+      $("productSellingPrice").value =
+        product.selling_price ??
+        product.price ??
+        "";
+
+      $("productCostPrice").value =
+        product.cost_price ?? "";
+
+      $("productSalePrice").value =
+        product.sale_price ?? "";
+
+      $("productTaxRate").value =
+        product.tax_rate ?? 0;
+
+      $("productStock").value =
+        product.stock_quantity ??
+        product.stock ??
+        0;
+
+      $("productLowStock").value =
+        product.low_stock_threshold ??
+        product.low_stock_level ??
+        0;
+
+      $("productTrackInventory").checked =
+        Number(
+          product.track_inventory ?? 1
+        ) === 1;
+
+      $("productWeight").value =
+        product.weight ?? "";
+
+      $("productLength").value =
+        product.length ?? "";
+
+      $("productWidth").value =
+        product.width ?? "";
+
+      $("productHeight").value =
+        product.height ?? "";
+
+      $("productSlug").value =
+        product.slug || "";
+
+      $("productBrand").value =
+        product.brand || "";
+
+      $("productSeoTitle").value =
+        product.seo_title || "";
+
+      $("productSeoDescription").value =
+        product.seo_description || "";
+
+      $("productStatus").value =
+        getProductStatus(product);
+
+      $("productType").value =
+        product.product_type ||
+        "physical";
+
+      $("productFeatured").checked =
+        Number(
+          product.featured ??
+          product.is_featured ??
+          0
+        ) === 1;
+
+      $("productDownloadable").checked =
+        Number(
+          product.downloadable ??
+          0
+        ) === 1;
+
+      $("mediaContainer").innerHTML = "";
+
+      const media =
+        getProductMedia(product);
+
+      media.forEach(item=>{
+        addMediaRow(item);
+      });
+
+      $("variantsContainer").innerHTML = "";
+
+      const variants =
+        Array.isArray(product.variants)
+          ? product.variants
+          : [];
+
+      variants.forEach(variant=>{
+        addVariantRow(variant);
+      });
+
+      clearStatus(
+        "productFormStatus"
+      );
+
+      openProductModal();
+
+      clearStatus(
+        "storeProductsStatus"
+      );
+
+    }catch(error){
+
+      setStatus(
+        "storeProductsStatus",
+        error.message,
+        "error"
+      );
+    }
+  };
+
+
+  /* ==========================================================
+     DELETE PRODUCT
+     ========================================================== */
+
+  window.deleteProduct = async function(id){
+
+    const product =
+      ecommerceProducts.find(
+        item =>
+          String(item.id) ===
+          String(id)
+      );
+
+    if(!product) return;
+
+    if(!confirm(
+      'Delete product "' +
+      (product.name || "") +
+      '"?'
+    )){
+      return;
+    }
+
+    try{
+
+      setStatus(
+        "storeProductsStatus",
+        "Deleting product...",
+        "info"
+      );
+
+      await apiFetch(
+        "/ecommerce/products/" +
+        encodeURIComponent(id),
+        {
+          method:"DELETE"
+        }
+      );
+
+      await loadEcommerceProducts();
+
+      setStatus(
+        "storeProductsStatus",
+        "Product deleted successfully.",
+        "success"
+      );
+
+    }catch(error){
+
+      setStatus(
+        "storeProductsStatus",
+        error.message,
+        "error"
+      );
+    }
+  };
+
+
+  /* ==========================================================
+     ORDERS
+     ========================================================== */
+
+  async function loadOrders(){
+
+    const table =
+      $("ordersTable");
+
+    if(!table) return;
+
+    table.innerHTML =
+      '<tr><td colspan="6" class="empty">Loading...</td></tr>';
+
+    try{
+
+      const data =
+        await apiFetch("/ecommerce/orders");
+
+      const orders =
+        getArray(
+          data,
+          "orders",
+          "data"
+        );
+
+      if(!orders.length){
+
+        table.innerHTML =
+          '<tr><td colspan="6" class="empty">No orders found.</td></tr>';
+
+        return;
+      }
+
+      table.innerHTML =
+        orders.map(order=>`
+
+          <tr>
+
+            <td>
+              <strong>
+                ${escapeHTML(
+                  order.order_number ||
+                  order.id ||
+                  "-"
+                )}
+              </strong>
+            </td>
+
+            <td>
+              ${escapeHTML(
+                order.customer_name ||
+                order.customer_email ||
+                "-"
+              )}
+            </td>
+
+            <td>
+              ${formatMoney(
+                order.total_amount ||
+                order.total ||
+                0
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(
+                order.payment_status ||
+                "-"
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(
+                order.order_status ||
+                "-"
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(
+                formatDate(
+                  order.created_at
+                )
+              )}
+            </td>
+
+          </tr>
+
+        `).join("");
+
+    }catch(error){
+
+      table.innerHTML =
+        '<tr><td colspan="6" class="empty">' +
+        escapeHTML(error.message) +
+        "</td></tr>";
+
+      setStatus(
+        "ordersStatus",
+        error.message,
+        "error"
+      );
+    }
+  }
+
+
+  /* ==========================================================
+     LOGOUT
+     ========================================================== */
+
+  $("logoutBtn").addEventListener(
+    "click",
+    async()=>{
+
+      try{
+
+        await fetch(
+          "/api/auth/logout",
+          {
+            method:"POST",
+            credentials:"include"
+          }
+        );
+
+      }catch(error){
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+      }finally{
+
+        window.location.href = "/";
+      }
+
+    }
+  );
+
+
+  /* ==========================================================
+     MODAL OUTSIDE CLICK
+     ========================================================== */
+
+  $("productModal").addEventListener(
+    "click",
+    event=>{
+      if(
+        event.target ===
+        $("productModal")
+      ){
+        closeProductModal();
+      }
+    }
+  );
+
+
+  $("categoryModal").addEventListener(
+    "click",
+    event=>{
+      if(
+        event.target ===
+        $("categoryModal")
+      ){
+        closeCategoryModal();
+      }
+    }
+  );
+
+
+  /* ==========================================================
+     INITIAL LOAD
+     ========================================================== */
+
+  async function init(){
+
+    await loadDashboard();
+
+    await loadEcommerceDashboard();
+
+    await loadBusiness();
+
+    await loadEcommerceStore();
+
+  }
+
+
+  init();
+
+</script>
+
+</body>
+  </html>
