@@ -3117,7 +3117,187 @@
      MEDIA ROWS
      ========================================================== */
 
-  function addMediaRow(media={}){
+  function addMediaRow(media = {}) {
+
+  const row = document.createElement("div");
+
+  row.className = "media-row";
+
+  row.dataset.mediaId =
+    media.id || "";
+
+  row.innerHTML = `
+
+    <div class="media-row-grid">
+
+      <div>
+
+        <div class="media-preview-wrap">
+          <div class="media-preview"></div>
+        </div>
+
+      </div>
+
+      <div>
+
+        <div class="form-grid-3">
+
+          <div class="field">
+
+            <label>Media Type</label>
+
+            <select class="media-type">
+
+              <option value="image"
+                ${media.media_type === "image" ? "selected" : ""}>
+                Image
+              </option>
+
+              <option value="video"
+                ${media.media_type === "video" ? "selected" : ""}>
+                Video
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field full">
+
+            <label>Media URL</label>
+
+            <input
+              class="media-url"
+              type="url"
+              value="${escapeHTML(
+                media.media_url || ""
+              )}"
+              placeholder="Uploaded media URL">
+
+          </div>
+
+
+          <div class="field">
+
+            <label>Thumbnail URL</label>
+
+            <input
+              class="media-thumbnail"
+              type="url"
+              value="${escapeHTML(
+                media.thumbnail_url || ""
+              )}">
+
+          </div>
+
+
+          <div class="field">
+
+            <label>Alt Text</label>
+
+            <input
+              class="media-alt"
+              type="text"
+              value="${escapeHTML(
+                media.alt_text || ""
+              )}">
+
+          </div>
+
+
+          <div class="field">
+
+            <label>Caption</label>
+
+            <input
+              class="media-caption"
+              type="text"
+              value="${escapeHTML(
+                media.caption || ""
+              )}">
+
+          </div>
+
+        </div>
+
+
+        <div class="check-row">
+
+          <input
+            type="checkbox"
+            class="media-primary"
+            ${Number(media.is_primary || 0) === 1 ? "checked" : ""}>
+
+          <label>
+            Featured / Main Media
+          </label>
+
+        </div>
+
+
+        <div class="check-row">
+
+          <input
+            type="checkbox"
+            class="media-whatsapp"
+            ${Number(media.whatsapp_publish || 0) === 1 ? "checked" : ""}>
+
+          <label>
+            Publish to WhatsApp
+          </label>
+
+        </div>
+
+
+        <div class="actions">
+
+          <button
+            type="button"
+            class="btn btn-danger btn-small remove-media">
+            Remove
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  $("mediaContainer")
+    .appendChild(row);
+
+
+  row.querySelector(".remove-media")
+    .addEventListener("click", () => {
+
+      row.remove();
+
+    });
+
+
+  row.querySelector(".media-url")
+    .addEventListener("input", () => {
+
+      updateMediaPreview(row);
+
+    });
+
+
+  row.querySelector(".media-type")
+    .addEventListener("change", () => {
+
+      updateMediaPreview(row);
+
+    });
+
+
+  updateMediaPreview(row);
+
+                }
 
     const id =
       "media_" +
@@ -3322,6 +3502,85 @@
     "click",
     ()=>addMediaRow()
   );
+
+  $("productMediaUpload").addEventListener(
+  "change",
+  async (event) => {
+
+    const files = Array.from(
+      event.target.files || []
+    );
+
+    if (!files.length) {
+      return;
+    }
+
+    for (const file of files) {
+
+      try {
+
+        const formData = new FormData();
+
+        formData.append("file", file);
+
+        const response = await fetch(
+          "/api/media/upload",
+          {
+            method: "POST",
+            body: formData,
+            credentials: "include"
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.error ||
+            "Media upload failed"
+          );
+        }
+
+        addMediaRow({
+          media_type:
+            result.media_type,
+
+          media_url:
+            result.url,
+
+          thumbnail_url:
+            "",
+
+          alt_text:
+            file.name,
+
+          caption:
+            "",
+
+          is_primary:
+            0,
+
+          whatsapp_publish:
+            0
+        });
+
+      } catch (error) {
+
+        alert(
+          "Upload failed for " +
+          file.name +
+          ": " +
+          error.message
+        );
+
+      }
+
+    }
+
+    event.target.value = "";
+
+  }
+);
 
 
   function collectMedia(){
