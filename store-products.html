@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Store Products | Sky Blue Digital Service</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+
+    .topbar {
+      background: #0b4f9c;
+      color: white;
+      padding: 18px;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .topbar p {
+      margin: 5px 0 0;
+      opacity: .9;
+      font-size: 13px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 18px;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 15px;
+      color: #0b4f9c;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d8deea;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .primary {
+      background: #0b4f9c;
+      color: white;
+    }
+
+    .secondary {
+      background: #e9eef6;
+      color: #172033;
+    }
+
+    .danger {
+      background: #c62828;
+      color: white;
+    }
+
+    .success {
+      background: #18864b;
+      color: white;
+    }
+
+    .product {
+      border: 1px solid #e1e6ef;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .product-name {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .product-meta {
+      color: #657084;
+      font-size: 13px;
+      margin-top: 5px;
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 20px;
+      background: #e8f0ff;
+      color: #0b4f9c;
+      font-size: 11px;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .message.success {
+      background: #e8f7ef;
+      color: #176b3d;
+      display: block;
+    }
+
+    .message.error {
+      background: #fdecec;
+      color: #a51d1d;
+      display: block;
+    }
+
+    .media-list,
+    .variant-list {
+      margin-top: 10px;
+    }
+
+    .media-item,
+    .variant-item {
+      border: 1px solid #e1e6ef;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      background: #fafbfd;
+    }
+
+    .media-item strong,
+    .variant-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: normal;
+    }
+
+    .check input {
+      width: auto;
+    }
+
+    .section-title {
+      margin-top: 25px;
+      border-bottom: 1px solid #e5e9f0;
+      padding-bottom: 8px;
+      color: #0b4f9c;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px 10px;
+      color: #687386;
+    }
+
+    .loading {
+      color: #0b4f9c;
+      font-weight: bold;
+    }
+
+    @media (max-width: 700px) {
+      .grid,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .product-header {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <h1>Sky Blue Digital Service</h1>
+    <p>Ecommerce Product Management</p>
+  </div>
+
+  <div class="container">
+
+    <a class="back" href="/dashboard.html">← Back to Dashboard</a>
+
+    <div id="message" class="message"></div>
+
+    <!-- PRODUCT LIST -->
+    <div class="card">
+      <h2>Store Products</h2>
+
+      <div class="toolbar">
+        <div style="flex:1;min-width:220px;">
+          <input
+            id="search"
+            type="search"
+            placeholder="Search products..."
+            oninput="renderProducts()"
+          >
+        </div>
+
+        <button class="primary" onclick="newProduct()">
+          + Add Product
+        </button>
+
+        <button class="secondary" onclick="loadProducts()">
+          Reload
+        </button>
+      </div>
+
+      <div id="productsStatus" class="loading">
+        Loading products...
+      </div>
+
+      <div id="productsList"></div>
+    </div>
+
+    <!-- PRODUCT EDITOR -->
+    <div id="editor" class="card hidden">
+
+      <h2 id="editorTitle">Add Ecommerce Product</h2>
+
+      <form id="productForm">
+
+        <h3 class="section-title">Basic Information</h3>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>Product Name *</label>
+            <input id="name" required placeholder="e.g. HP ProBook 450 G10">
+          </div>
+
+          <div class="field">
+            <label>SKU</label>
+            <input id="sku" placeholder="e.g. HP-PB-450">
+          </div>
+
+          <div class="field">
+            <label>Barcode</label>
+            <input id="barcode" placeholder="Barcode">
+          </div>
+
+          <div class="field">
+            <label>Brand</label>
+            <input id="brand" placeholder="e.g. HP">
+          </div>
+
+        </div>
+
+        <div class="field">
+          <label>Short Description</label>
+          <textarea id="short_description"
+            placeholder="Short product description"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Full Description</label>
+          <textarea id="description"
+            placeholder="Detailed product description"></textarea>
+        </div>
+
+        <h3 class="section-title">Category</h3>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>Category</label>
+            <select id="category_id">
+              <option value="">Select category</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Subcategory</label>
+            <select id="parent_category_id">
+              <option value="">Select subcategory</option>
+            </select>
+          </div>
+
+        </div>
+
+        <h3 class="section-title">Pricing</h3>
+
+        <div class="grid-3">
+
+          <div class="field">
+            <label>Cost Price</label>
+            <input id="cost_price" type="number" step="0.01" min="0"
+              placeholder="0.00">
+          </div>
+
+          <div class="field">
+            <label>Selling Price *</label>
+            <input id="selling_price" type="number" step="0.01" min="0"
+              required placeholder="0.00">
+          </div>
+
+          <div class="field">
+            <label>Sale Price</label>
+            <input id="sale_price" type="number" step="0.01" min="0"
+              placeholder="0.00">
+          </div>
+
+        </div>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>VAT / Tax Rate (%)</label>
+            <input id="tax_rate" type="number" step="0.01" min="0"
+              placeholder="15">
+          </div>
+
+          <div class="field">
+            <label>Unit</label>
+            <input id="unit" placeholder="e.g. each, box, kg">
+          </div>
+
+        </div>
+
+        <h3 class="section-title">Inventory</h3>
+
+        <div class="grid-3">
+
+          <div class="field">
+            <label>Stock Quantity</label>
+            <input id="stock_quantity" type="number" step="0.01" min="0"
+              value="0">
+          </div>
+
+          <div class="field">
+            <label>Low Stock Threshold</label>
+            <input id="low_stock_level" type="number" step="0.01" min="0"
+              value="5">
+          </div>
+
+          <div class="field">
+            <label>Reorder Level</label>
+            <input id="reorder_level" type="number" step="0.01" min="0"
+              value="0">
+          </div>
+
+        </div>
+
+        <label class="check">
+          <input id="track_inventory" type="checkbox" checked>
+          Track inventory for this product
+        </label>
+
+        <h3 class="section-title">Product Type & Delivery</h3>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>Product Type</label>
+            <select id="product_type">
+              <option value="physical">Physical Product</option>
+              <option value="digital">Digital Product</option>
+              <option value="service">Service / Non-stock</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Weight (kg)</label>
+            <input id="weight" type="number" step="0.01" min="0"
+              placeholder="0.00">
+          </div>
+
+        </div>
+
+        <div class="grid-3">
+
+          <div class="field">
+            <label>Length (cm)</label>
+            <input id="length" type="number" step="0.01" min="0">
+          </div>
+
+          <div class="field">
+            <label>Width (cm)</label>
+            <input id="width" type="number" step="0.01" min="0">
+          </div>
+
+          <div class="field">
+            <label>Height (cm)</label>
+            <input id="height" type="number" step="0.01" min="0">
+          </div>
+
+        </div>
+
+        <h3 class="section-title">Product Media</h3>
+
+        <div class="field">
+          <label>Main Product Image URL</label>
+          <input id="image_url"
+            placeholder="https://example.com/product-image.jpg">
+        </div>
+
+        <div class="field">
+          <label>Additional Image / Video URL</label>
+          <input id="media_url"
+            placeholder="Image or video URL">
+        </div>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>Media Type</label>
+            <select id="media_type">
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Media Caption</label>
+            <input id="media_caption"
+              placeholder="Product image/video caption">
+          </div>
+
+        </div>
+
+        <label class="check">
+          <input id="media_whatsapp" type="checkbox">
+          Publish this media to WhatsApp
+        </label>
+
+        <div class="actions">
+          <button type="button" class="secondary"
+            onclick="addMedia()">
+            Add Media
+          </button>
+        </div>
+
+        <div id="mediaList" class="media-list"></div>
+
+        <h3 class="section-title">Product Variants</h3>
+
+        <p style="font-size:13px;color:#687386;">
+          Add variations such as size, colour, model or storage.
+        </p>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>Variant Name</label>
+            <input id="variant_name"
+              placeholder="e.g. Black / 256GB">
+          </div>
+
+          <div class="field">
+            <label>Variant SKU</label>
+            <input id="variant_sku"
+              placeholder="Variant SKU">
+          </div>
+
+          <div class="field">
+            <label>Variant Price</label>
+            <input id="variant_price"
+              type="number"
+              step="0.01"
+              min="0">
+          </div>
+
+          <div class="field">
+            <label>Variant Stock</label>
+            <input id="variant_stock"
+              type="number"
+              step="0.01"
+              min="0"
+              value="0">
+          </div>
+
+        </div>
+
+        <div class="field">
+          <label>Variant Options</label>
+          <input id="variant_options"
+            placeholder='Example: {"colour":"Black","storage":"256GB"}'>
+        </div>
+
+        <button type="button"
+          class="secondary"
+          onclick="addVariant()">
+          Add Variant
+        </button>
+
+        <div id="variantList" class="variant-list"></div>
+
+        <h3 class="section-title">SEO & Store Visibility</h3>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>Product Slug / URL</label>
+            <input id="slug"
+              placeholder="hp-probook-450-g10">
+          </div>
+
+          <div class="field">
+            <label>SEO Title</label>
+            <input id="seo_title"
+              placeholder="Product SEO title">
+          </div>
+
+        </div>
+
+        <div class="field">
+          <label>SEO Description</label>
+          <textarea id="seo_description"
+            placeholder="Search engine description"></textarea>
+        </div>
+
+        <div class="grid">
+
+          <div class="field">
+            <label>Product Status</label>
+            <select id="status">
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+              <option value="hidden">Hidden</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="check" style="margin-top:25px;">
+              <input id="featured" type="checkbox">
+              Featured Product
+            </label>
+          </div>
+
+        </div>
+
+        <div class="actions">
+
+          <button type="submit" class="primary">
+            Save Product
+          </button>
+
+          <button type="button"
+            class="secondary"
+            onclick="closeEditor()">
+            Cancel
+          </button>
+
+          <button type="button"
+            id="deleteButton"
+            class="danger hidden"
+            onclick="deleteCurrentProduct()">
+            Delete Product
+          </button>
+
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+
+<script>
+  const API_BASE = "/api/core";
+
+  let products = [];
+  let categories = [];
+  let editingProductId = null;
+  let mediaItems = [];
+  let variantItems = [];
+
+  function showMessage(message, type = "success") {
+    const el = document.getElementById("message");
+
+    el.textContent = message;
+    el.className = "message " + type;
+
+    setTimeout(() => {
+      el.className = "message";
+      el.textContent = "";
+    }, 5000);
+  }
+
+  async function apiFetch(path, options = {}) {
+    const response = await fetch(API_BASE + path, {
+      credentials: "same-origin",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      }
+    });
+
+    let data = {};
+
+    try {
+      data = await response.json();
+    } catch {
+      data = {
+        success: false,
+        error: "Server returned an invalid response."
+      };
+    }
+
+    if (!response.ok || data.success === false) {
+      throw new Error(
+        data.error ||
+        data.message ||
+        "Request failed."
+      );
+    }
+
+    return data;
+  }
+
+  async function loadProducts() {
+    const status = document.getElementById("productsStatus");
+
+    status.textContent = "Loading products...";
+
+    try {
+      const data = await apiFetch(
+        "/ecommerce/products"
+      );
+
+      products =
+        data.products ||
+        data.data ||
+        [];
+
+      status.textContent =
+        products.length +
+        " product(s) found.";
+
+      renderProducts();
+
+    } catch (error) {
+      status.textContent = "Unable to load products.";
+      showMessage(error.message, "error");
+    }
+  }
+
+  async function loadCategories() {
+    try {
+      const data = await apiFetch(
+        "/ecommerce/categories"
+      );
+
+      categories =
+        data.categories ||
+        data.data ||
+        [];
+
+      populateCategories();
+
+    } catch (error) {
+      console.warn(
+        "Category loading failed:",
+        error.message
+      );
+    }
+  }
+
+  function populateCategories() {
+    const category =
+      document.getElementById("category_id");
+
+    const subcategory =
+      document.getElementById("parent_category_id");
+
+    category.innerHTML =
+      '<option value="">Select category</option>';
+
+    subcategory.innerHTML =
+      '<option value="">Select subcategory</option>';
+
+    categories.forEach(item => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = item.id;
+      option.textContent = item.name;
+
+      category.appendChild(option);
+
+    });
+
+    categories.forEach(item => {
+
+      if (item.parent_id) {
+
+        const option =
+          document.createElement("option");
+
+        option.value = item.id;
+        option.textContent = item.name;
+
+        subcategory.appendChild(option);
+      }
+
+    });
+  }
+
+  function renderProducts() {
+
+    const list =
+      document.getElementById("productsList");
+
+    const search =
+      document.getElementById("search")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const filtered =
+      products.filter(product => {
+
+        const text = [
+          product.name,
+          product.sku,
+          product.barcode,
+          product.brand,
+          product.category
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        return text.includes(search);
+      });
+
+    if (!filtered.length) {
+
+      list.innerHTML = `
+        <div class="empty">
+          No Ecommerce products found.
+          <br><br>
+          Tap <strong>+ Add Product</strong> to create your first product.
+        </div>
+      `;
+
+      return;
+    }
+
+    list.innerHTML = filtered.map(product => {
+
+      const price =
+        Number(
+          product.sale_price ||
+          product.selling_price ||
+          0
+        ).toFixed(2);
+
+      const stock =
+        Number(
+          product.stock_quantity || 0
+        );
+
+      const status =
+        product.status ||
+        (Number(product.active) === 1
+          ? "active"
+          : "hidden");
+
+      return `
+        <div class="product">
+
+          <div class="product-header">
+
+            <div>
+
+              <div class="product-name">
+                ${escapeHtml(product.name || "Unnamed Product")}
+              </div>
+
+              <div class="product-meta">
+                SKU:
+                ${escapeHtml(product.sku || "—")}
+                <br>
+
+                Price:
+                <strong>R${price}</strong>
+                <br>
+
+                Stock:
+                ${stock}
+
+                ${stock <= Number(product.low_stock_level || 0)
+                  ? '<span class="badge">LOW STOCK</span>'
+                  : ''
+                }
+
+              </div>
+
+            </div>
+
+            <div>
+              <span class="badge">
+                ${escapeHtml(status)}
+              </span>
+
+              ${Number(product.featured) === 1
+                ? '<span class="badge">FEATURED</span>'
+                : ''
+              }
+
+            </div>
+
+          </div>
+
+          <div class="actions">
+
+            <button
+              class="primary"
+              onclick="editProduct(${Number(product.id)})">
+              Edit
+            </button>
+
+            <button
+              class="secondary"
+              onclick="manageMedia(${Number(product.id)})">
+              Media
+            </button>
+
+            <button
+              class="secondary"
+              onclick="manageVariants(${Number(product.id)})">
+              Variants
+            </button>
+
+            <button
+              class="danger"
+              onclick="deleteProduct(${Number(product.id)})">
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+  }
+
+  function newProduct() {
+
+    editingProductId = null;
+    mediaItems = [];
+    variantItems = [];
+
+    document.getElementById("editorTitle")
+      .textContent =
+      "Add Ecommerce Product";
+
+    document.getElementById("productForm")
+      .reset();
+
+    document.getElementById("track_inventory")
+      .checked = true;
+
+    document.getElementById("stock_quantity")
+      .value = 0;
+
+    document.getElementById("low_stock_level")
+      .value = 5;
+
+    document.getElementById("reorder_level")
+      .value = 0;
+
+    document.getElementById("deleteButton")
+      .classList.add("hidden");
+
+    renderMedia();
+    renderVariants();
+
+    document.getElementById("editor")
+      .classList.remove("hidden");
+
+    window.scrollTo({
+      top: document.getElementById("editor").offsetTop - 10,
+      behavior: "smooth"
+    });
+  }
+
+  async function editProduct(id) {
+
+    try {
+
+      const data =
+        await apiFetch(
+          "/ecommerce/products/" + id
+        );
+
+      const product =
+        data.product ||
+        data.data;
+
+      if (!product) {
+        throw new Error("Product not found.");
+      }
+
+      editingProductId = id;
+
+      document.getElementById("editorTitle")
+        .textContent =
+        "Edit Ecommerce Product";
+
+      setValue("name", product.name);
+      setValue("sku", product.sku);
+      setValue("barcode", product.barcode);
+      setValue("brand", product.brand);
+      setValue("short_description",
+        product.short_description);
+      setValue("description",
+        product.description);
+      setValue("category_id",
+        product.category_id);
+      setValue("parent_category_id",
+        product.parent_id);
+      setValue("cost_price",
+        product.cost_price);
+      setValue("selling_price",
+        product.selling_price);
+      setValue("sale_price",
+        product.sale_price);
+      setValue("tax_rate",
+        product.tax_rate);
+      setValue("unit", product.unit);
+      setValue("stock_quantity",
+        product.stock_quantity || 0);
+      setValue("low_stock_level",
+        product.low_stock_level || 5);
+      setValue("reorder_level",
+        product.reorder_level || 0);
+      setValue("product_type",
+        product.product_type || "physical");
+      setValue("weight", product.weight);
+      setValue("length", product.length);
+      setValue("width", product.width);
+      setValue("height", product.height);
+      setValue("image_url",
+        product.image_url);
+      setValue("slug", product.slug);
+      setValue("seo_title",
+        product.seo_title);
+      setValue("seo_description",
+        product.seo_description);
+      setValue("status",
+        product.status ||
+        (Number(product.active) === 1
+          ? "active"
+          : "hidden"));
+
+      document.getElementById("track_inventory")
+        .checked =
+        Number(product.track_inventory) !== 0;
+
+      document.getElementById("featured")
+        .checked =
+        Number(product.featured) === 1;
+
+      document.getElementById("deleteButton")
+        .classList.remove("hidden");
+
+      mediaItems = [];
+      variantItems = [];
+
+      renderMedia();
+      renderVariants();
+
+      document.getElementById("editor")
+        .classList.remove("hidden");
+
+      window.scrollTo({
+        top: document.getElementById("editor").offsetTop - 10,
+        behavior: "smooth"
+      });
+
+    } catch (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+    }
+  }
+
+  function setValue(id, value) {
+
+    const el =
+      document.getElementById(id);
+
+    if (!el) return;
+
+    el.value =
+      value === null ||
+      value === undefined
+        ? ""
+        : value;
+  }
+
+  async function saveProduct(event) {
+
+    event.preventDefault();
+
+    const product = {
+
+      name:
+        document.getElementById("name").value.trim(),
+
+      sku:
+        document.getElementById("sku").value.trim(),
+
+      barcode:
+        document.getElementById("barcode").value.trim(),
+
+      brand:
+        document.getElementById("brand").value.trim(),
+
+      short_description:
+        document.getElementById("short_description").value.trim(),
+
+      description:
+        document.getElementById("description").value.trim(),
+
+      category_id:
+        numberOrNull("category_id"),
+
+      parent_id:
+        numberOrNull("parent_category_id"),
+
+      cost_price:
+        numberOrZero("cost_price"),
+
+      selling_price:
+        numberOrZero("selling_price"),
+
+      sale_price:
+        numberOrNull("sale_price"),
+
+      tax_rate:
+        numberOrZero("tax_rate"),
+
+      unit:
+        document.getElementById("unit").value.trim(),
+
+      stock_quantity:
+        numberOrZero("stock_quantity"),
+
+      low_stock_level:
+        numberOrZero("low_stock_level"),
+
+      reorder_level:
+        numberOrZero("reorder_level"),
+
+      track_inventory:
+        document.getElementById("track_inventory").checked
+          ? 1
+          : 0,
+
+      product_type:
+        document.getElementById("product_type").value,
+
+      weight:
+        numberOrNull("weight"),
+
+      length:
+        numberOrNull("length"),
+
+      width:
+        numberOrNull("width"),
+
+      height:
+        numberOrNull("height"),
+
+      image_url:
+        document.getElementById("image_url").value.trim(),
+
+      slug:
+        document.getElementById("slug").value.trim(),
+
+      seo_title:
+        document.getElementById("seo_title").value.trim(),
+
+      seo_description:
+        document.getElementById("seo_description").value.trim(),
+
+      status:
+        document.getElementById("status").value,
+
+      featured:
+        document.getElementById("featured").checked
+          ? 1
+          : 0
+    };
+
+    if (!product.name) {
+      showMessage(
+        "Product name is required.",
+        "error"
+      );
+      return;
+    }
+
+    if (
+      product.selling_price === null ||
+      product.selling_price < 0
+    ) {
+      showMessage(
+        "Selling price is required.",
+        "error"
+      );
+      return;
+    }
+
+    try {
+
+      let data;
+
+      if (editingProductId) {
+
+        data =
+          await apiFetch(
+            "/ecommerce/products/" +
+            editingProductId,
+            {
+              method: "PATCH",
+              body: JSON.stringify(product)
+            }
+          );
+
+      } else {
+
+        data =
+          await apiFetch(
+            "/ecommerce/products",
+            {
+              method: "POST",
+              body: JSON.stringify(product)
+            }
+          );
+      }
+
+      const savedProduct =
+        data.product ||
+        data.data;
+
+      const savedId =
+        savedProduct?.id ||
+        editingProductId;
+
+      await saveExtraData(savedId);
+
+      showMessage(
+        editingProductId
+          ? "Product updated successfully."
+          : "Product created successfully."
+      );
+
+      closeEditor();
+
+      await loadProducts();
+
+    } catch (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+    }
+  }
+
+  async function saveExtraData(productId) {
+
+    if (!productId) return;
+
+    for (const media of mediaItems) {
+
+      try {
+
+        await apiFetch(
+          "/ecommerce/media",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              product_id: productId,
+              ...media
+            })
+          }
+        );
+
+      } catch (error) {
+
+        console.warn(
+          "Media save failed:",
+          error.message
+        );
+      }
+    }
+
+    for (const variant of variantItems) {
+
+      try {
+
+        await apiFetch(
+          "/ecommerce/products/" +
+          productId +
+          "/variants",
+          {
+            method: "POST",
+            body: JSON.stringify(variant)
+          }
+        );
+
+      } catch (error) {
+
+        console.warn(
+          "Variant save failed:",
+          error.message
+        );
+      }
+    }
+  }
+
+  function addMedia() {
+
+    const url =
+      document.getElementById("media_url")
+        .value.trim();
+
+    if (!url) {
+
+      showMessage(
+        "Enter a media URL first.",
+        "error"
+      );
+
+      return;
+    }
+
+    mediaItems.push({
+
+      media_type:
+        document.getElementById("media_type").value,
+
+      media_url: url,
+
+      caption:
+        document.getElementById("media_caption").value.trim(),
+
+      whatsapp_publish:
+        document.getElementById("media_whatsapp").checked
+          ? 1
+          : 0,
+
+      active: 1
+
+    });
+
+    document.getElementById("media_url")
+      .value = "";
+
+    document.getElementById("media_caption")
+      .value = "";
+
+    document.getElementById("media_whatsapp")
+      .checked = false;
+
+    renderMedia();
+  }
+
+  function renderMedia() {
+
+    const list =
+      document.getElementById("mediaList");
+
+    if (!mediaItems.length) {
+
+      list.innerHTML = "";
+
+      return;
+    }
+
+    list.innerHTML =
+      mediaItems.map((item, index) => `
+        <div class="media-item">
+
+          <strong>
+            ${escapeHtml(item.media_type)}
+          </strong>
+
+          <div style="font-size:12px;word-break:break-all;">
+            ${escapeHtml(item.media_url)}
+          </div>
+
+          <div style="font-size:12px;margin-top:5px;">
+            ${item.whatsapp_publish
+              ? "✓ WhatsApp publishing enabled"
+              : "WhatsApp publishing disabled"
+            }
+          </div>
+
+          <button
+            type="button"
+            class="danger"
+            style="margin-top:8px;"
+            onclick="removeMedia(${index})">
+            Remove
+          </button>
+
+        </div>
+      `).join("");
+  }
+
+  function removeMedia(index) {
+
+    mediaItems.splice(index, 1);
+
+    renderMedia();
+  }
+
+  function addVariant() {
+
+    const name =
+      document.getElementById("variant_name")
+        .value.trim();
+
+    if (!name) {
+
+      showMessage(
+        "Enter a variant name.",
+        "error"
+      );
+
+      return;
+    }
+
+    let options = {};
+
+    const raw =
+      document.getElementById("variant_options")
+        .value.trim();
+
+    if (raw) {
+
+      try {
+        options = JSON.parse(raw);
+      } catch {
+
+        showMessage(
+          "Variant options must be valid JSON.",
+          "error"
+        );
+
+        return;
+      }
+    }
+
+    variantItems.push({
+
+      variant_name: name,
+
+      sku:
+        document.getElementById("variant_sku")
+          .value.trim(),
+
+      selling_price:
+        numberOrZero("variant_price"),
+
+      stock_quantity:
+        numberOrZero("variant_stock"),
+
+      option_values_json:
+        JSON.stringify(options),
+
+      active: 1
+
+    });
+
+    document.getElementById("variant_name")
+      .value = "";
+
+    document.getElementById("variant_sku")
+      .value = "";
+
+    document.getElementById("variant_price")
+      .value = "";
+
+    document.getElementById("variant_stock")
+      .value = 0;
+
+    document.getElementById("variant_options")
+      .value = "";
+
+    renderVariants();
+  }
+
+  function renderVariants() {
+
+    const list =
+      document.getElementById("variantList");
+
+    if (!variantItems.length) {
+
+      list.innerHTML = "";
+
+      return;
+    }
+
+    list.innerHTML =
+      variantItems.map((item, index) => `
+        <div class="variant-item">
+
+          <strong>
+            ${escapeHtml(item.variant_name)}
+          </strong>
+
+          <div style="font-size:12px;">
+            SKU:
+            ${escapeHtml(item.sku || "—")}
+            <br>
+            Price:
+            R${Number(
+              item.selling_price || 0
+            ).toFixed(2)}
+            <br>
+            Stock:
+            ${Number(
+              item.stock_quantity || 0
+            )}
+          </div>
+
+          <button
+            type="button"
+            class="danger"
+            style="margin-top:8px;"
+            onclick="removeVariant(${index})">
+            Remove
+          </button>
+
+        </div>
+      `).join("");
+  }
+
+  function removeVariant(index) {
+
+    variantItems.splice(index, 1);
+
+    renderVariants();
+  }
+
+  async function manageMedia(id) {
+
+    try {
+
+      const data =
+        await apiFetch(
+          "/ecommerce/media?product_id=" + id
+        );
+
+      const items =
+        data.media ||
+        data.items ||
+        [];
+
+      if (!items.length) {
+
+        showMessage(
+          "This product has no media yet."
+        );
+
+        return;
+      }
+
+      const whatsapp =
+        items.filter(
+          item =>
+            Number(item.whatsapp_publish) === 1
+        ).length;
+
+      showMessage(
+        items.length +
+        " media item(s) found. " +
+        whatsapp +
+        " marked for WhatsApp."
+      );
+
+    } catch (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+    }
+  }
+
+  async function manageVariants(id) {
+
+    try {
+
+      const data =
+        await apiFetch(
+          "/ecommerce/products/" +
+          id +
+          "/variants"
+        );
+
+      const items =
+        data.variants ||
+        data.items ||
+        [];
+
+      showMessage(
+        items.length +
+        " variant(s) found."
+      );
+
+    } catch (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+    }
+  }
+
+  async function deleteProduct(id) {
+
+    if (
+      !confirm(
+        "Delete this product? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    try {
+
+      await apiFetch(
+        "/ecommerce/products/" + id,
+        {
+          method: "DELETE"
+        }
+      );
+
+      showMessage(
+        "Product deleted successfully."
+      );
+
+      await loadProducts();
+
+    } catch (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+    }
+  }
+
+  async function deleteCurrentProduct() {
+
+    if (!editingProductId) return;
+
+    await deleteProduct(
+      editingProductId
+    );
+
+    closeEditor();
+  }
+
+  function closeEditor() {
+
+    document.getElementById("editor")
+      .classList.add("hidden");
+
+    editingProductId = null;
+  }
+
+  function numberOrZero(id) {
+
+    const value =
+      document.getElementById(id)
+        .value;
+
+    if (value === "") return 0;
+
+    const number =
+      Number(value);
+
+    return Number.isFinite(number)
+      ? number
+      : 0;
+  }
+
+  function numberOrNull(id) {
+
+    const value =
+      document.getElementById(id)
+        .value;
+
+    if (value === "") return null;
+
+    const number =
+      Number(value);
+
+    return Number.isFinite(number)
+      ? number
+      : null;
+  }
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  document
+    .getElementById("productForm")
+    .addEventListener(
+      "submit",
+      saveProduct
+    );
+
+  loadCategories();
+  loadProducts();
+
+</script>
+
+</body>
+  </html>
