@@ -2182,8 +2182,9 @@ export async function createEcommerceProduct(
   const result = await env.DB.prepare(
     `
       INSERT INTO saas_products (
-        account_id,
-        module_code,
+          organisation_id,
+  account_id,
+  module_code,
 
         name,
         sku,
@@ -2236,8 +2237,9 @@ export async function createEcommerceProduct(
         active
       )
       VALUES (
-        ?,
-        'ecommerce',
+  ?,
+  ?,
+  'ecommerce',
 
         ?,
         ?,
@@ -2292,7 +2294,9 @@ export async function createEcommerceProduct(
     `
   )
     .bind(
-      account,
+  organisationId,
+  account,
+  name,
 
       name,
       sku,
