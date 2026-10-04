@@ -565,14 +565,6 @@ export async function ensureEcommerceTables(env) {
   await env.DB.prepare(
     `
       CREATE INDEX IF NOT EXISTS
-      idx_ecommerce_categories_account
-      ON ecommerce_categories(account_id)
-    `
-  ).run();
-
-  await env.DB.prepare(
-    `
-      CREATE INDEX IF NOT EXISTS
       idx_ecommerce_categories_parent
       ON ecommerce_categories(account_id, parent_id)
     `
@@ -879,6 +871,14 @@ export async function ensureEcommerceTables(env) {
       "INTEGER DEFAULT 1"
     );
   }
+
+    await env.DB.prepare(
+    `
+      CREATE INDEX IF NOT EXISTS
+      idx_ecommerce_categories_parent
+      ON ecommerce_categories(account_id, parent_id)
+    `
+  ).run();
 
   /*
    * Existing orders table upgrades.
