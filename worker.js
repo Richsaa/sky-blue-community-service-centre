@@ -1306,6 +1306,63 @@ export default {
     }
 
     // =========================================================
+// PRODUCT MEDIA SERVING — CLOUDFLARE R2
+// =========================================================
+
+if (
+  url.pathname.startsWith("/media/") &&
+  request.method === "GET"
+) {
+  try {
+    if (!env.MEDIA) {
+      return new Response("Media storage is not configured", {
+        status: 500
+      });
+    }
+
+    const mediaKey = decodeURIComponent(
+      url.pathname.slice("/media/".length)
+    );
+
+    if (!mediaKey) {
+      return new Response("Media file not found", {
+        status: 404
+      });
+    }
+
+    const object = await env.MEDIA.get(mediaKey);
+
+    if (!object) {
+      return new Response("Media file not found", {
+        status: 404
+      });
+    }
+
+    const headers = new Headers();
+
+    object.writeHttpMetadata(headers);
+
+    headers.set("etag", object.httpEtag);
+    headers.set(
+      "cache-control",
+      "public, max-age=31536000, immutable"
+    );
+
+    return new Response(object.body, {
+      status: 200,
+      headers
+    });
+
+  } catch (error) {
+    console.error("PRODUCT MEDIA SERVING ERROR:", error);
+
+    return new Response("Unable to load media", {
+      status: 500
+    });
+  }
+}
+
+    // =========================================================
     // CURRENT CUSTOMER
     // =========================================================
 
@@ -1334,6 +1391,126 @@ export default {
           publicAccount(account)
       });
     }
+    
+    // =========================================================
+// PRODUCT MEDIA UPLOAD — CLOUDFLARE R2
+// =========================================================
+
+if (
+  url.pathname === "/api/media/upload" &&
+  request.method === "POST"
+) {
+  try {
+    if (!account?.id) {
+      return jsonResponse(
+        {
+          success: false,
+          error: "Authentication required"
+        },
+        401
+      );
+    }
+
+    if (!env.MEDIA) {
+      return jsonResponse(
+        {
+          success: false,
+          error: "Media storage is not configured"
+        },
+        500
+      );
+    }
+
+    const formData = await request.formData();
+    const file = formData.get("file");
+
+    if (!(file instanceof File)) {
+      return jsonResponse(
+        {
+          success: false,
+          error: "No file was uploaded"
+        },
+        400
+      );
+    }
+
+    const contentType = file.type || "";
+
+    const isImage = contentType.startsWith("image/");
+    const isVideo = contentType.startsWith("video/");
+
+    if (!isImage && !isVideo) {
+      return jsonResponse(
+        {
+          success: false,
+          error: "Only image and video files are allowed"
+        },
+        400
+      );
+    }
+
+    // Maximum direct upload size: 50 MB
+    const maxSize = 50 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      return jsonResponse(
+        {
+          success: false,
+          error: "File is too large. Maximum size is 50 MB."
+        },
+        413
+      );
+    }
+
+    const originalName = file.name || "media";
+
+    const safeName = originalName
+      .replace(/[^a-zA-Z0-9._-]/g, "-")
+      .replace(/-+/g, "-")
+      .slice(0, 120);
+
+    const mediaType = isVideo ? "video" : "image";
+
+    const mediaKey =
+      `ecommerce/${account.id}/${crypto.randomUUID()}-${safeName}`;
+
+    await env.MEDIA.put(
+      mediaKey,
+      file,
+      {
+        httpMetadata: {
+          contentType
+        },
+        customMetadata: {
+          accountId: String(account.id),
+          mediaType,
+          originalName
+        }
+      }
+    );
+
+    return jsonResponse({
+      success: true,
+      media_type: mediaType,
+      key: mediaKey,
+      url: `/media/${mediaKey}`,
+      filename: originalName,
+      size: file.size,
+      content_type: contentType
+    });
+
+  } catch (error) {
+    console.error("PRODUCT MEDIA UPLOAD ERROR:", error);
+
+    return jsonResponse(
+      {
+        success: false,
+        error: error?.message || "Media upload failed"
+      },
+      500
+    );
+  }
+  }
     
  // =========================================================
 // CUSTOMER LOGOUT
