@@ -3,8 +3,6 @@
  *
  * HTTP route layer for the shared Sky Blue SaaS Core API.
  *
- * This file connects:
- *
  * Business Workspace
  *        ↓
  * SaaS Core Routes
@@ -60,6 +58,37 @@ import {
 
 
 /* =========================================================
+   ECOMMERCE CORE API
+========================================================= */
+
+import {
+  ensureEcommerceTables,
+
+  getEcommerceStore,
+  saveEcommerceStore,
+
+  listEcommerceCategories,
+  createEcommerceCategory,
+  updateEcommerceCategory,
+  deleteEcommerceCategory,
+
+  listEcommerceMedia,
+  createEcommerceMedia,
+  updateEcommerceMedia,
+  deleteEcommerceMedia,
+
+  listWhatsAppProductMedia,
+
+  listEcommerceOrders,
+  getEcommerceOrder,
+  createEcommerceOrder,
+  updateEcommerceOrder,
+
+  getEcommerceDashboard
+} from "./ecommerce-core-api.js";
+
+
+/* =========================================================
    HELPERS
 ========================================================= */
 
@@ -111,20 +140,6 @@ function getModuleCode(url, body = {}) {
 }
 
 
-/*
- * The module code is required for records that belong
- * to a specific industry module.
- *
- * Examples:
- *
- * pharmacy
- * salon-barber
- * laundry
- * ecommerce
- * food-business
- * wholesale-grocery
- * etc.
- */
 function requireModuleCode(url, body = {}) {
 
   const moduleCode =
@@ -1009,6 +1024,538 @@ export async function handleSaaSCoreRoute(
 
 
   /* =======================================================
+     ECOMMERCE INITIALISATION
+  ======================================================= */
+
+  if (
+    path.startsWith(
+      "/api/core/ecommerce"
+    )
+  ) {
+
+    /*
+     * Make sure Ecommerce tables exist before
+     * handling any Ecommerce request.
+     */
+
+    await ensureEcommerceTables(
+      env
+    );
+
+
+    /* =====================================================
+       ECOMMERCE DASHBOARD
+    ===================================================== */
+
+    if (
+      (
+        path ===
+        "/api/core/ecommerce/dashboard"
+      ) &&
+      method === "GET"
+    ) {
+
+      const result =
+        await getEcommerceDashboard(
+          env,
+          accountId
+        );
+
+      return json(
+        result
+      );
+
+    }
+
+
+    /* =====================================================
+       ECOMMERCE STATUS
+    ===================================================== */
+
+    if (
+      (
+        path ===
+        "/api/core/ecommerce/status"
+      ) &&
+      method === "GET"
+    ) {
+
+      const result =
+        await getEcommerceDashboard(
+          env,
+          accountId
+        );
+
+      return json({
+        success: true,
+        ecommerce: result
+      });
+
+    }
+
+
+    /* =====================================================
+       ECOMMERCE STORE
+    ===================================================== */
+
+    if (
+      path ===
+      "/api/core/ecommerce/store"
+    ) {
+
+      if (method === "GET") {
+
+        const store =
+          await getEcommerceStore(
+            env,
+            accountId
+          );
+
+        return json({
+          success: true,
+          store
+        });
+
+      }
+
+
+      if (
+        method === "POST" ||
+        method === "PUT" ||
+        method === "PATCH"
+      ) {
+
+        const body =
+          await readJSON(
+            request
+          );
+
+        const result =
+          await saveEcommerceStore(
+            env,
+            accountId,
+            body
+          );
+
+        return json(
+          result
+        );
+
+      }
+
+    }
+
+
+    /* =====================================================
+       ECOMMERCE CATEGORIES
+    ===================================================== */
+
+    if (
+      path ===
+      "/api/core/ecommerce/categories"
+    ) {
+
+      if (method === "GET") {
+
+        const result =
+          await listEcommerceCategories(
+            env,
+            accountId
+          );
+
+        return json(
+          result
+        );
+
+      }
+
+
+      if (method === "POST") {
+
+        const body =
+          await readJSON(
+            request
+          );
+
+        const result =
+          await createEcommerceCategory(
+            env,
+            accountId,
+            body
+          );
+
+        return json(
+          result,
+          201
+        );
+
+      }
+
+    }
+
+
+    const ecommerceCategoryMatch =
+      path.match(
+        /^\/api\/core\/ecommerce\/categories\/(\d+)$/
+      );
+
+
+    if (
+      ecommerceCategoryMatch &&
+      (
+        method === "PATCH" ||
+        method === "PUT"
+      )
+    ) {
+
+      const categoryId =
+        Number(
+          ecommerceCategoryMatch[1]
+        );
+
+      const body =
+        await readJSON(
+          request
+        );
+
+      const result =
+        await updateEcommerceCategory(
+          env,
+          accountId,
+          categoryId,
+          body
+        );
+
+      return json(
+        result
+      );
+
+    }
+
+
+    if (
+      ecommerceCategoryMatch &&
+      method === "DELETE"
+    ) {
+
+      const categoryId =
+        Number(
+          ecommerceCategoryMatch[1]
+        );
+
+      const result =
+        await deleteEcommerceCategory(
+          env,
+          accountId,
+          categoryId
+        );
+
+      return json(
+        result
+      );
+
+    }
+
+
+    /* =====================================================
+       ECOMMERCE PRODUCT MEDIA
+    ===================================================== */
+
+    if (
+      path ===
+      "/api/core/ecommerce/media"
+    ) {
+
+      if (method === "GET") {
+
+        const productId =
+          url.searchParams.get(
+            "product_id"
+          );
+
+        const result =
+          await listEcommerceMedia(
+            env,
+            accountId,
+            productId
+          );
+
+        return json(
+          result
+        );
+
+      }
+
+
+      if (method === "POST") {
+
+        const body =
+          await readJSON(
+            request
+          );
+
+        const result =
+          await createEcommerceMedia(
+            env,
+            accountId,
+            body
+          );
+
+        return json(
+          result,
+          201
+        );
+
+      }
+
+    }
+
+
+    const ecommerceMediaMatch =
+      path.match(
+        /^\/api\/core\/ecommerce\/media\/(\d+)$/
+      );
+
+
+    if (
+      ecommerceMediaMatch &&
+      (
+        method === "PATCH" ||
+        method === "PUT"
+      )
+    ) {
+
+      const mediaId =
+        Number(
+          ecommerceMediaMatch[1]
+        );
+
+      const body =
+        await readJSON(
+          request
+        );
+
+      const result =
+        await updateEcommerceMedia(
+          env,
+          accountId,
+          mediaId,
+          body
+        );
+
+      return json(
+        result
+      );
+
+    }
+
+
+    if (
+      ecommerceMediaMatch &&
+      method === "DELETE"
+    ) {
+
+      const mediaId =
+        Number(
+          ecommerceMediaMatch[1]
+        );
+
+      const result =
+        await deleteEcommerceMedia(
+          env,
+          accountId,
+          mediaId
+        );
+
+      return json(
+        result
+      );
+
+    }
+
+
+    /* =====================================================
+       WHATSAPP PRODUCT MEDIA
+    ===================================================== */
+
+    if (
+      path ===
+      "/api/core/ecommerce/whatsapp-media" &&
+      method === "GET"
+    ) {
+
+      const result =
+        await listWhatsAppProductMedia(
+          env,
+          accountId
+        );
+
+      return json(
+        result
+      );
+
+    }
+
+
+    /* =====================================================
+       ECOMMERCE ORDERS
+    ===================================================== */
+
+    if (
+      path ===
+      "/api/core/ecommerce/orders"
+    ) {
+
+      if (method === "GET") {
+
+        const result =
+          await listEcommerceOrders(
+            env,
+            accountId,
+            {
+              status:
+                url.searchParams.get(
+                  "status"
+                ) || "",
+
+              payment_status:
+                url.searchParams.get(
+                  "payment_status"
+                ) || "",
+
+              limit:
+                url.searchParams.get(
+                  "limit"
+                ) || 100,
+
+              offset:
+                url.searchParams.get(
+                  "offset"
+                ) || 0
+            }
+          );
+
+        return json(
+          result
+        );
+
+      }
+
+
+      if (method === "POST") {
+
+        const body =
+          await readJSON(
+            request
+          );
+
+        const result =
+          await createEcommerceOrder(
+            env,
+            accountId,
+            body
+          );
+
+        return json(
+          result,
+          201
+        );
+
+      }
+
+    }
+
+
+    const ecommerceOrderMatch =
+      path.match(
+        /^\/api\/core\/ecommerce\/orders\/(\d+)$/
+      );
+
+
+    if (
+      ecommerceOrderMatch &&
+      method === "GET"
+    ) {
+
+      const orderId =
+        Number(
+          ecommerceOrderMatch[1]
+        );
+
+      const result =
+        await getEcommerceOrder(
+          env,
+          accountId,
+          orderId
+        );
+
+      if (
+        !result ||
+        result.success === false
+      ) {
+
+        return json({
+          success: false,
+          error:
+            "Order not found"
+        }, 404);
+
+      }
+
+      return json(
+        result
+      );
+
+    }
+
+
+    if (
+      ecommerceOrderMatch &&
+      (
+        method === "PATCH" ||
+        method === "PUT"
+      )
+    ) {
+
+      const orderId =
+        Number(
+          ecommerceOrderMatch[1]
+        );
+
+      const body =
+        await readJSON(
+          request
+        );
+
+      const result =
+        await updateEcommerceOrder(
+          env,
+          accountId,
+          orderId,
+          body
+        );
+
+      return json(
+        result
+      );
+
+    }
+
+
+    /* =====================================================
+       UNKNOWN ECOMMERCE ROUTE
+    ===================================================== */
+
+    return json({
+      success: false,
+      error:
+        "Ecommerce endpoint not found"
+    }, 404);
+
+  }
+
+
+  /* =======================================================
      NO CORE ROUTE MATCH
   ======================================================= */
 
@@ -1040,4 +1587,4 @@ export function coreRouteError(
     error: message
   }, 400);
 
-      }
+}
