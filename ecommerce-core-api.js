@@ -1975,8 +1975,24 @@ export async function createEcommerceProduct(
 ) {
   const account = accountNumber(accountId);
 
-  await ensureEcommerceTables(env);
+    await ensureEcommerceTables(env);
   await ensureEcommerceProductColumns(env);
+
+  const organisation = await env.DB.prepare(`
+    SELECT o.id
+    FROM customer_accounts ca
+    INNER JOIN saas_organisations o
+      ON o.legacy_tenant_id = ca.tenant_id
+    WHERE ca.id = ?
+      AND o.status = 'active'
+    LIMIT 1
+  `).bind(account).first();
+
+  if (!organisation?.id) {
+    throw new Error("Active organisation not found for this account");
+  }
+
+  const organisationId = Number(organisation.id);
 
   const name = clean(data.name);
 
