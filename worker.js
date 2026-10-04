@@ -1442,14 +1442,12 @@ if (
     }
 
     const coreResponse =
-      await handleSaaSCoreRoute(
-        env,
-        request,
-        url,
-        account,
-        json
-      );
-
+  await handleSaaSCoreRoute(
+    request,
+    env,
+    account
+  );
+    
     if (coreResponse) {
       return coreResponse;
     }
