@@ -8099,27 +8099,6 @@ async function handlePublicEcommerceRoutes(
   return null;
 }
 
-
-// ============================================================
-// CUSTOMER MODULE ROUTES
-// ============================================================
-
-async function handleCustomerModuleRoutes(
-  request,
-  env,
-  url,
-  account
-) {
-  if (
-    !url.pathname.startsWith(
-      "/api/modules"
-    )
-  ) {
-    return null;
-  }
-
-  await ensureSaaSModuleTables(env);
-
   // ----------------------------------------------------------
   // PUBLIC MODULE CATALOGUE
   // ----------------------------------------------------------
