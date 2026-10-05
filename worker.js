@@ -7883,27 +7883,6 @@ function normaliseRouteError(
 // ============================================================
 
 
-// ============================================================
-// PUBLIC E-COMMERCE ROUTES
-// ============================================================
-
-async function handlePublicEcommerceRoutes(
-  request,
-  env,
-  url
-) {
-  if (
-    !url.pathname.startsWith(
-      "/api/store"
-    ) &&
-    !url.pathname.startsWith(
-      "/api/public/store"
-    )
-  ) {
-    return null;
-  }
-
-  await ensureEcommerceTables(env);
 
   // ----------------------------------------------------------
   // PUBLIC STORE PRODUCTS
