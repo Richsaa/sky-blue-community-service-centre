@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Sky Blue Digital Service — Store Products</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    .topbar {
+      background: #0b3d91;
+      color: white;
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .topbar p {
+      margin: 5px 0 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+      border: 1px solid #e1e7ef;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    h3 {
+      margin-top: 22px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .field {
+      margin-bottom: 13px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #ccd4df;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 15px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #0b67d1;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #edf2f7;
+      color: #17324d;
+    }
+
+    .btn-danger {
+      background: #c62828;
+      color: white;
+    }
+
+    .actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .status {
+      display: none;
+      padding: 11px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.info {
+      background: #eaf3ff;
+      color: #12549a;
+    }
+
+    .status.success {
+      background: #e8f7ee;
+      color: #126536;
+    }
+
+    .status.error {
+      background: #fdecec;
+      color: #9d1c1c;
+    }
+
+    .upload-box {
+      border: 2px dashed #b8cbe1;
+      background: #f7fbff;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .upload-box strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .upload-box input {
+      margin-top: 12px;
+      background: white;
+    }
+
+    .muted {
+      color: #68758a;
+      font-size: 13px;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .media-item {
+      border: 1px solid #dfe6ee;
+      border-radius: 9px;
+      padding: 9px;
+      background: white;
+    }
+
+    .media-item img,
+    .media-item video {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      border-radius: 7px;
+      background: #e9edf2;
+    }
+
+    .media-name {
+      font-size: 12px;
+      margin-top: 7px;
+      word-break: break-word;
+    }
+
+    .media-remove {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 750px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e7ebf0;
+      text-align: left;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f7f9fc;
+    }
+
+    .thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 7px;
+      background: #edf1f5;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 20px;
+      background: #e7f7ed;
+      color: #126536;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #718096;
+    }
+
+    @media (max-width: 750px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .media-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 10px;
+      }
+
+      .media-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions button {
+        width: 100%;
+      }
+
+      .media-item img,
+      .media-item video {
+        height: 210px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <h1>SKY BLUE — Store Products</h1>
+    <p>Sky Blue Digital Service • Products, Pictures & Videos</p>
+  </header>
+
+  <main class="container">
+
+    <!-- GENERAL STATUS -->
+    <div id="status" class="status"></div>
+
+    <!-- PRODUCT FORM -->
+    <section class="card">
+
+      <h2 id="formTitle">Add Store Product</h2>
+
+      <p class="muted">
+        Add your product information and upload pictures or videos
+        directly from your phone. You do not need to enter media URLs.
+      </p>
+
+      <input type="hidden" id="productId">
+
+      <div class="grid">
+
+        <div class="field">
+          <label>Product Name *</label>
+          <input
+            type="text"
+            id="productName"
+            placeholder="Example: Samsung 55 inch Smart TV"
+          >
+        </div>
+
+        <div class="field">
+          <label>SKU</label>
+          <input
+            type="text"
+            id="productSku"
+            placeholder="Example: TV-55-001"
+          >
+        </div>
+
+        <div class="field">
+          <label>Category</label>
+          <select id="productCategory">
+            <option value="">Select category</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Brand</label>
+          <input
+            type="text"
+            id="productBrand"
+            placeholder="Example: Samsung"
+          >
+        </div>
+
+        <div class="field">
+          <label>Selling Price (R) *</label>
+          <input
+            type="number"
+            id="productPrice"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+          >
+        </div>
+
+        <div class="field">
+          <label>Sale Price (R)</label>
+          <input
+            type="number"
+            id="productSalePrice"
+            min="0"
+            step="0.01"
+            placeholder="Optional"
+          >
+        </div>
+
+        <div class="field">
+          <label>Stock Quantity</label>
+          <input
+            type="number"
+            id="productStock"
+            min="0"
+            step="1"
+            value="0"
+          >
+        </div>
+
+        <div class="field">
+          <label>Status</label>
+          <select id="productStatus">
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="field">
+        <label>Short Description</label>
+
+        <textarea
+          id="productShortDescription"
+          placeholder="Short description of the product"
+        ></textarea>
+      </div>
+
+      <div class="field">
+        <label>Full Description</label>
+
+        <textarea
+          id="productDescription"
+          placeholder="Detailed product description"
+        ></textarea>
+      </div>
+
+      <!-- MEDIA -->
+      <h3>📷 Product Pictures & 🎥 Videos</h3>
+
+      <div class="upload-box">
+
+        <strong>
+          Upload directly from your phone
+        </strong>
+
+        <div class="muted">
+          Select one or multiple pictures and videos.
+          No URL is required.
+        </div>
+
+        <input
+          type="file"
+          id="productMediaFiles"
+          accept="image/*,video/*"
+          multiple
+        >
+
+      </div>
+
+      <div
+        id="mediaStatus"
+        class="status"
+      ></div>
+
+      <div
+        id="mediaPreview"
+        class="media-grid"
+      ></div>
+
+      <!-- BUTTONS -->
+      <div class="actions">
+
+        <button
+          type="button"
+          class="btn-primary"
+          id="saveProductBtn"
+        >
+          💾 Save Product
+        </button>
+
+        <button
+          type="button"
+          class="btn-secondary"
+          id="clearProductBtn"
+        >
+          🆕 Clear / New Product
+        </button>
+
+        <button
+          type="button"
+          class="btn-secondary"
+          id="backDashboardBtn"
+        >
+          ← Back to Dashboard
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- PRODUCT LIST -->
+    <section class="card">
+
+      <h2>🛍 Store Products</h2>
+
+      <button
+        type="button"
+        class="btn-primary"
+        id="refreshProductsBtn"
+      >
+        🔄 Refresh Products
+      </button>
+
+      <div
+        class="table-wrapper"
+        style="margin-top:15px;"
+      >
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Media</th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody id="productsTable">
+
+            <tr>
+              <td
+                colspan="7"
+                class="empty"
+              >
+                Loading products...
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+<script>
+
+"use strict";
+
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
+const API_BASE = "/api/core";
+
+let products = [];
+let uploadedMedia = [];
+let editingProductId = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function money(value) {
+
+  return new Intl.NumberFormat(
+    "en-ZA",
+    {
+      style: "currency",
+      currency: "ZAR"
+    }
+  ).format(Number(value || 0));
+
+}
+
+
+function showStatus(
+  message,
+  type = "info"
+) {
+
+  const element = $("status");
+
+  element.className =
+    "status show " + type;
+
+  element.textContent = message;
+
+}
+
+
+function showMediaStatus(
+  message,
+  type = "info"
+) {
+
+  const element = $("mediaStatus");
+
+  element.className =
+    "status show " + type;
+
+  element.textContent = message;
+
+}
+
+
+/* =========================================================
+   API REQUEST
+========================================================= */
+
+async function apiRequest(
+  path,
+  options = {}
+) {
+
+  const headers = {
+    ...(options.headers || {})
+  };
+
+  if (
+    options.body &&
+    !(options.body instanceof FormData)
+  ) {
+
+    headers["Content-Type"] =
+      "application/json";
+
+  }
+
+  const response =
+    await fetch(
+      API_BASE + path,
+      {
+        credentials: "include",
+        ...options,
+        headers
+      }
+    );
+
+  let data = {};
+
+  try {
+
+    data =
+      await response.json();
+
+  } catch {
+
+    data = {};
+
+  }
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Request failed"
+    );
+
+  }
+
+  return data;
+
+}
+
+
+/* =========================================================
+   MEDIA UPLOAD
+========================================================= */
+
+async function uploadMediaFile(
+  file
+) {
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    "file",
+    file
+  );
+
+  const response =
+    await fetch(
+      "/api/media/upload",
+      {
+        method: "POST",
+        credentials: "include",
+        body: formData
+      }
+    );
+
+  let data = {};
+
+  try {
+
+    data =
+      await response.json();
+
+  } catch {
+
+    data = {};
+
+  }
+
+  if (
+    !response.ok ||
+    data.success === false
+  ) {
+
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Media upload failed"
+    );
+
+  }
+
+  return {
+
+    media_type:
+      data.media_type ||
+      (
+        file.type.startsWith("video/")
+          ? "video"
+          : "image"
+      ),
+
+    media_url:
+      data.url ||
+      data.media_url,
+
+    thumbnail_url:
+      data.thumbnail_url || "",
+
+    alt_text:
+      file.name,
+
+    caption:
+      "",
+
+    is_primary:
+      uploadedMedia.length === 0
+        ? 1
+        : 0,
+
+    whatsapp_publish:
+      0
+
+  };
+
+}
+
+
+/* =========================================================
+   MEDIA PREVIEW
+========================================================= */
+
+function renderMediaPreview() {
+
+  const container =
+    $("mediaPreview");
+
+  if (!uploadedMedia.length) {
+
+    container.innerHTML = "";
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    uploadedMedia
+      .map(
+        (media, index) => {
+
+          let visual = "";
+
+          if (
+            media.media_type ===
+            "video"
+          ) {
+
+            visual = `
+              <video
+                src="${escapeHTML(
+                  media.media_url
+                )}"
+                controls
+                playsinline
+              ></video>
+            `;
+
+          } else {
+
+            visual = `
+              <img
+                src="${escapeHTML(
+                  media.media_url
+                )}"
+                alt="${escapeHTML(
+                  media.alt_text ||
+                  "Product image"
+                )}"
+              >
+            `;
+
+          }
+
+
+          return `
+            <div class="media-item">
+
+              ${visual}
+
+              <div class="media-name">
+                ${escapeHTML(
+                  media.alt_text ||
+                  "Uploaded media"
+                )}
+              </div>
+
+              <button
+                type="button"
+                class="btn-danger media-remove"
+                onclick="removeMedia(${index})"
+              >
+                Remove
+              </button>
+
+            </div>
+          `;
+
+        }
+      )
+      .join("");
+
+}
+
+
+/* =========================================================
+   REMOVE MEDIA
+========================================================= */
+
+window.removeMedia =
+function(index) {
+
+  uploadedMedia.splice(
+    index,
+    1
+  );
+
+
+  if (
+    uploadedMedia.length &&
+    !uploadedMedia.some(
+      item =>
+        Number(item.is_primary) === 1
+    )
+  ) {
+
+    uploadedMedia[0].is_primary = 1;
+
+  }
+
+
+  renderMediaPreview();
+
+};
+
+
+/* =========================================================
+   PHONE FILE SELECTION
+========================================================= */
+
+$("productMediaFiles")
+  .addEventListener(
+    "change",
+    async function(event) {
+
+      const files =
+        Array.from(
+          event.target.files || []
+        );
+
+
+      if (!files.length) {
+
+        return;
+
+      }
+
+
+      try {
+
+        showMediaStatus(
+          "Uploading pictures and videos...",
+          "info"
+        );
+
+
+        for (
+          const file of files
+        ) {
+
+          const uploaded =
+            await uploadMediaFile(
+              file
+            );
+
+          if (
+            !uploaded.media_url
+          ) {
+
+            throw new Error(
+              "The server did not return a media URL."
+            );
+
+          }
+
+
+          uploadedMedia.push(
+            uploaded
+          );
+
+
+          renderMediaPreview();
+
+        }
+
+
+        showMediaStatus(
+          "All selected pictures and videos uploaded successfully.",
+          "success"
+        );
+
+      } catch (error) {
+
+        showMediaStatus(
+          error.message,
+          "error"
+        );
+
+      }
+
+
+      event.target.value = "";
+
+    }
+  );
+
+
+/* =========================================================
+   LOAD CATEGORIES
+========================================================= */
+
+async function loadCategories() {
+
+  const data =
+    await apiRequest(
+      "/ecommerce/categories"
+    );
+
+
+  const categories =
+    Array.isArray(
+      data.categories
+    )
+      ? data.categories
+      : (
+          Array.isArray(data.data)
+            ? data.data
+            : []
+        );
+
+
+  $("productCategory")
+    .innerHTML =
+      `
+        <option value="">
+          Select category
+        </option>
+      ` +
+      categories
+        .map(
+          category =>
+            `
+              <option
+                value="${escapeHTML(
+                  category.id
+                )}"
+              >
+                ${escapeHTML(
+                  category.name
+                )}
+              </option>
+            `
+        )
+        .join("");
+
+}
+
+
+/* =========================================================
+   LOAD PRODUCTS
+========================================================= */
+
+async function loadProducts() {
+
+  const table =
+    $("productsTable");
+
+
+  table.innerHTML = `
+    <tr>
+      <td
+        colspan="7"
+        class="empty"
+      >
+        Loading products...
+      </td>
+    </tr>
+  `;
+
+
+  try {
+
+    const data =
+      await apiRequest(
+        "/ecommerce/products"
+      );
+
+
+    products =
+      Array.isArray(
+        data.products
+      )
+        ? data.products
+        : (
+            Array.isArray(data.data)
+              ? data.data
+              : []
+          );
+
+
+    if (!products.length) {
+
+      table.innerHTML = `
+        <tr>
+          <td
+            colspan="7"
+            class="empty"
+          >
+            No store products yet.
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    table.innerHTML =
+      products
+        .map(
+          product => {
+
+            const media =
+              Array.isArray(
+                product.media
+              )
+                ? product.media
+                : (
+                    Array.isArray(
+                      product.media_items
+                    )
+                      ? product.media_items
+                      : []
+                  );
+
+
+            const firstMedia =
+              media.find(
+                item =>
+                  item.media_url
+              );
+
+
+            let preview =
+              `<span class="muted">
+                No media
+              </span>`;
+
+
+            if (firstMedia) {
+
+              if (
+                firstMedia.media_type ===
+                "video"
+              ) {
+
+                preview =
+                  `
+                    <span class="badge">
+                      🎥 VIDEO
+                    </span>
+                  `;
+
+              } else {
+
+                preview =
+                  `
+                    <img
+                      class="thumb"
+                      src="${escapeHTML(
+                        firstMedia.media_url
+                      )}"
+                      alt="Product image"
+                    >
+                  `;
+
+              }
+
+            }
+
+
+            return `
+              <tr>
+
+                <td>
+                  ${preview}
+                </td>
+
+                <td>
+                  <strong>
+                    ${escapeHTML(
+                      product.name ||
+                      "-"
+                    )}
+                  </strong>
+                </td>
+
+                <td>
+                  ${escapeHTML(
+                    product.sku ||
+                    "-"
+                  )}
+                </td>
+
+                <td>
+                  ${money(
+                    product.selling_price ??
+                    product.price
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHTML(
+                    product.stock_quantity ??
+                    product.stock ??
+                    0
+                  )}
+                </td>
+
+                <td>
+                  <span class="badge">
+                    ${escapeHTML(
+                      product.status ||
+                      "active"
+                    )}
+                  </span>
+                </td>
+
+                <td>
+
+                  <button
+                    type="button"
+                    class="btn-secondary"
+                    onclick="editProduct(${Number(
+                      product.id
+                    )})"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-danger"
+                    onclick="deleteProduct(${Number(
+                      product.id
+                    )})"
+                  >
+                    Delete
+                  </button>
+
+                </td>
+
+              </tr>
+            `;
+
+          }
+        )
+        .join("");
+
+  } catch (error) {
+
+    table.innerHTML = `
+      <tr>
+        <td
+          colspan="7"
+          class="empty"
+        >
+          ${escapeHTML(
+            error.message
+          )}
+        </td>
+      </tr>
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   CLEAR FORM
+========================================================= */
+
+function clearProductForm() {
+
+  editingProductId = null;
+
+  uploadedMedia = [];
+
+  $("formTitle").textContent =
+    "Add Store Product";
+
+  $("productId").value = "";
+
+  $("productName").value = "";
+
+  $("productSku").value = "";
+
+  $("productCategory").value = "";
+
+  $("productBrand").value = "";
+
+  $("productPrice").value = "";
+
+  $("productSalePrice").value = "";
+
+  $("productStock").value = "0";
+
+  $("productStatus").value =
+    "active";
+
+  $("productShortDescription")
+    .value = "";
+
+  $("productDescription")
+    .value = "";
+
+  $("productMediaFiles")
+    .value = "";
+
+  $("mediaStatus").className =
+    "status";
+
+  $("saveProductBtn")
+    .textContent =
+    "💾 Save Product";
+
+  renderMediaPreview();
+
+}
+
+
+/* =========================================================
+   PRODUCT PAYLOAD
+========================================================= */
+
+function getProductPayload() {
+
+  const name =
+    $("productName")
+      .value
+      .trim();
+
+
+  const price =
+    Number(
+      $("productPrice").value
+    );
+
+
+  if (!name) {
+
+    throw new Error(
+      "Product name is required."
+    );
+
+  }
+
+
+  if (
+    !Number.isFinite(price)
+  ) {
+
+    throw new Error(
+      "Selling price is required."
+    );
+
+  }
+
+
+  return {
+
+    name,
+
+    sku:
+      $("productSku")
+        .value
+        .trim(),
+
+    brand:
+      $("productBrand")
+        .value
+        .trim(),
+
+    category_id:
+      $("productCategory").value
+        ? Number(
+            $("productCategory").value
+          )
+        : null,
+
+    short_description:
+      $("productShortDescription")
+        .value
+        .trim(),
+
+    description:
+      $("productDescription")
+        .value
+        .trim(),
+
+    selling_price:
+      price,
+
+    sale_price:
+      $("productSalePrice")
+        .value === ""
+        ? null
+        : Number(
+            $("productSalePrice").value
+          ),
+
+    stock_quantity:
+      Number(
+        $("productStock").value ||
+        0
+      ),
+
+    track_inventory:
+      1,
+
+    status:
+      $("productStatus").value,
+
+    product_type:
+      "physical",
+
+    featured:
+      0,
+
+    is_featured:
+      0,
+
+    downloadable:
+      0,
+
+    media:
+      uploadedMedia.map(
+        media => ({
+          ...media
+        })
+      )
+
+  };
+
+}
+
+
+/* =========================================================
+   SAVE PRODUCT
+========================================================= */
+
+$("saveProductBtn")
+  .addEventListener(
+    "click",
+    async function() {
+
+      try {
+
+        this.disabled = true;
+
+        showStatus(
+          editingProductId
+            ? "Updating product..."
+            : "Saving product...",
+          "info"
+        );
+
+
+        const payload =
+          getProductPayload();
+
+
+        if (
+          editingProductId
+        ) {
+
+          await apiRequest(
+            "/ecommerce/products/" +
+            encodeURIComponent(
+              editingProductId
+            ),
+            {
+              method: "PATCH",
+              body:
+                JSON.stringify(
+                  payload
+                )
+            }
+          );
+
+
+          showStatus(
+            "Product updated successfully.",
+            "success"
+          );
+
+        } else {
+
+          await apiRequest(
+            "/ecommerce/products",
+            {
+              method: "POST",
+              body:
+                JSON.stringify(
+                  payload
+                )
+            }
+          );
+
+
+          showStatus(
+            "Product created successfully.",
+            "success"
+          );
+
+        }
+
+
+        clearProductForm();
+
+        await loadProducts();
+
+      } catch (error) {
+
+        showStatus(
+          error.message,
+          "error"
+        );
+
+      } finally {
+
+        this.disabled = false;
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   EDIT PRODUCT
+========================================================= */
+
+window.editProduct =
+async function(id) {
+
+  try {
+
+    showStatus(
+      "Loading product...",
+      "info"
+    );
+
+
+    const data =
+      await apiRequest(
+        "/ecommerce/products/" +
+        encodeURIComponent(id)
+      );
+
+
+    const product =
+      data.product ||
+      data.data ||
+      data;
+
+
+    editingProductId =
+      product.id ||
+      id;
+
+
+    $("formTitle").textContent =
+      "Edit Store Product";
+
+
+    $("productId").value =
+      editingProductId;
+
+
+    $("productName").value =
+      product.name || "";
+
+
+    $("productSku").value =
+      product.sku || "";
+
+
+    $("productBrand").value =
+      product.brand || "";
+
+
+    $("productCategory").value =
+      product.category_id || "";
+
+
+    $("productPrice").value =
+      product.selling_price ??
+      product.price ??
+      "";
+
+
+    $("productSalePrice").value =
+      product.sale_price ??
+      "";
+
+
+    $("productStock").value =
+      product.stock_quantity ??
+      product.stock ??
+      0;
+
+
+    $("productStatus").value =
+      product.status ||
+      "active";
+
+
+    $("productShortDescription")
+      .value =
+        product.short_description ||
+        "";
+
+
+    $("productDescription")
+      .value =
+        product.description ||
+        "";
+
+
+    uploadedMedia =
+      Array.isArray(
+        product.media
+      )
+        ? product.media
+        : (
+            Array.isArray(
+              product.media_items
+            )
+              ? product.media_items
+              : []
+          );
+
+
+    renderMediaPreview();
+
+
+    $("saveProductBtn")
+      .textContent =
+      "💾 Update Product";
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+
+    showStatus(
+      "Product loaded. You can edit it and upload more pictures or videos.",
+      "info"
+    );
+
+  } catch (error) {
+
+    showStatus(
+      error.message,
+      "error"
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   DELETE PRODUCT
+========================================================= */
+
+window.deleteProduct =
+async function(id) {
+
+  const product =
+    products.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
+
+
+  if (!product) {
+
+    return;
+
+  }
+
+
+  const confirmed =
+    confirm(
+      'Delete product "' +
+      (
+        product.name ||
+        ""
+      ) +
+      '"?'
+    );
+
+
+  if (!confirmed) {
+
+    return;
+
+  }
+
+
+  try {
+
+    showStatus(
+      "Deleting product...",
+      "info"
+    );
+
+
+    await apiRequest(
+      "/ecommerce/products/" +
+      encodeURIComponent(id),
+      {
+        method: "DELETE"
+      }
+    );
+
+
+    showStatus(
+      "Product deleted successfully.",
+      "success"
+    );
+
+
+    await loadProducts();
+
+  } catch (error) {
+
+    showStatus(
+      error.message,
+      "error"
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+$("clearProductBtn")
+  .addEventListener(
+    "click",
+    clearProductForm
+  );
+
+
+$("refreshProductsBtn")
+  .addEventListener(
+    "click",
+    loadProducts
+  );
+
+
+$("backDashboardBtn")
+  .addEventListener(
+    "click",
+    function() {
+
+      window.location.href =
+        "/dashboard.html";
+
+    }
+  );
+
+
+/* =========================================================
+   INITIALISE
+========================================================= */
+
+async function init() {
+
+  try {
+
+    await loadCategories();
+
+    await loadProducts();
+
+    renderMediaPreview();
+
+  } catch (error) {
+
+    showStatus(
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+init();
+
+</script>
+
+</body>
+  </html>
