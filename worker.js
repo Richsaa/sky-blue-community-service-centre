@@ -54,15 +54,18 @@ export default {
     // BASIC API HEALTH CHECK
     // =========================================================
 
-    if (url.pathname === "/api" && request.method === "GET") {
-      return new Response(
-        "Sky Blue Digital Service API is running",
-        {
-          status: 200,
-          headers: corsHeaders
-        }
-      );
+    if (
+  (url.pathname === "/api" || url.pathname === "/api/health") &&
+  request.method === "GET"
+) {
+  return new Response(
+    "Sky Blue Digital Service API is running",
+    {
+      status: 200,
+      headers: corsHeaders
     }
+  );
+   }
 
     // =========================================================
     // CUSTOMER AUTHENTICATION SYSTEM
