@@ -8076,7 +8076,6 @@ function normaliseRouteError(
   }
 
   return null;
-}
 
 // ============================================================
 // OWNER / ADMIN ACCOUNT OVERVIEW
