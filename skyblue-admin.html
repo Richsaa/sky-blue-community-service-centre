@@ -1,0 +1,2904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0759a5">
+<title>Sky Blue Admin</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7fb;
+  color:#172033;
+}
+
+header{
+  background:linear-gradient(135deg,#063b7a,#0b5ed7);
+  color:#fff;
+  padding:18px;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+
+.header-inner{
+  max-width:1450px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.brand h1{
+  margin:0;
+  font-size:25px;
+}
+
+.brand p{
+  margin:5px 0 0;
+  opacity:.9;
+  font-size:13px;
+}
+
+.container{
+  max-width:1450px;
+  margin:auto;
+  padding:18px;
+}
+
+.card{
+  background:#fff;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 3px 14px rgba(0,0,0,.07);
+}
+
+.login-card{
+  max-width:430px;
+  margin:80px auto;
+}
+
+h2,h3{
+  margin-top:0;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccd4df;
+  border-radius:8px;
+  font-size:14px;
+  margin:5px 0 12px;
+  background:#fff;
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  padding:10px 15px;
+  cursor:pointer;
+  font-weight:600;
+  background:#0759a5;
+  color:#fff;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+.btn-secondary{
+  background:#edf4fc;
+  color:#0759a5;
+}
+
+.btn-danger{
+  background:#b42318;
+  color:#fff;
+}
+
+.btn-success{
+  background:#16804b;
+  color:#fff;
+}
+
+.btn-small{
+  padding:7px 10px;
+  font-size:12px;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.muted{
+  color:#667085;
+  font-size:13px;
+}
+
+.error{
+  color:#b42318;
+  margin-top:10px;
+}
+
+.success{
+  color:#16804b;
+  margin-top:10px;
+}
+
+.notice{
+  padding:13px;
+  border-radius:9px;
+  background:#fff7df;
+  margin-bottom:15px;
+  font-size:14px;
+}
+
+.support-notice{
+  background:#e8f7ef;
+  border-left:4px solid #16804b;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.stat{
+  background:#fff;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 3px 14px rgba(0,0,0,.06);
+}
+
+.stat-label{
+  color:#667085;
+  font-size:13px;
+}
+
+.stat-value{
+  font-size:28px;
+  font-weight:700;
+  color:#0759a5;
+  margin-top:7px;
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:8px;
+  margin-bottom:10px;
+}
+
+.tabs button{
+  white-space:nowrap;
+}
+
+.tabs button.active{
+  background:#063b7a;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:750px;
+}
+
+th,
+td{
+  padding:11px;
+  border-bottom:1px solid #e7ebf0;
+  text-align:left;
+  font-size:13px;
+  vertical-align:top;
+}
+
+th{
+  background:#edf4fc;
+  color:#0759a5;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 9px;
+  border-radius:20px;
+  background:#e9f2ff;
+  color:#0759a5;
+  font-size:12px;
+  margin:2px;
+}
+
+.badge-green{
+  background:#e7f7ed;
+  color:#16804b;
+}
+
+.badge-red{
+  background:#fdecec;
+  color:#b42318;
+}
+
+.badge-orange{
+  background:#fff1df;
+  color:#a15c00;
+}
+
+.customer-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.two-column{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.action-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.customer-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+.customer-name{
+  font-size:22px;
+  font-weight:700;
+}
+
+.dashboard-preview{
+  background:#f7f9fc;
+  border:1px solid #e1e6ed;
+  border-radius:10px;
+  padding:14px;
+  max-height:450px;
+  overflow:auto;
+}
+
+pre{
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-size:12px;
+}
+
+.module-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+
+.product-row{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr auto;
+  gap:8px;
+  align-items:center;
+  margin-bottom:8px;
+}
+
+.loading{
+  text-align:center;
+  padding:30px;
+  color:#667085;
+}
+
+@media(max-width:800px){
+
+  .header-inner{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .customer-grid,
+  .two-column{
+    grid-template-columns:1fr;
+  }
+
+  .product-row{
+    grid-template-columns:1fr;
+  }
+
+  .container{
+    padding:10px;
+  }
+
+  .card{
+    padding:14px;
+  }
+
+  .stat-value{
+    font-size:23px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+
+    <div class="brand">
+      <h1>Sky Blue Admin</h1>
+      <p>Platform administration & remote customer support</p>
+    </div>
+
+    <button
+      class="btn-secondary"
+      onclick="clearAdmin()">
+      Clear Admin Access
+    </button>
+
+  </div>
+</header>
+
+
+<!-- LOGIN -->
+
+<div id="loginScreen" class="container">
+
+  <div class="card login-card">
+
+    <h2>Sky Blue Admin</h2>
+
+    <p class="muted">
+      Secure administration and customer support centre.
+    </p>
+
+    <label>Admin Key</label>
+
+    <input
+      id="adminKey"
+      type="password"
+      placeholder="Enter ADMIN_KEY">
+
+    <button
+      style="width:100%"
+      onclick="login()">
+      Enter Admin
+    </button>
+
+    <div
+      id="loginMessage"
+      class="error">
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ADMIN APPLICATION -->
+
+<main
+  id="adminApplication"
+  class="container hidden">
+
+
+  <!-- DASHBOARD STATS -->
+
+  <div class="stats">
+
+    <div class="stat">
+      <div class="stat-label">
+        Customers
+      </div>
+
+      <div
+        id="statCustomers"
+        class="stat-value">
+        0
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-label">
+        Active Subscriptions
+      </div>
+
+      <div
+        id="statSubscriptions"
+        class="stat-value">
+        0
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-label">
+        Revenue
+      </div>
+
+      <div
+        id="statRevenue"
+        class="stat-value">
+        R0.00
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-label">
+        Ecommerce Stores
+      </div>
+
+      <div
+        id="statStores"
+        class="stat-value">
+        0
+      </div>
+    </div>
+
+
+    <div class="stat">
+      <div class="stat-label">
+        Ecommerce Orders
+      </div>
+
+      <div
+        id="statOrders"
+        class="stat-value">
+        0
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- MAIN TABS -->
+
+  <div class="tabs">
+
+    <button
+      class="active"
+      onclick="showTab('customersTab',this)">
+      Customers
+    </button>
+
+    <button
+      onclick="showTab('subscriptionsTab',this)">
+      Subscriptions
+    </button>
+
+    <button
+      onclick="showTab('paymentsTab',this)">
+      PayFast
+    </button>
+
+    <button
+      onclick="showTab('storesTab',this)">
+      Ecommerce
+    </button>
+
+    <button
+      onclick="showTab('ordersTab',this)">
+      Orders
+    </button>
+
+    <button
+      onclick="showTab('activityTab',this)">
+      Activity
+    </button>
+
+  </div>
+
+
+  <!-- CUSTOMERS -->
+
+  <section
+    id="customersTab"
+    class="card">
+
+    <h2>Customers</h2>
+
+    <input
+      id="customerSearch"
+      placeholder="Search customers..."
+      oninput="renderCustomers()">
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Joined</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="customerRows">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- SUBSCRIPTIONS -->
+
+  <section
+    id="subscriptionsTab"
+    class="card hidden">
+
+    <h2>Subscriptions</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Module</th>
+            <th>Plan</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Account</th>
+            <th>Date</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="subscriptionRows">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- PAYFAST -->
+
+  <section
+    id="paymentsTab"
+    class="card hidden">
+
+    <h2>PayFast Payments</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Payment ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>PayFast ID</th>
+            <th>Date</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="paymentRows">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- ECOMMERCE -->
+
+  <section
+    id="storesTab"
+    class="card hidden">
+
+    <h2>Ecommerce Stores</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Store</th>
+            <th>Slug</th>
+            <th>Status</th>
+            <th>Published</th>
+            <th>Account</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="storeRows">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- ORDERS -->
+
+  <section
+    id="ordersTab"
+    class="card hidden">
+
+    <h2>Ecommerce Orders</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Order</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="orderRows">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- ACTIVITY -->
+
+  <section
+    id="activityTab"
+    class="card hidden">
+
+    <h2>Remote Support Activity</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Customer</th>
+            <th>Action</th>
+            <th>Details</th>
+            <th>Date</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="activityRows">
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+
+  <!-- CUSTOMER SUPPORT -->
+
+  <section
+    id="customerSupport"
+    class="hidden">
+
+
+    <div class="customer-header">
+
+      <div>
+
+        <div
+          id="supportCustomerName"
+          class="customer-name">
+          Customer
+        </div>
+
+        <div
+          id="supportCustomerEmail"
+          class="muted">
+        </div>
+
+      </div>
+
+
+      <div class="action-row">
+
+        <button
+          class="btn-secondary"
+          onclick="closeSupport()">
+          Back
+        </button>
+
+        <button
+          class="btn-danger"
+          onclick="endSupport()">
+          End Support Session
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="notice support-notice">
+
+      <strong>Remote Support Mode</strong>
+
+      <br>
+
+      You are assisting this customer remotely.
+      Changes made during this session should be treated as support actions.
+
+    </div>
+
+
+    <!-- PROFILE -->
+
+    <div class="card">
+
+      <h2>Business Profile</h2>
+
+      <div class="customer-grid">
+
+        <div>
+
+          <label>Business Name</label>
+
+          <input id="businessName">
+
+          <label>Industry</label>
+
+          <input id="businessIndustry">
+
+          <label>Phone</label>
+
+          <input id="businessPhone">
+
+          <label>WhatsApp</label>
+
+          <input id="businessWhatsapp">
+
+        </div>
+
+
+        <div>
+
+          <label>Email</label>
+
+          <input id="businessEmail">
+
+          <label>Address</label>
+
+          <input id="businessAddress">
+
+          <label>Website</label>
+
+          <input id="businessWebsite">
+
+          <br>
+
+          <button onclick="saveProfile()">
+            Save Business Profile
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- CUSTOMER DASHBOARD -->
+
+    <div class="card">
+
+      <h2>Customer Dashboard View</h2>
+
+      <p class="muted">
+        This shows the information currently available to the customer's dashboard.
+      </p>
+
+      <div
+        id="customerDashboardView"
+        class="dashboard-preview">
+        Loading...
+      </div>
+
+      <br>
+
+      <button
+        class="btn-secondary"
+        onclick="refreshCustomer()">
+        Refresh Customer
+      </button>
+
+    </div>
+
+
+    <!-- MODULES -->
+
+    <div class="card">
+
+      <h2>Customer Modules</h2>
+
+      <div
+        id="customerModules"
+        class="module-list">
+      </div>
+
+    </div>
+
+
+    <!-- ECOMMERCE SUPPORT -->
+
+    <div class="card">
+
+      <h2>Ecommerce Remote Support</h2>
+
+      <div id="storeSupport">
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+
+    <div class="card">
+
+      <h2>Products</h2>
+
+      <div
+        id="productAddForm">
+      </div>
+
+      <br>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Action</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="customerProducts">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- ORDERS -->
+
+    <div class="card">
+
+      <h2>Customer Orders</h2>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Status</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="customerOrders">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- PAYMENTS -->
+
+    <div class="card">
+
+      <h2>Customer Payments</h2>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Payment</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>PayFast ID</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="customerPayments">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- SUPPORT INFORMATION -->
+
+    <div class="card">
+
+      <h2>Support Session</h2>
+
+      <div class="notice">
+
+        <strong>Session ID:</strong>
+
+        <span id="supportSessionId"></span>
+
+        <br><br>
+
+        All supported changes should be performed through the
+        Admin support controls.
+
+      </div>
+
+      <button
+        class="btn-danger"
+        onclick="endSupport()">
+        End Support Session
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+let ADMIN_KEY =
+  localStorage.getItem("skyblue_admin_key") || "";
+
+let ADMIN_DATA = null;
+
+let CURRENT_CUSTOMER = null;
+
+let SUPPORT_SESSION = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+function escapeHTML(value){
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    value === null ||
+    value === undefined
+      ? ""
+      : value;
+
+  return div.innerHTML;
+}
+
+
+function money(value){
+
+  const number =
+    Number(value || 0);
+
+  return "R" +
+    number.toFixed(2);
+}
+
+
+/* =========================================================
+   API
+========================================================= */
+
+async function api(path,options={}){
+
+  options.headers =
+    Object.assign(
+      {
+        "X-Admin-Key":ADMIN_KEY,
+        "Content-Type":"application/json"
+      },
+      options.headers || {}
+    );
+
+  const response =
+    await fetch(path,options);
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(!response.ok){
+
+    throw new Error(
+      data.error ||
+      "Request failed"
+    );
+
+  }
+
+  return data;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function login(){
+
+  const key =
+    $("adminKey").value.trim();
+
+  if(!key){
+
+    $("loginMessage").textContent =
+      "Please enter the Admin Key.";
+
+    return;
+  }
+
+  ADMIN_KEY = key;
+
+  try{
+
+    await api(
+      "/api/admin/dashboard"
+    );
+
+    localStorage.setItem(
+      "skyblue_admin_key",
+      ADMIN_KEY
+    );
+
+    $("loginScreen")
+      .classList
+      .add("hidden");
+
+    $("adminApplication")
+      .classList
+      .remove("hidden");
+
+    await loadAdmin();
+
+  }catch(error){
+
+    $("loginMessage").textContent =
+      error.message;
+
+    ADMIN_KEY = "";
+
+  }
+
+}
+
+
+function clearAdmin(){
+
+  localStorage.removeItem(
+    "skyblue_admin_key"
+  );
+
+  ADMIN_KEY = "";
+
+  location.reload();
+
+}
+
+
+/* =========================================================
+   LOAD ADMIN
+========================================================= */
+
+async function loadAdmin(){
+
+  try{
+
+    ADMIN_DATA =
+      await api(
+        "/api/admin/dashboard"
+      );
+
+    updateStats();
+
+    renderCustomers();
+
+    renderTables();
+
+    await loadActivity();
+
+  }catch(error){
+
+    alert(error.message);
+
+  }
+
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function updateStats(){
+
+  if(!ADMIN_DATA)
+    return;
+
+  $("statCustomers")
+    .textContent =
+      (ADMIN_DATA.customers || [])
+        .length;
+
+  $("statSubscriptions")
+    .textContent =
+      ADMIN_DATA.active_subscriptions ||
+      0;
+
+  $("statRevenue")
+    .textContent =
+      money(
+        ADMIN_DATA.revenue
+      );
+
+  $("statStores")
+    .textContent =
+      (ADMIN_DATA.ecommerce_stores || [])
+        .length;
+
+  $("statOrders")
+    .textContent =
+      (ADMIN_DATA.orders || [])
+        .length;
+
+}
+
+
+/* =========================================================
+   TABS
+========================================================= */
+
+function showTab(tabId,button){
+
+  document
+    .querySelectorAll(
+      "#adminApplication > section"
+    )
+    .forEach(section => {
+
+      section.classList.add(
+        "hidden"
+      );
+
+    });
+
+  const target =
+    $(tabId);
+
+  if(target)
+    target.classList.remove(
+      "hidden"
+    );
+
+  document
+    .querySelectorAll(
+      ".tabs button"
+    )
+    .forEach(btn => {
+
+      btn.classList.remove(
+        "active"
+      );
+
+    });
+
+  button.classList.add(
+    "active"
+  );
+
+}
+
+
+/* =========================================================
+   CUSTOMERS
+========================================================= */
+
+function renderCustomers(){
+
+  if(!ADMIN_DATA)
+    return;
+
+  const search =
+    (
+      $("customerSearch")
+        .value ||
+      ""
+    )
+    .toLowerCase();
+
+  const customers =
+    ADMIN_DATA.customers ||
+    [];
+
+  const filtered =
+    customers.filter(customer => {
+
+      const text =
+        (
+          (customer.name || "") +
+          " " +
+          (customer.email || "") +
+          " " +
+          (customer.phone || "")
+        )
+        .toLowerCase();
+
+      return text.includes(search);
+
+    });
+
+
+  if(!filtered.length){
+
+    $("customerRows").innerHTML =
+      `<tr>
+        <td colspan="5">
+          No customers found.
+        </td>
+      </tr>`;
+
+    return;
+
+  }
+
+
+  $("customerRows").innerHTML =
+    filtered.map(customer => {
+
+      return `
+        <tr>
+
+          <td>
+            <strong>
+              ${escapeHTML(customer.name)}
+            </strong>
+          </td>
+
+          <td>
+            ${escapeHTML(customer.email)}
+          </td>
+
+          <td>
+            ${escapeHTML(customer.phone)}
+          </td>
+
+          <td>
+            ${escapeHTML(customer.created_at)}
+          </td>
+
+          <td>
+
+            <button
+              class="btn-small"
+              onclick="startSupport('${escapeHTML(customer.id)}')">
+
+              Assist Customer
+
+            </button>
+
+          </td>
+
+        </tr>
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+function renderTables(){
+
+  if(!ADMIN_DATA)
+    return;
+
+
+  $("subscriptionRows").innerHTML =
+    (ADMIN_DATA.subscriptions || [])
+      .map(row => {
+
+        return `
+          <tr>
+
+            <td>
+              ${escapeHTML(row.module)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.plan)}
+            </td>
+
+            <td>
+              ${money(row.amount)}
+            </td>
+
+            <td>
+              ${statusBadge(row.status)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.account_id)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.created_at)}
+            </td>
+
+          </tr>
+        `;
+
+      })
+      .join("");
+
+
+  $("paymentRows").innerHTML =
+    (ADMIN_DATA.payments || [])
+      .map(row => {
+
+        return `
+          <tr>
+
+            <td>
+              ${escapeHTML(row.m_payment_id)}
+            </td>
+
+            <td>
+              ${money(row.amount)}
+            </td>
+
+            <td>
+              ${statusBadge(row.status)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.pf_payment_id)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.created_at)}
+            </td>
+
+          </tr>
+        `;
+
+      })
+      .join("");
+
+
+  $("storeRows").innerHTML =
+    (ADMIN_DATA.ecommerce_stores || [])
+      .map(row => {
+
+        return `
+          <tr>
+
+            <td>
+              <strong>
+                ${escapeHTML(row.store_name)}
+              </strong>
+            </td>
+
+            <td>
+              ${escapeHTML(row.slug)}
+            </td>
+
+            <td>
+              ${statusBadge(row.status)}
+            </td>
+
+            <td>
+              ${
+                row.published
+                  ? '<span class="badge badge-green">Published</span>'
+                  : '<span class="badge badge-orange">Draft</span>'
+              }
+            </td>
+
+            <td>
+              ${escapeHTML(row.account_id)}
+            </td>
+
+          </tr>
+        `;
+
+      })
+      .join("");
+
+
+  $("orderRows").innerHTML =
+    (ADMIN_DATA.orders || [])
+      .map(row => {
+
+        return `
+          <tr>
+
+            <td>
+              ${escapeHTML(row.id)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.customer_name)}
+            </td>
+
+            <td>
+              ${money(row.total)}
+            </td>
+
+            <td>
+              ${statusBadge(row.payment_status)}
+            </td>
+
+            <td>
+              ${statusBadge(row.order_status)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.created_at)}
+            </td>
+
+          </tr>
+        `;
+
+      })
+      .join("");
+
+}
+
+
+function statusBadge(status){
+
+  const value =
+    String(status || "")
+      .toUpperCase();
+
+  let className =
+    "badge";
+
+  if(
+    value === "ACTIVE" ||
+    value === "COMPLETE" ||
+    value === "PAID" ||
+    value === "COMPLETED"
+  ){
+
+    className +=
+      " badge-green";
+
+  }else if(
+    value === "FAILED" ||
+    value === "CANCELLED" ||
+    value === "CANCELED"
+  ){
+
+    className +=
+      " badge-red";
+
+  }else if(
+    value === "PENDING"
+  ){
+
+    className +=
+      " badge-orange";
+
+  }
+
+  return `
+    <span class="${className}">
+      ${escapeHTML(status)}
+    </span>
+  `;
+
+}
+
+
+/* =========================================================
+   ACTIVITY
+========================================================= */
+
+async function loadActivity(){
+
+  try{
+
+    const data =
+      await api(
+        "/api/admin/activity"
+      );
+
+    const rows =
+      data.activity || [];
+
+    $("activityRows").innerHTML =
+      rows.map(row => {
+
+        return `
+          <tr>
+
+            <td>
+              ${escapeHTML(
+                row.customer_name ||
+                row.account_id
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(row.action)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.details)}
+            </td>
+
+            <td>
+              ${escapeHTML(row.created_at)}
+            </td>
+
+          </tr>
+        `;
+
+      })
+      .join("") ||
+      `<tr>
+        <td colspan="4">
+          No support activity yet.
+        </td>
+      </tr>`;
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* =========================================================
+   START REMOTE SUPPORT
+========================================================= */
+
+async function startSupport(accountId){
+
+  try{
+
+    const data =
+      await api(
+        "/api/admin/support/start",
+        {
+          method:"POST",
+
+          body:JSON.stringify({
+            account_id:accountId
+          })
+        }
+      );
+
+
+    SUPPORT_SESSION =
+      data.session_id;
+
+    CURRENT_CUSTOMER =
+      data.customer;
+
+
+    $("supportSessionId")
+      .textContent =
+      SUPPORT_SESSION;
+
+
+    $("customersTab")
+      .classList
+      .add("hidden");
+
+
+    document
+      .querySelectorAll(
+        "#adminApplication > section"
+      )
+      .forEach(section => {
+
+        if(
+          section.id !==
+          "customerSupport"
+        ){
+
+          section.classList.add(
+            "hidden"
+          );
+
+        }
+
+      });
+
+
+    $("customerSupport")
+      .classList
+      .remove("hidden");
+
+
+    renderCustomerSupport();
+
+    await loadCustomerDashboard();
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CUSTOMER SUPPORT VIEW
+========================================================= */
+
+function renderCustomerSupport(){
+
+  if(!CURRENT_CUSTOMER)
+    return;
+
+
+  const account =
+    CURRENT_CUSTOMER.account ||
+    {};
+
+  const profile =
+    CURRENT_CUSTOMER.profile ||
+    {};
+
+
+  $("supportCustomerName")
+    .textContent =
+      profile.business_name ||
+      account.name ||
+      "Customer";
+
+
+  $("supportCustomerEmail")
+    .textContent =
+      account.email ||
+      "";
+
+
+  $("businessName")
+    .value =
+      profile.business_name ||
+      "";
+
+
+  $("businessIndustry")
+    .value =
+      profile.industry ||
+      "";
+
+
+  $("businessPhone")
+    .value =
+      profile.phone ||
+      account.phone ||
+      "";
+
+
+  $("businessWhatsapp")
+    .value =
+      profile.whatsapp ||
+      "";
+
+
+  $("businessEmail")
+    .value =
+      profile.email ||
+      account.email ||
+      "";
+
+
+  $("businessAddress")
+    .value =
+      profile.address ||
+      "";
+
+
+  $("businessWebsite")
+    .value =
+      profile.website ||
+      "";
+
+
+  renderCustomerModules();
+
+  renderStoreSupport();
+
+  renderCustomerProducts();
+
+  renderCustomerOrders();
+
+  renderCustomerPayments();
+
+}
+
+
+/* =========================================================
+   CUSTOMER MODULES
+========================================================= */
+
+function renderCustomerModules(){
+
+  const subscriptions =
+    CURRENT_CUSTOMER.subscriptions ||
+    [];
+
+  if(!subscriptions.length){
+
+    $("customerModules").innerHTML =
+      "<span class='muted'>No subscription records.</span>";
+
+    return;
+
+  }
+
+
+  $("customerModules").innerHTML =
+    subscriptions.map(subscription => {
+
+      return `
+        <span class="badge">
+
+          ${escapeHTML(
+            subscription.module
+          )}
+
+          ·
+
+          ${escapeHTML(
+            subscription.status
+          )}
+
+        </span>
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =========================================================
+   CUSTOMER DASHBOARD
+========================================================= */
+
+async function loadCustomerDashboard(){
+
+  if(!CURRENT_CUSTOMER)
+    return;
+
+
+  try{
+
+    const accountId =
+      CURRENT_CUSTOMER.account.id;
+
+    const data =
+      await api(
+        "/api/admin/customer/" +
+        encodeURIComponent(accountId) +
+        "/dashboard"
+      );
+
+
+    const preview = {
+
+      account:
+        data.account,
+
+      active_modules:
+        data.active_modules,
+
+      subscriptions:
+        data.subscriptions,
+
+      payments:
+        data.payments,
+
+      orders:
+        data.orders
+
+    };
+
+
+    $("customerDashboardView")
+      .innerHTML =
+      "<pre>" +
+      escapeHTML(
+        JSON.stringify(
+          preview,
+          null,
+          2
+        )
+      ) +
+      "</pre>";
+
+  }catch(error){
+
+    $("customerDashboardView")
+      .textContent =
+      error.message;
+
+  }
+
+}
+
+
+/* =========================================================
+   SAVE BUSINESS PROFILE
+========================================================= */
+
+async function saveProfile(){
+
+  try{
+
+    const data =
+      await supportAction(
+        "update_profile",
+        {
+
+          business_name:
+            $("businessName").value,
+
+          industry:
+            $("businessIndustry").value,
+
+          phone:
+            $("businessPhone").value,
+
+          whatsapp:
+            $("businessWhatsapp").value,
+
+          email:
+            $("businessEmail").value,
+
+          address:
+            $("businessAddress").value,
+
+          website:
+            $("businessWebsite").value
+
+        }
+      );
+
+
+    CURRENT_CUSTOMER =
+      data.customer;
+
+
+    renderCustomerSupport();
+
+    await loadCustomerDashboard();
+
+
+    alert(
+      "Business profile updated successfully."
+    );
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ECOMMERCE STORE SUPPORT
+========================================================= */
+
+function renderStoreSupport(){
+
+  const store =
+    CURRENT_CUSTOMER.store;
+
+
+  if(!store){
+
+    $("storeSupport").innerHTML =
+      `
+        <div class="notice">
+          This customer does not currently have
+          an active Ecommerce store.
+        </div>
+      `;
+
+    return;
+
+  }
+
+
+  $("storeSupport").innerHTML = `
+
+    <div class="two-column">
+
+      <div>
+
+        <label>Store Name</label>
+
+        <input
+          id="adminStoreName"
+          value="${escapeHTML(
+            store.store_name || ""
+          )}">
+
+        <label>Store Slug</label>
+
+        <input
+          id="adminStoreSlug"
+          value="${escapeHTML(
+            store.slug || ""
+          )}">
+
+        <label>Store Email</label>
+
+        <input
+          id="adminStoreEmail"
+          value="${escapeHTML(
+            store.email || ""
+          )}">
+
+        <label>Store Phone</label>
+
+        <input
+          id="adminStorePhone"
+          value="${escapeHTML(
+            store.phone || ""
+          )}">
+
+      </div>
+
+
+      <div>
+
+        <label>WhatsApp</label>
+
+        <input
+          id="adminStoreWhatsapp"
+          value="${escapeHTML(
+            store.whatsapp || ""
+          )}">
+
+        <label>Description</label>
+
+        <textarea
+          id="adminStoreDescription">${escapeHTML(
+            store.description || ""
+          )}</textarea>
+
+        <label>Delivery Fee</label>
+
+        <input
+          id="adminStoreDeliveryFee"
+          type="number"
+          step="0.01"
+          value="${Number(
+            store.delivery_fee || 0
+          )}">
+
+      </div>
+
+    </div>
+
+
+    <div class="action-row">
+
+      <label>
+        <input
+          id="adminStorePublished"
+          type="checkbox"
+          ${
+            store.published
+              ? "checked"
+              : ""
+          }>
+
+        Published
+      </label>
+
+
+      <label>
+        <input
+          id="adminStoreCheckout"
+          type="checkbox"
+          ${
+            store.checkout_enabled !== 0
+              ? "checked"
+              : ""
+          }>
+
+        Checkout Enabled
+      </label>
+
+
+      <label>
+        <input
+          id="adminStoreDelivery"
+          type="checkbox"
+          ${
+            store.delivery_enabled
+              ? "checked"
+              : ""
+          }>
+
+        Delivery
+      </label>
+
+
+      <label>
+        <input
+          id="adminStorePickup"
+          type="checkbox"
+          ${
+            store.pickup_enabled !== 0
+              ? "checked"
+              : ""
+          }>
+
+        Pickup
+      </label>
+
+    </div>
+
+
+    <br>
+
+
+    <button onclick="saveStore()">
+      Save Ecommerce Store
+    </button>
+
+  `;
+
+}
+
+
+/* =========================================================
+   SAVE STORE
+========================================================= */
+
+async function saveStore(){
+
+  try{
+
+    const data =
+      await supportAction(
+        "update_store",
+        {
+
+          store_name:
+            $("adminStoreName").value,
+
+          slug:
+            $("adminStoreSlug").value,
+
+          email:
+            $("adminStoreEmail").value,
+
+          phone:
+            $("adminStorePhone").value,
+
+          whatsapp:
+            $("adminStoreWhatsapp").value,
+
+          description:
+            $("adminStoreDescription").value,
+
+          delivery_fee:
+            $("adminStoreDeliveryFee").value,
+
+          published:
+            $("adminStorePublished").checked,
+
+          checkout_enabled:
+            $("adminStoreCheckout").checked,
+
+          delivery_enabled:
+            $("adminStoreDelivery").checked,
+
+          pickup_enabled:
+            $("adminStorePickup").checked
+
+        }
+      );
+
+
+    CURRENT_CUSTOMER =
+      data.customer;
+
+
+    renderCustomerSupport();
+
+    alert(
+      "Ecommerce store updated."
+    );
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
+function renderCustomerProducts(){
+
+  const products =
+    CURRENT_CUSTOMER.products ||
+    [];
+
+
+  $("productAddForm").innerHTML = `
+
+    <div class="card">
+
+      <h3>Add Product</h3>
+
+      <div class="two-column">
+
+        <div>
+
+          <label>Product Name</label>
+
+          <input
+            id="newProductName"
+            placeholder="Product name">
+
+          <label>Price</label>
+
+          <input
+            id="newProductPrice"
+            type="number"
+            step="0.01"
+            placeholder="0.00">
+
+        </div>
+
+
+        <div>
+
+          <label>Stock</label>
+
+          <input
+            id="newProductStock"
+            type="number"
+            placeholder="0">
+
+          <label>Description</label>
+
+          <input
+            id="newProductDescription"
+            placeholder="Product description">
+
+        </div>
+
+      </div>
+
+
+      <button
+        onclick="addProduct()">
+
+        Add Product
+
+      </button>
+
+    </div>
+
+  `;
+
+
+  if(!products.length){
+
+    $("customerProducts").innerHTML =
+      `
+        <tr>
+          <td colspan="4">
+            No products found.
+          </td>
+        </tr>
+      `;
+
+    return;
+
+  }
+
+
+  $("customerProducts").innerHTML =
+    products.map(product => {
+
+      return `
+
+        <tr>
+
+          <td>
+
+            <input
+              id="productName_${escapeHTML(product.id)}"
+              value="${escapeHTML(
+                product.name || ""
+              )}">
+
+          </td>
+
+
+          <td>
+
+            <input
+              id="productPrice_${escapeHTML(product.id)}"
+              type="number"
+              step="0.01"
+              value="${Number(
+                product.price || 0
+              )}">
+
+          </td>
+
+
+          <td>
+
+            <input
+              id="productStock_${escapeHTML(product.id)}"
+              type="number"
+              value="${Number(
+                product.stock || 0
+              )}">
+
+          </td>
+
+
+          <td>
+
+            <button
+              class="btn-small"
+              onclick="updateProduct('${escapeHTML(product.id)}')">
+
+              Save
+
+            </button>
+
+
+            <button
+              class="btn-small btn-danger"
+              onclick="deleteProduct('${escapeHTML(product.id)}')">
+
+              Delete
+
+            </button>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =========================================================
+   ADD PRODUCT
+========================================================= */
+
+async function addProduct(){
+
+  try{
+
+    const name =
+      $("newProductName")
+        .value
+        .trim();
+
+    if(!name){
+
+      alert(
+        "Product name is required."
+      );
+
+      return;
+
+    }
+
+
+    const data =
+      await supportAction(
+        "add_product",
+        {
+
+          name:name,
+
+          price:
+            $("newProductPrice").value,
+
+          stock:
+            $("newProductStock").value,
+
+          description:
+            $("newProductDescription").value
+
+        }
+      );
+
+
+    CURRENT_CUSTOMER =
+      data.customer;
+
+
+    renderCustomerProducts();
+
+    alert(
+      "Product added successfully."
+    );
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   UPDATE PRODUCT
+========================================================= */
+
+async function updateProduct(productId){
+
+  try{
+
+    const data =
+      await supportAction(
+        "update_product",
+        {
+
+          id:productId,
+
+          name:
+            $("productName_" + productId)
+              .value,
+
+          price:
+            $("productPrice_" + productId)
+              .value,
+
+          stock:
+            $("productStock_" + productId)
+              .value
+
+        }
+      );
+
+
+    CURRENT_CUSTOMER =
+      data.customer;
+
+
+    renderCustomerProducts();
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DELETE PRODUCT
+========================================================= */
+
+async function deleteProduct(productId){
+
+  if(
+    !confirm(
+      "Delete this product?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const data =
+      await supportAction(
+        "delete_product",
+        {
+          id:productId
+        }
+      );
+
+
+    CURRENT_CUSTOMER =
+      data.customer;
+
+
+    renderCustomerProducts();
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CUSTOMER ORDERS
+========================================================= */
+
+function renderCustomerOrders(){
+
+  const orders =
+    CURRENT_CUSTOMER.orders ||
+    [];
+
+
+  if(!orders.length){
+
+    $("customerOrders").innerHTML =
+      `
+        <tr>
+          <td colspan="5">
+            No orders found.
+          </td>
+        </tr>
+      `;
+
+    return;
+
+  }
+
+
+  $("customerOrders").innerHTML =
+    orders.map(order => {
+
+      return `
+
+        <tr>
+
+          <td>
+            ${escapeHTML(order.id)}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              order.customer_name
+            )}
+          </td>
+
+          <td>
+            ${money(order.total)}
+          </td>
+
+          <td>
+            ${statusBadge(
+              order.payment_status
+            )}
+          </td>
+
+          <td>
+            ${statusBadge(
+              order.order_status
+            )}
+          </td>
+
+        </tr>
+
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =========================================================
+   CUSTOMER PAYMENTS
+========================================================= */
+
+function renderCustomerPayments(){
+
+  const payments =
+    CURRENT_CUSTOMER.payments ||
+    [];
+
+
+  if(!payments.length){
+
+    $("customerPayments").innerHTML =
+      `
+        <tr>
+          <td colspan="4">
+            No payments found.
+          </td>
+        </tr>
+      `;
+
+    return;
+
+  }
+
+
+  $("customerPayments").innerHTML =
+    payments.map(payment => {
+
+      return `
+
+        <tr>
+
+          <td>
+            ${escapeHTML(
+              payment.m_payment_id
+            )}
+          </td>
+
+          <td>
+            ${money(
+              payment.amount
+            )}
+          </td>
+
+          <td>
+            ${statusBadge(
+              payment.status
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              payment.pf_payment_id
+            )}
+          </td>
+
+        </tr>
+
+      `;
+
+    })
+    .join("");
+
+}
+
+
+/* =========================================================
+   SUPPORT ACTION
+========================================================= */
+
+async function supportAction(
+  action,
+  data
+){
+
+  if(!SUPPORT_SESSION){
+
+    throw new Error(
+      "No active support session."
+    );
+
+  }
+
+
+  return api(
+    "/api/admin/support/action",
+    {
+
+      method:"POST",
+
+      body:JSON.stringify({
+
+        session_id:
+          SUPPORT_SESSION,
+
+        action:action,
+
+        data:data
+
+      })
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   REFRESH CUSTOMER
+========================================================= */
+
+async function refreshCustomer(){
+
+  if(!CURRENT_CUSTOMER)
+    return;
+
+
+  try{
+
+    const accountId =
+      CURRENT_CUSTOMER.account.id;
+
+
+    const data =
+      await api(
+        "/api/admin/customer?account_id=" +
+        encodeURIComponent(accountId)
+      );
+
+
+    CURRENT_CUSTOMER =
+      data.customer;
+
+
+    renderCustomerSupport();
+
+    await loadCustomerDashboard();
+
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   END SUPPORT
+========================================================= */
+
+async function endSupport(){
+
+  if(!SUPPORT_SESSION)
+    return;
+
+
+  try{
+
+    await api(
+      "/api/admin/support/end",
+      {
+
+        method:"POST",
+
+        body:JSON.stringify({
+
+          session_id:
+            SUPPORT_SESSION
+
+        })
+
+      }
+    );
+
+
+    SUPPORT_SESSION =
+      null;
+
+    CURRENT_CUSTOMER =
+      null;
+
+
+    $("customerSupport")
+      .classList
+      .add("hidden");
+
+
+    $("customersTab")
+      .classList
+      .remove("hidden");
+
+
+    await loadAdmin();
+
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CLOSE SUPPORT
+========================================================= */
+
+function closeSupport(){
+
+  if(
+    confirm(
+      "End the current remote support session?"
+    )
+  ){
+
+    endSupport();
+
+  }
+
+}
+
+
+/* =========================================================
+   INITIAL BOOT
+========================================================= */
+
+async function boot(){
+
+  if(!ADMIN_KEY)
+    return;
+
+
+  try{
+
+    await api(
+      "/api/admin/dashboard"
+    );
+
+
+    $("loginScreen")
+      .classList
+      .add("hidden");
+
+
+    $("adminApplication")
+      .classList
+      .remove("hidden");
+
+
+    await loadAdmin();
+
+  }catch(error){
+
+    localStorage.removeItem(
+      "skyblue_admin_key"
+    );
+
+    ADMIN_KEY = "";
+
+  }
+
+}
+
+
+boot();
+
+</script>
+
+</body>
+  </html>
