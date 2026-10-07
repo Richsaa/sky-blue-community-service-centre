@@ -1,1 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Sky Blue Digital Service — practical WhatsApp, website and business communication tools for South African businesses, schools and organisations.">
+<title>Sky Blue Digital Service | WhatsApp + Website from R199/month</title>
 
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#10213d;
+  background:#f7faff;
+  line-height:1.55
+}
+:root{
+  --blue:#1261d6;
+  --dark:#07377f;
+  --cyan:#12a7e8;
+  --ink:#10213d;
+  --muted:#64748b;
+  --line:#dce6f2;
+  --card:#fff;
+  --soft:#eef6ff;
+  --green:#0b9b62;
+  --shadow:0 16px 45px rgba(10,45,95,.10);
+  --radius:20px
+}
+a{text-decoration:none;color:inherit}
+.wrap{width:min(1160px,92%);margin:auto}
+
+.top{
+  background:#052b65;
+  color:#fff;
+  font-size:13px;
+  padding:8px 0
+}
+.top .wrap{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)
+}
+.nav{
+  height:74px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  font-weight:900;
+  color:var(--dark)
+}
+.logo{
+  width:44px;
+  height:44px;
+  border-radius:13px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  box-shadow:0 8px 22px rgba(18,97,214,.25)
+}
+.brand small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:1.4px
+}
+nav{
+  display:flex;
+  align-items:center;
+  gap:22px;
+  font-size:14px;
+  font-weight:700
+}
+nav a:hover{color:var(--blue)}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:0;
+  border-radius:12px;
+  padding:12px 18px;
+  font-weight:800;
+  cursor:pointer
+}
+.btn-primary{
+  background:var(--blue);
+  color:#fff;
+  box-shadow:0 9px 20px rgba(18,97,214,.20)
+}
+.btn-primary:hover{background:var(--dark)}
+.btn-light{
+  background:#fff;
+  color:var(--dark);
+  border:1px solid var(--line)
+}
+.mobile{display:none}
+
+.hero{
+  padding:72px 0 55px;
+  background:
+    radial-gradient(circle at 85% 10%,#dff2ff 0,transparent 31%),
+    linear-gradient(180deg,#fff,#f5f9ff)
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.08fr .92fr;
+  gap:55px;
+  align-items:center
+}
+.eyebrow{
+  display:inline-flex;
+  padding:7px 11px;
+  border-radius:999px;
+  background:#e7f2ff;
+  color:var(--blue);
+  font-weight:900;
+  font-size:12px
+}
+.hero h1{
+  font-size:clamp(38px,5vw,64px);
+  line-height:1.02;
+  letter-spacing:-2px;
+  margin:18px 0
+}
+.hero h1 span{color:var(--blue)}
+.hero p{
+  font-size:18px;
+  color:var(--muted);
+  max-width:680px
+}
+.actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:25px 0
+}
+.hero-points{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  color:#34506f;
+  font-size:13px;
+  font-weight:700
+}
+.hero-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:24px;
+  box-shadow:var(--shadow)
+}
+.price-big{
+  font-size:46px;
+  font-weight:950;
+  color:var(--dark)
+}
+.price-big small{
+  font-size:16px;
+  color:var(--muted);
+  font-weight:700
+}
+.hero-card h3{margin:5px 0}
+.hero-card ul{
+  padding-left:20px;
+  color:#52657f
+}
+.hero-card li{margin:9px 0}
+.check{
+  color:var(--green);
+  font-weight:900
+}
+
+section{padding:76px 0}
+.section-head{
+  text-align:center;
+  max-width:760px;
+  margin:0 auto 38px
+}
+.section-head h2{
+  font-size:36px;
+  line-height:1.1;
+  margin:0 0 10px
+}
+.section-head p{
+  color:var(--muted);
+  margin:0
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:24px;
+  box-shadow:0 8px 25px rgba(10,45,95,.05)
+}
+.icon{
+  width:44px;
+  height:44px;
+  border-radius:13px;
+  background:var(--soft);
+  display:grid;
+  place-items:center;
+  color:var(--blue);
+  font-weight:900;
+  margin-bottom:15px
+}
+.card h3{margin:0 0 7px}
+.card p{
+  color:var(--muted);
+  margin:0
+}
+
+.pricing{background:#eef6ff}
+.pricing-grid{
+  display:grid;
+  grid-template-columns:1fr 1.35fr;
+  gap:22px;
+  align-items:stretch
+}
+.plan{
+  background:#fff;
+  border:2px solid var(--blue);
+  border-radius:25px;
+  padding:28px;
+  box-shadow:var(--shadow)
+}
+.plan .tag{
+  display:inline-block;
+  background:#dcecff;
+  color:var(--blue);
+  font-weight:900;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:11px
+}
+.plan h3{
+  font-size:25px;
+  margin:14px 0 4px
+}
+.plan .amount{
+  font-size:48px;
+  font-weight:950;
+  color:var(--dark)
+}
+.plan ul{
+  padding-left:19px;
+  color:#52657f
+}
+.addon-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px
+}
+.addon{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:19px
+}
+.addon strong{
+  display:block;
+  font-size:18px
+}
+.addon span{
+  color:var(--muted);
+  font-size:13px
+}
+
+.industry{background:#fff}
+.industry-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px
+}
+.industry-card{
+  border:1px solid var(--line);
+  border-radius:21px;
+  padding:23px;
+  background:linear-gradient(180deg,#fff,#f8fbff)
+}
+.industry-card .label{
+  color:var(--blue);
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.8px
+}
+.industry-card h3{margin:8px 0}
+.industry-card p{
+  color:var(--muted);
+  font-size:14px
+}
+.flow{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:12px
+}
+.flow b{
+  background:#edf5ff;
+  border-radius:999px;
+  padding:6px 9px;
+  font-size:11px;
+  color:#1d4f92
+}
+
+.school{
+  background:linear-gradient(135deg,#062f70,#0b62bf);
+  color:#fff
+}
+.school .section-head p{color:#d9e9ff}
+.school-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px
+}
+.school-box{
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.20);
+  border-radius:22px;
+  padding:24px
+}
+.school-box h3{margin-top:0}
+.school-box p,
+.school-box li{color:#d9e9ff}
+.school-box ul{padding-left:19px}
+.route{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap
+}
+.route b{
+  background:#fff;
+  color:var(--dark);
+  padding:8px 11px;
+  border-radius:10px;
+  font-size:12px
+}
+
+.demo{background:#f7faff}
+.demo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px
+}
+.phone,
+.office{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:20px;
+  box-shadow:var(--shadow)
+}
+.screen{
+  background:#edf4fb;
+  border-radius:18px;
+  padding:16px
+}
+.msg{
+  background:#fff;
+  border-radius:13px;
+  padding:11px;
+  margin:9px 0;
+  font-size:13px
+}
+.msg.me{
+  background:#d8f8e8;
+  margin-left:28px
+}
+.choice{
+  display:block;
+  width:100%;
+  padding:10px;
+  border:1px solid #cbd9e9;
+  background:#fff;
+  border-radius:10px;
+  text-align:left;
+  margin:7px 0;
+  font-weight:700
+}
+.choice:hover{
+  border-color:var(--blue);
+  color:var(--blue)
+}
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px
+}
+.step{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:20px
+}
+.num{
+  font-size:28px;
+  font-weight:950;
+  color:var(--blue)
+}
+
+.cta{padding:65px 0}
+.cta-box{
+  background:linear-gradient(135deg,#0b3f91,#1261d6);
+  color:#fff;
+  border-radius:28px;
+  padding:42px;
+  display:flex;
+  justify-content:space-between;
+  gap:25px;
+  align-items:center
+}
+.cta-box h2{
+  font-size:34px;
+  margin:0 0 7px
+}
+.cta-box p{
+  color:#dbeaff;
+  margin:0
+}
+
+.form{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:25px;
+  max-width:800px;
+  margin:auto;
+  box-shadow:var(--shadow)
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px
+}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px
+}
+.field.full{grid-column:1/-1}
+.field label{
+  font-size:13px;
+  font-weight:800
+}
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  outline:0
+}
+.field textarea{
+  min-height:110px;
+  resize:vertical
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:var(--blue)
+}
+.form-note{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:12px
+}
+.notice{
+  display:none;
+  padding:12px;
+  border-radius:10px;
+  background:#e7f8ef;
+  color:#08734a;
+  font-weight:700;
+  margin-top:12px
+}
+.notice.show{display:block}
+
+footer{
+  background:#061d42;
+  color:#d6e4f8;
+  padding:45px 0 25px
+}
+.foot-grid{
+  display:grid;
+  grid-template-columns:1.3fr 1fr 1fr;
+  gap:30px
+}
+.foot-brand{
+  color:#fff;
+  font-size:20px;
+  font-weight:900
+}
+.foot-grid h4{color:#fff}
+.foot-grid a{
+  display:block;
+  margin:8px 0;
+  color:#c6d7ee;
+  font-size:14px
+}
+.copy{
+  border-top:1px solid rgba(255,255,255,.12);
+  margin-top:30px;
+  padding-top:18px;
+  font-size:12px;
+  color:#91a9c8
+}
+
+@media(max-width:850px){
+  nav{display:none}
+  .mobile{display:block}
+  .hero-grid,
+  .pricing-grid,
+  .school-grid,
+  .demo-grid{
+    grid-template-columns:1fr
+  }
+  .cards,
+  .industry-grid{
+    grid-template-columns:1fr 1fr
+  }
+  .steps{grid-template-columns:1fr 1fr}
+  .hero{padding-top:45px}
+  .cta-box{
+    flex-direction:column;
+    align-items:flex-start
+  }
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:560px){
+  .cards,
+  .industry-grid,
+  .addon-grid,
+  .steps,
+  .form-grid,
+  .foot-grid{
+    grid-template-columns:1fr
+  }
+  .hero h1{font-size:43px}
+  .section-head h2{font-size:30px}
+  .top{display:none}
+  .nav{height:66px}
+  .brand small{display:none}
+  .hero-points{display:block}
+  .hero-points div{margin:7px 0}
+  .cta-box{padding:28px}
+  .price-big{font-size:40px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <span>Practical digital tools for South African businesses, schools & organisations</span>
+    <span>Starting from R199/month</span>
+  </div>
+</div>
+
+<header>
+  <div class="wrap nav">
+
+    <a class="brand" href="#home">
+      <div class="logo">SB</div>
+      <div>
+        Sky Blue Digital Service
+        <small>SMART TECHNOLOGY • RELIABLE BUSINESS SOLUTIONS</small>
+      </div>
+    </a>
+
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#industries">Industries</a>
+      <a href="#schools">Schools</a>
+      <a href="#how">How it works</a>
+      <a class="btn btn-primary" href="#start">Get Started</a>
+    </nav>
+
+    <a class="btn btn-primary mobile" href="#start">Get Started</a>
+
+  </div>
+</header>
+
+<main id="home">
+
+<section class="hero">
+  <div class="wrap hero-grid">
+
+    <div>
+      <span class="eyebrow">WHATSAPP-FIRST BUSINESS PLATFORM</span>
+
+      <h1>
+        Your business.<br>
+        <span>One WhatsApp.</span><br>
+        One website.
+      </h1>
+
+      <p>
+        Sky Blue connects customers, staff, teachers, management and communities
+        through practical digital tools designed to grow with you.
+      </p>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="#start">
+          Start with R199/month
+        </a>
+
+        <a class="btn btn-light" href="#industries">
+          Explore solutions
+        </a>
+      </div>
+
+      <div class="hero-points">
+        <div>✓ WhatsApp workflows</div>
+        <div>✓ Professional website</div>
+        <div>✓ Management tools</div>
+      </div>
+    </div>
+
+    <div class="hero-card">
+
+      <span class="eyebrow">CORE PLATFORM</span>
+
+      <h3>WhatsApp + Website</h3>
+
+      <div class="price-big">
+        R199
+        <small>/ month</small>
+      </div>
+
+      <ul>
+        <li>
+          <span class="check">✓</span>
+          Professional business website
+        </li>
+
+        <li>
+          <span class="check">✓</span>
+          Structured WhatsApp communication
+        </li>
+
+        <li>
+          <span class="check">✓</span>
+          Customer enquiries and requests
+        </li>
+
+        <li>
+          <span class="check">✓</span>
+          Upgrade with industry modules
+        </li>
+      </ul>
+
+      <a class="btn btn-primary" style="width:100%" href="#start">
+        Request setup
+      </a>
+
+      <p style="font-size:12px;margin-top:12px;color:#718096">
+        Business numbers, connectivity, payment-provider and third-party
+        charges may be separate.
+      </p>
+
+    </div>
+
+  </div>
+</section>
+
+<section id="services">
+
+<div class="wrap">
+
+<div class="section-head">
+  <h2>One platform. Multiple ways to work.</h2>
+  <p>
+    Start small and add the tools your organisation actually needs.
+  </p>
+</div>
+
+<div class="cards">
+
+<div class="card">
+  <div class="icon">WA</div>
+  <h3>Business WhatsApp</h3>
+  <p>
+    Turn WhatsApp into a structured customer, staff or parent communication
+    channel instead of an uncontrolled inbox.
+  </p>
+</div>
+
+<div class="card">
+  <div class="icon">WEB</div>
+  <h3>Professional Website</h3>
+  <p>
+    Give your business a professional online presence with services,
+    pricing, contact information and clear calls to action.
+  </p>
+</div>
+
+<div class="card">
+  <div class="icon">↗</div>
+  <h3>Broadcast & Announcements</h3>
+  <p>
+    Send approved information to registered customers, branches, classes
+    or communities without messaging everyone manually.
+  </p>
+</div>
+
+<div class="card">
+  <div class="icon">▦</div>
+  <h3>Management Dashboard</h3>
+  <p>
+    Turn incoming requests into structured records, tasks, bookings,
+    orders, incidents and reports.
+  </p>
+</div>
+
+<div class="card">
+  <div class="icon">▶</div>
+  <h3>Photos & Videos</h3>
+  <p>
+    Let customers and staff share supporting images or videos where
+    the workflow requires visual information.
+  </p>
+</div>
+
+<div class="card">
+  <div class="icon">+</div>
+  <h3>Upgrade as You Grow</h3>
+  <p>
+    Add ecommerce, telephone services, Cloud PBX, connectivity and
+    specialist industry workflows when needed.
+  </p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="pricing" class="pricing">
+
+<div class="wrap">
+
+<div class="section-head">
+  <h2>Simple starting price</h2>
+  <p>
+    Every organisation gets the same practical digital foundation.
+    Advanced needs can be added later.
+  </p>
+</div>
+
+<div class="pricing-grid">
+
+<div class="plan">
+
+<span class="tag">CORE</span>
+
+<h3>WhatsApp + Website</h3>
+
+<div class="amount">
+  R199
+  <small style="font-size:15px;color:#64748b">/month</small>
+</div>
+
+<ul>
+  <li>Professional website</li>
+  <li>WhatsApp-first workflow</li>
+  <li>Customer communication</li>
+  <li>Basic business information</li>
+  <li>Upgrade path to industry modules</li>
+</ul>
+
+<a class="btn btn-primary" href="#start">
+  Choose R199
+</a>
+
+</div>
+
+<div class="addon-grid">
+
+<div class="addon">
+  <strong>Business Number</strong>
+  <span>From R69/month — optional add-on</span>
+</div>
+
+<div class="addon">
+  <strong>Ecommerce</strong>
+  <span>
+    From R399/month — products, orders and online selling
+  </span>
+</div>
+
+<div class="addon">
+  <strong>Cloud PBX</strong>
+  <span>
+    From R299/month — subject to package
+  </span>
+</div>
+
+<div class="addon">
+  <strong>Fibre / LTE</strong>
+  <span>
+    Subject to coverage and selected package
+  </span>
+</div>
+
+<div class="addon">
+  <strong>Specialist Modules</strong>
+  <span>
+    Schools, salons, food service, pharmacy, community and more
+  </span>
+</div>
+
+<div class="addon">
+  <strong>Custom Business</strong>
+  <span>
+    Multi-branch, larger teams and advanced workflows
+  </span>
+</div>
+
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="industries" class="industry">
+
+<div class="wrap">
+
+<div class="section-head">
+  <h2>Built around how different organisations work</h2>
+  <p>
+    The platform changes the workflow, not just the logo.
+  </p>
+</div>
+
+<div class="industry-grid">
+
+<div class="industry-card">
+  <span class="label">Beauty</span>
+  <h3>Salon</h3>
+  <p>
+    Customers choose a service, view hairstyle pictures,
+    select a style or choose “None of the above”, send their own
+    reference picture and book a time.
+  </p>
+
+  <div class="flow">
+    <b>Style</b>
+    <b>Picture</b>
+    <b>Time</b>
+    <b>Booking</b>
+  </div>
+</div>
+
+<div class="industry-card">
+  <span class="label">Food</span>
+  <h3>Food Service</h3>
+  <p>
+    Menu → meals → order → payment → confirmation →
+    business receives the order → customer receives status.
+  </p>
+
+  <div class="flow">
+    <b>Menu</b>
+    <b>Order</b>
+    <b>Pay</b>
+    <b>Status</b>
+  </div>
+</div>
+
+<div class="industry-card">
+  <span class="label">Healthcare retail</span>
+  <h3>Pharmacy</h3>
+  <p>
+    Branches can order stock, report problems, attach photos/videos,
+    submit daily cash-flow reports and acknowledge deliveries.
+  </p>
+
+  <div class="flow">
+    <b>Stock</b>
+    <b>Issues</b>
+    <b>Cash flow</b>
+    <b>Delivery</b>
+  </div>
+</div>
+
+<div class="industry-card">
+  <span class="label">Community</span>
+  <h3>Councillor / Community</h3>
+  <p>
+    Residents report issues with details and media, receive references
+    and updates, while approved community announcements can reach
+    registered residents.
+  </p>
+
+  <div class="flow">
+    <b>Report</b>
+    <b>Route</b>
+    <b>Track</b>
+    <b>Notify</b>
+  </div>
+</div>
+
+<div class="industry-card">
+  <span class="label">Commerce</span>
+  <h3>Online Seller</h3>
+  <p>
+    Present products, capture customer enquiries and orders,
+    and upgrade into ecommerce when the business is ready.
+  </p>
+
+  <div class="flow">
+    <b>Products</b>
+    <b>Orders</b>
+    <b>Customers</b>
+  </div>
+</div>
+
+<div class="industry-card">
+  <span class="label">Care</span>
+  <h3>Day Care</h3>
+  <p>
+    Keep parent communication, notices, attendance-related requests
+    and operational information organised around the centre.
+  </p>
+
+  <div class="flow">
+    <b>Parents</b>
+    <b>Notices</b>
+    <b>Requests</b>
+  </div>
+</div>
+
+<div class="industry-card">
+  <span class="label">Non-profit</span>
+  <h3>NPO / NGO</h3>
+  <p>
+    Organise beneficiaries, enquiries, announcements, programme
+    communication and administration through structured digital workflows.
+  </p>
+
+  <div class="flow">
+    <b>People</b>
+    <b>Programs</b>
+    <b>Reports</b>
+  </div>
+</div>
+
+<div class="industry-card">
+  <span class="label">Community organisations</span>
+  <h3>Church</h3>
+  <p>
+    Manage member communication, announcements, events and structured
+    enquiries without relying on one overloaded group.
+  </p>
+
+  <div class="flow">
+    <b>Members</b>
+    <b>Events</b>
+    <b>Notices</b>
+  </div>
+</div>
+
+<div class="industry-card">
+  <span class="label">Professional services</span>
+  <h3>Undertaker & Others</h3>
+  <p>
+    Build a workflow around the real customer journey, with a
+    professional website and controlled communication.
+  </p>
+
+  <div class="flow">
+    <b>Enquiry</b>
+    <b>Service</b>
+    <b>Follow-up</b>
+  </div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="schools" class="school">
+
+<div class="wrap">
+
+<div class="section-head">
+  <h2>Schools: replace the WhatsApp-group problem</h2>
+  <p>
+    Every grade can connect to its class teacher while school
+    management keeps central control.
+  </p>
+</div>
+
+<div class="school-grid">
+
+<div class="school-box">
+
+<h3>Parents connect to the right teacher</h3>
+
+<p>
+  Instead of one huge school WhatsApp group, communication can be
+  organised by grade and class.
+</p>
+
+<div class="route">
+  <b>School</b>
+  <span>→</span>
+  <b>Grade</b>
+  <span>→</span>
+  <b>Class</b>
+  <span>→</span>
+  <b>Teacher</b>
+  <span>→</span>
+  <b>Parent</b>
+</div>
+
+<ul>
+  <li>Grade-by-grade communication</li>
+  <li>Class teacher connection</li>
+  <li>Parent enquiries routed correctly</li>
+  <li>Important notices can require acknowledgement</li>
+</ul>
+
+</div>
+
+<div class="school-box">
+
+<h3>Management stays in control</h3>
+
+<ul>
+  <li>
+    Send one approved announcement to all registered grades.
+  </li>
+
+  <li>
+    Send a notice to selected grades/classes.
+  </li>
+
+  <li>
+    Track important acknowledgement status.
+  </li>
+
+  <li>
+    Keep school information separate from informal group-chat noise.
+  </li>
+
+  <li>
+    Add school telephone numbers or extensions as an optional service.
+  </li>
+</ul>
+
+</div>
+
+</div>
+</div>
+</section>
+
+<section class="demo">
+
+<div class="wrap">
+
+<div class="section-head">
+  <h2>What the experience can look like</h2>
+  <p>
+    Structured conversations turn messages into useful business actions.
+  </p>
+</div>
+
+<div class="demo-grid">
+
+<div class="phone">
+
+<h3>Parent / Customer WhatsApp</h3>
+
+<div class="screen">
+
+<div class="msg">
+  <b>Sky Blue</b><br>
+  Welcome. What do you need?
+</div>
+
+<button class="choice" onclick="demo('School / Grade')">
+  School / Grade
+</button>
+
+<button class="choice" onclick="demo('Book a service')">
+  Book a service
+</button>
+
+<button class="choice" onclick="demo('Place an order')">
+  Place an order
+</button>
+
+<button class="choice" onclick="demo('General enquiry')">
+  General enquiry
+</button>
+
+<div id="demoMsg" class="msg me">
+  Select an option above.
+</div>
+
+</div>
+</div>
+
+<div class="office">
+
+<h3>Management view</h3>
+
+<div class="screen">
+
+<div class="msg">
+  <b>New request</b><br>
+  Grade 5 • Class 5A • Parent enquiry
+</div>
+
+<div class="msg">
+  <b>Broadcast</b><br>
+  School announcement ready for approved sending.
+</div>
+
+<div class="msg">
+  <b>Branch / Team task</b><br>
+  Delivery acknowledgement pending.
+</div>
+
+<div class="msg">
+  <b>Customer order</b><br>
+  Payment confirmation received — action required.
+</div>
+
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="how">
+
+<div class="wrap">
+
+<div class="section-head">
+  <h2>How Sky Blue works</h2>
+  <p>
+    Simple for the customer. Structured for the organisation.
+  </p>
+</div>
+
+<div class="steps">
+
+<div class="step">
+  <div class="num">01</div>
+  <h3>Someone starts</h3>
+  <p>
+    Customer, parent, employee, resident or manager begins through
+    the appropriate channel.
+  </p>
+</div>
+
+<div class="step">
+  <div class="num">02</div>
+  <h3>Sky Blue guides them</h3>
+  <p>
+    The workflow asks the right questions instead of relying on
+    unstructured messages.
+  </p>
+</div>
+
+<div class="step">
+  <div class="num">03</div>
+  <h3>Organisation receives it</h3>
+  <p>
+    The request becomes a booking, order, report, incident,
+    enquiry or task.
+  </p>
+</div>
+
+<div class="step">
+  <div class="num">04</div>
+  <h3>Management acts</h3>
+  <p>
+    Teams can follow up, update status and communicate back
+    through the system.
+  </p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="start" class="cta">
+
+<div class="wrap">
+
+<div class="cta-box">
+
+<div>
+  <h2>Ready to put your organisation online?</h2>
+  <p>
+    Start with WhatsApp + Website at R199/month and add what you need.
+  </p>
+</div>
+
+<a class="btn btn-light" href="#request">
+  Request setup
+</a>
+
+</div>
+
+</div>
+</section>
+
+<section id="request" style="padding-top:20px">
+
+<div class="wrap">
+
+<div class="section-head">
+  <h2>Request Sky Blue setup</h2>
+  <p>
+    Tell us what you need and we will use the information
+    to prepare the next step.
+  </p>
+</div>
+
+<form class="form" onsubmit="submitRequest(event)">
+
+<div class="form-grid">
+
+<div class="field">
+  <label>Business / Organisation name</label>
+  <input
+    id="org"
+    required
+    placeholder="Your organisation"
+  >
+</div>
+
+<div class="field">
+  <label>Contact number</label>
+  <input
+    id="phone"
+    required
+    placeholder="Your number"
+  >
+</div>
+
+<div class="field">
+
+<label>Organisation type</label>
+
+<select id="type" required>
+
+<option value="">Select</option>
+<option>Business</option>
+<option>School</option>
+<option>Salon</option>
+<option>Food Service</option>
+<option>Pharmacy</option>
+<option>Councillor / Community</option>
+<option>Online Seller</option>
+<option>Day Care</option>
+<option>NPO / NGO</option>
+<option>Church</option>
+<option>Undertaker</option>
+<option>Other</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>Main requirement</label>
+
+<select id="need" required>
+
+<option value="">Select</option>
+<option>WhatsApp + Website</option>
+<option>School communication</option>
+<option>Customer bookings</option>
+<option>Food ordering + payment</option>
+<option>Branch management</option>
+<option>Ecommerce</option>
+<option>Telephone / Cloud PBX</option>
+<option>Connectivity</option>
+<option>Other</option>
+
+</select>
+
+</div>
+
+<div class="field full">
+
+<label>
+  Tell us what you want the system to do
+</label>
+
+<textarea
+  id="details"
+  placeholder="Briefly describe your workflow"
+></textarea>
+
+</div>
+
+<div class="field full">
+
+<button class="btn btn-primary" type="submit">
+  Prepare setup request
+</button>
+
+<div id="notice" class="notice"></div>
+
+<div class="form-note">
+  This website form prepares an email request.
+  Payment, WhatsApp messaging and third-party services are only live
+  after their respective integrations and approvals are completed.
+</div>
+
+</div>
+
+</div>
+
+</form>
+
+</div>
+</section>
+
+</main>
+
+<footer>
+
+<div class="wrap">
+
+<div class="foot-grid">
+
+<div>
+
+<div class="foot-brand">
+  Sky Blue Digital Service
+</div>
+
+<p>
+  SMART TECHNOLOGY. RELIABLE BUSINESS SOLUTIONS.
+</p>
+
+<p style="font-size:13px">
+  WhatsApp-first digital communication, websites and
+  practical business workflows.
+</p>
+
+</div>
+
+<div>
+
+<h4>Explore</h4>
+
+<a href="#services">Services</a>
+<a href="#pricing">Pricing</a>
+<a href="#industries">Industries</a>
+<a href="#schools">Schools</a>
+<a href="#how">How it works</a>
+
+</div>
+
+<div>
+
+<h4>Customer access</h4>
+
+<a href="admin.html">Admin Dashboard</a>
+<a href="owner-dashboard.html">Owner Dashboard</a>
+<a href="#start">Request Setup</a>
+<a href="mailto:skybluesolution30@gmail.com">
+  skybluesolution30@gmail.com
+</a>
+
+</div>
+
+</div>
+
+<div class="copy">
+  © 2026 Sky Blue Digital Service / Sky Blue Solution.
+  All rights reserved.
+</div>
+
+</div>
+
+</footer>
+
+<script>
+
+function demo(choice){
+
+  document.getElementById("demoMsg").textContent =
+    "Selected: " +
+    choice +
+    ". Sky Blue can route the next step through the appropriate workflow.";
+
+}
+
+function submitRequest(e){
+
+  e.preventDefault();
+
+  const org =
+    document.getElementById("org").value.trim();
+
+  const phone =
+    document.getElementById("phone").value.trim();
+
+  const type =
+    document.getElementById("type").value;
+
+  const need =
+    document.getElementById("need").value;
+
+  const details =
+    document.getElementById("details").value.trim();
+
+  const subject =
+    encodeURIComponent(
+      "Sky Blue setup request — " + org
+    );
+
+  const body =
+    encodeURIComponent(
+      "Organisation: " + org +
+      "\nContact number: " + phone +
+      "\nType: " + type +
+      "\nMain requirement: " + need +
+      "\nDetails: " + details
+    );
+
+  window.location.href =
+    "mailto:skybluesolution30@gmail.com" +
+    "?subject=" + subject +
+    "&body=" + body;
+
+  const notice =
+    document.getElementById("notice");
+
+  notice.classList.add("show");
+
+  notice.textContent =
+    "Your email app should open with the setup request prepared.";
+
+}
+
+</script>
+
+</body>
+  </html>
