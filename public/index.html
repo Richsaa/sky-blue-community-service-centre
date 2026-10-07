@@ -1,1 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0759d8">
 
+<title>Sky Blue Digital Service | WhatsApp + Website Business Platform</title>
+
+<meta name="description" content="Sky Blue Digital Service connects businesses, schools, pharmacies, salons, food services, organisations and communities through WhatsApp, websites and practical digital management tools.">
+<meta name="keywords" content="Sky Blue Digital Service, WhatsApp business, business website, SaaS South Africa, school communication, pharmacy branches, salon bookings, ecommerce, digital business">
+<meta name="author" content="SKY BLUE SOLUTION (PTY) LTD">
+
+<style>
+*{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#172033;
+  background:#f6f9ff;
+  line-height:1.55;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+.container{
+  width:min(1180px,92%);
+  margin:auto;
+}
+
+.header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(255,255,255,.96);
+  border-bottom:1px solid #e5eaf3;
+  backdrop-filter:blur(12px);
+}
+
+.nav{
+  min-height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:800;
+  color:#0759d8;
+  font-size:19px;
+  white-space:nowrap;
+}
+
+.logo-mark{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  background:linear-gradient(135deg,#0759d8,#16a7ff);
+  color:white;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  box-shadow:0 7px 20px rgba(7,89,216,.25);
+}
+
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  font-size:14px;
+  font-weight:600;
+}
+
+.nav-links a:hover{
+  color:#0759d8;
+}
+
+.nav-actions{
+  display:flex;
+  gap:9px;
+  align-items:center;
+}
+
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:12px 18px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-weight:700;
+  transition:.2s ease;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn-primary{
+  color:#fff;
+  background:#0759d8;
+  box-shadow:0 7px 20px rgba(7,89,216,.2);
+}
+
+.btn-primary:hover{
+  background:#0348b3;
+}
+
+.btn-light{
+  color:#0759d8;
+  background:#eef5ff;
+}
+
+.btn-outline{
+  color:#0759d8;
+  background:#fff;
+  border:1px solid #cbd9ee;
+}
+
+.menu-btn{
+  display:none;
+  background:#eef5ff;
+  border:0;
+  border-radius:9px;
+  padding:10px 13px;
+  cursor:pointer;
+  font-size:20px;
+}
+
+.hero{
+  padding:80px 0 70px;
+  background:
+    radial-gradient(circle at 85% 15%,rgba(22,167,255,.17),transparent 30%),
+    linear-gradient(135deg,#f7fbff,#edf5ff);
+}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:50px;
+  align-items:center;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 12px;
+  border-radius:30px;
+  background:#e7f1ff;
+  color:#0759d8;
+  font-weight:700;
+  font-size:13px;
+  margin-bottom:18px;
+}
+
+h1{
+  margin:0 0 20px;
+  font-size:clamp(38px,5vw,65px);
+  line-height:1.05;
+  letter-spacing:-2px;
+}
+
+.hero h1 span{
+  color:#0759d8;
+}
+
+.hero-text{
+  font-size:19px;
+  color:#526174;
+  max-width:700px;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:28px;
+}
+
+.hero-card{
+  background:#fff;
+  border:1px solid #dce6f4;
+  border-radius:22px;
+  padding:28px;
+  box-shadow:0 22px 60px rgba(26,64,115,.12);
+}
+
+.hero-card .price{
+  font-size:48px;
+  font-weight:900;
+  color:#0759d8;
+  line-height:1;
+}
+
+.hero-card .price small{
+  font-size:16px;
+  color:#68758a;
+  font-weight:600;
+}
+
+.check-list{
+  list-style:none;
+  padding:0;
+  margin:20px 0;
+}
+
+.check-list li{
+  padding:8px 0;
+}
+
+.check-list li:before{
+  content:"✓";
+  color:#0a8f45;
+  font-weight:900;
+  margin-right:10px;
+}
+
+section{
+  padding:75px 0;
+}
+
+.section-head{
+  max-width:760px;
+  margin:0 auto 42px;
+  text-align:center;
+}
+
+.section-head h2{
+  margin:0 0 12px;
+  font-size:clamp(29px,4vw,43px);
+  line-height:1.12;
+}
+
+.section-head p{
+  color:#637084;
+  font-size:17px;
+}
+
+.grid{
+  display:grid;
+  gap:20px;
+}
+
+.services-grid{
+  grid-template-columns:repeat(3,1fr);
+}
+
+.card{
+  background:#fff;
+  border:1px solid #e1e8f2;
+  border-radius:17px;
+  padding:25px;
+  box-shadow:0 8px 30px rgba(30,64,110,.05);
+}
+
+.card h3{
+  margin:10px 0 8px;
+  font-size:20px;
+}
+
+.card p{
+  color:#657287;
+  margin:0;
+}
+
+.icon{
+  width:46px;
+  height:46px;
+  border-radius:13px;
+  background:#eaf3ff;
+  color:#0759d8;
+  display:grid;
+  place-items:center;
+  font-size:21px;
+  font-weight:800;
+}
+
+.pricing{
+  background:#edf5ff;
+}
+
+.pricing-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+
+.price-card{
+  background:#fff;
+  border:1px solid #dce6f4;
+  border-radius:17px;
+  padding:25px;
+  position:relative;
+}
+
+.price-card.featured{
+  border:2px solid #0759d8;
+  box-shadow:0 14px 40px rgba(7,89,216,.14);
+}
+
+.popular{
+  position:absolute;
+  top:-12px;
+  right:18px;
+  background:#0759d8;
+  color:#fff;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.price-card h3{
+  margin:0 0 8px;
+}
+
+.amount{
+  font-size:36px;
+  font-weight:900;
+  color:#0759d8;
+}
+
+.amount small{
+  font-size:13px;
+  color:#718096;
+  font-weight:600;
+}
+
+.price-card ul{
+  list-style:none;
+  padding:0;
+  margin:20px 0;
+}
+
+.price-card li{
+  padding:7px 0;
+  color:#59677a;
+}
+
+.price-card li:before{
+  content:"✓";
+  color:#0a8f45;
+  font-weight:bold;
+  margin-right:8px;
+}
+
+.industry-grid{
+  grid-template-columns:repeat(3,1fr);
+}
+
+.industry{
+  min-height:205px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.industry-tag{
+  display:inline-block;
+  color:#0759d8;
+  background:#eaf3ff;
+  border-radius:20px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.workflow{
+  background:#0b1f3a;
+  color:#fff;
+}
+
+.workflow .section-head p{
+  color:#c1cddd;
+}
+
+.workflow-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+
+.step{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:16px;
+  padding:24px;
+}
+
+.step-number{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:#168fff;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  margin-bottom:16px;
+}
+
+.school{
+  background:#fff;
+}
+
+.school-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:35px;
+  align-items:center;
+}
+
+.school-box{
+  border-radius:20px;
+  padding:30px;
+  background:linear-gradient(145deg,#edf6ff,#fff);
+  border:1px solid #dbe7f5;
+}
+
+.route{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:20px 0;
+}
+
+.route span{
+  background:#0759d8;
+  color:#fff;
+  padding:9px 13px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.platform{
+  background:#f2f6fc;
+}
+
+.platform-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:25px;
+}
+
+.dashboard-preview{
+  background:#fff;
+  border:1px solid #dce5f2;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 14px 40px rgba(20,50,90,.08);
+}
+
+.preview-top{
+  padding:15px 18px;
+  border-bottom:1px solid #e7edf5;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.preview-body{
+  padding:20px;
+}
+
+.preview-stat{
+  display:inline-block;
+  width:30%;
+  min-width:100px;
+  padding:16px;
+  margin:1%;
+  background:#f3f7fd;
+  border-radius:10px;
+}
+
+.preview-stat strong{
+  display:block;
+  font-size:24px;
+  color:#0759d8;
+}
+
+.cta{
+  padding:75px 0;
+  background:linear-gradient(135deg,#0759d8,#0879df);
+  color:#fff;
+  text-align:center;
+}
+
+.cta h2{
+  font-size:clamp(30px,4vw,45px);
+  margin:0 0 12px;
+}
+
+.cta p{
+  max-width:700px;
+  margin:0 auto 25px;
+  color:#e2efff;
+}
+
+.cta .btn-light{
+  background:#fff;
+  color:#0759d8;
+}
+
+.contact{
+  background:#fff;
+}
+
+.contact-grid{
+  display:grid;
+  grid-template-columns:.8fr 1.2fr;
+  gap:30px;
+}
+
+.contact-info{
+  padding:28px;
+  background:#f2f7ff;
+  border-radius:18px;
+}
+
+.form{
+  display:grid;
+  gap:13px;
+}
+
+.form input,
+.form select,
+.form textarea{
+  width:100%;
+  border:1px solid #cfd9e7;
+  border-radius:9px;
+  padding:13px;
+  background:#fff;
+  outline:none;
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus{
+  border-color:#0759d8;
+  box-shadow:0 0 0 3px rgba(7,89,216,.08);
+}
+
+.form textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+.footer{
+  background:#07172c;
+  color:#c4d0df;
+  padding:45px 0 20px;
+}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1fr;
+  gap:30px;
+}
+
+.footer h3,
+.footer h4{
+  color:#fff;
+}
+
+.footer a{
+  display:block;
+  padding:5px 0;
+  color:#c4d0df;
+}
+
+.footer a:hover{
+  color:#fff;
+}
+
+.copyright{
+  border-top:1px solid rgba(255,255,255,.1);
+  margin-top:30px;
+  padding-top:20px;
+  font-size:13px;
+  text-align:center;
+}
+
+.note{
+  font-size:12px;
+  color:#6b788b;
+  margin-top:12px;
+}
+
+.mobile-panel{
+  display:none;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%) translateY(120px);
+  background:#07172c;
+  color:#fff;
+  padding:13px 18px;
+  border-radius:10px;
+  opacity:0;
+  transition:.3s;
+  z-index:5000;
+  max-width:90%;
+  text-align:center;
+}
+
+.toast.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1;
+}
+
+@media(max-width:1000px){
+  .nav-links{
+    display:none;
+  }
+
+  .menu-btn{
+    display:block;
+  }
+
+  .hero-grid,
+  .school-grid,
+  .platform-grid,
+  .contact-grid{
+    grid-template-columns:1fr;
+  }
+
+  .services-grid,
+  .industry-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .pricing-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .workflow-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .footer-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .mobile-panel.open{
+    display:block;
+    background:#fff;
+    border-top:1px solid #e5eaf3;
+    padding:15px 4%;
+  }
+
+  .mobile-panel a{
+    display:block;
+    padding:12px 0;
+    font-weight:700;
+    border-bottom:1px solid #edf1f6;
+  }
+}
+
+@media(max-width:650px){
+  .nav-actions .btn-outline{
+    display:none;
+  }
+
+  .logo{
+    font-size:16px;
+  }
+
+  .hero{
+    padding:55px 0;
+  }
+
+  h1{
+    letter-spacing:-1px;
+  }
+
+  .hero-text{
+    font-size:17px;
+  }
+
+  .services-grid,
+  .industry-grid,
+  .pricing-grid,
+  .workflow-grid,
+  .footer-grid{
+    grid-template-columns:1fr;
+  }
+
+  section{
+    padding:55px 0;
+  }
+
+  .preview-stat{
+    width:100%;
+    margin:4px 0;
+  }
+
+  .hero-card{
+    padding:22px;
+  }
+
+  .hero-actions .btn{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="container nav">
+
+    <a class="logo" href="#top" aria-label="Sky Blue Digital Service home">
+      <span class="logo-mark">SB</span>
+      <span>Sky Blue Digital Service</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#industries">Industries</a>
+      <a href="#schools">Schools</a>
+      <a href="#platform">Platform</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a class="btn btn-outline" href="/straight/">Login</a>
+      <a class="btn btn-primary" href="#contact">Get Started</a>
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu">☰</button>
+    </div>
+  </div>
+
+  <div class="mobile-panel" id="mobilePanel">
+    <div class="container">
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#industries">Industries</a>
+      <a href="#schools">Schools</a>
+      <a href="#platform">Platform</a>
+      <a href="#contact">Contact</a>
+      <a href="/straight/">Business Login</a>
+      <a href="/admin.html">Administrator Dashboard</a>
+      <a href="/owner-dashboard.html">Owner Dashboard</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+
+    <div>
+      <div class="badge">🇿🇦 Built for South African organisations</div>
+
+      <h1>
+        Your business.<br>
+        <span>One WhatsApp.</span><br>
+        One website.
+      </h1>
+
+      <p class="hero-text">
+        Sky Blue Digital Service connects your customers, staff,
+        teachers, management and community through practical digital
+        tools that grow with your organisation.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#contact">Start Your Business</a>
+        <a class="btn btn-light" href="/straight/">Open Business Dashboard</a>
+      </div>
+
+      <p class="note">
+        Start with the essentials and add more services as your business grows.
+      </p>
+    </div>
+
+    <div class="hero-card">
+      <div style="font-weight:800;margin-bottom:10px;">
+        WhatsApp + Website
+      </div>
+
+      <div class="price">
+        R199<small>/month</small>
+      </div>
+
+      <p style="color:#667386;">
+        Your digital foundation.
+      </p>
+
+      <ul class="check-list">
+        <li>Professional business website</li>
+        <li>WhatsApp customer communication</li>
+        <li>Business information and services</li>
+        <li>Customer enquiries and requests</li>
+        <li>Mobile-friendly experience</li>
+        <li>Upgrade when your business grows</li>
+      </ul>
+
+      <a class="btn btn-primary" style="width:100%;" href="#contact">
+        Request Setup
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+
+    <div class="section-head">
+      <h2>One platform for everyday business communication</h2>
+      <p>
+        Sky Blue brings customer communication, business information,
+        staff workflows and management tools together.
+      </p>
+    </div>
+
+    <div class="grid services-grid">
+
+      <div class="card">
+        <div class="icon">💬</div>
+        <h3>Business WhatsApp</h3>
+        <p>
+          Give customers a simple way to ask questions, request services,
+          place orders, make bookings and receive updates.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🌐</div>
+        <h3>Professional Website</h3>
+        <p>
+          Present your business, services, products, contact information
+          and digital services professionally.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📢</div>
+        <h3>Announcements</h3>
+        <p>
+          Send approved announcements to registered customers, staff,
+          parents, branches or community members.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📊</div>
+        <h3>Management Dashboard</h3>
+        <p>
+          Manage customers, products, services, sales, expenses,
+          payments, staff and business information.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📷</div>
+        <h3>Photos & Videos</h3>
+        <p>
+          Let customers and staff use images and videos where they are
+          useful to the workflow.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🚀</div>
+        <h3>Grow With Your Business</h3>
+        <p>
+          Start small and add ecommerce, telephone services, Cloud PBX,
+          connectivity and specialist modules when needed.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+
+    <div class="section-head">
+      <h2>Simple starting point. Powerful upgrades.</h2>
+      <p>
+        Every organisation can start with the core digital foundation
+        and add specialist capabilities as required.
+      </p>
+    </div>
+
+    <div class="pricing-grid">
+
+      <div class="price-card featured">
+        <div class="popular">CORE</div>
+        <h3>WhatsApp + Website</h3>
+        <div class="amount">R199 <small>/month</small></div>
+
+        <ul>
+          <li>Business website</li>
+          <li>WhatsApp workflow</li>
+          <li>Customer enquiries</li>
+          <li>Business information</li>
+          <li>Mobile-ready</li>
+        </ul>
+
+        <a class="btn btn-primary" style="width:100%;" href="#contact">
+          Get Started
+        </a>
+      </div>
+
+      <div class="price-card">
+        <h3>Business Number</h3>
+        <div class="amount">From R69 <small>/month</small></div>
+
+        <ul>
+          <li>Business telephone number</li>
+          <li>Professional communication</li>
+          <li>Optional upgrade</li>
+          <li>Subject to service availability</li>
+        </ul>
+
+        <a class="btn btn-light" style="width:100%;" href="#contact">
+          Add to Business
+        </a>
+      </div>
+
+      <div class="price-card">
+        <h3>Ecommerce</h3>
+        <div class="amount">From R399 <small>/month</small></div>
+
+        <ul>
+          <li>Online products</li>
+          <li>Customer orders</li>
+          <li>Order management</li>
+          <li>Payment integration</li>
+        </ul>
+
+        <a class="btn btn-light" style="width:100%;" href="#contact">
+          Ask About Ecommerce
+        </a>
+      </div>
+
+      <div class="price-card">
+        <h3>Cloud PBX</h3>
+        <div class="amount">From R299 <small>/month</small></div>
+
+        <ul>
+          <li>Business calling</li>
+          <li>Extensions</li>
+          <li>Professional phone system</li>
+          <li>Scalable for teams</li>
+        </ul>
+
+        <a class="btn btn-light" style="width:100%;" href="#contact">
+          Ask About Cloud PBX
+        </a>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top:20px;text-align:center;">
+      <strong>Connectivity & specialist services</strong>
+      <p style="margin-top:6px;">
+        Fibre, LTE, additional communication services, specialist modules
+        and larger business requirements are quoted according to coverage,
+        supplier package and business requirements.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section id="industries">
+  <div class="container">
+
+    <div class="section-head">
+      <h2>Built around how different organisations actually work</h2>
+      <p>
+        The platform is not one generic WhatsApp chatbot.
+        Each industry can have its own workflow.
+      </p>
+    </div>
+
+    <div class="grid industry-grid">
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">BOOKINGS</span>
+          <h3>💇 Salon</h3>
+          <p>
+            Customers choose services, view hairstyle pictures,
+            select a style, send their own reference picture if necessary,
+            choose an available appointment and confirm their booking.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">Salon Setup</a>
+      </div>
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">ORDERS + PAYMENT</span>
+          <h3>🍔 Food Service</h3>
+          <p>
+            Customers view the menu, select meals, build an order,
+            proceed to payment and receive order status.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">Food Business</a>
+      </div>
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">MULTI-BRANCH</span>
+          <h3>💊 Pharmacy</h3>
+          <p>
+            Branches can submit stock requests, incidents, cash-flow
+            reports and delivery acknowledgements while head office
+            manages operations centrally.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">Pharmacy Setup</a>
+      </div>
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">COMMUNITY</span>
+          <h3>🏘 Councillor / Community</h3>
+          <p>
+            Residents can report service problems, attach information,
+            receive references and follow updates.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">Community Setup</a>
+      </div>
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">SALES</span>
+          <h3>🛒 Online Seller</h3>
+          <p>
+            Present products, receive enquiries and orders and manage
+            online selling through the business platform.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">Seller Setup</a>
+      </div>
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">CHILDCARE</span>
+          <h3>👶 Day Care</h3>
+          <p>
+            Communicate with parents, share announcements and manage
+            important operational information.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">Day Care Setup</a>
+      </div>
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">ORGANISATION</span>
+          <h3>🤝 NPO / NGO</h3>
+          <p>
+            Manage organisational information, members, programmes,
+            communication and operational activities.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">NPO / NGO Setup</a>
+      </div>
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">COMMUNICATION</span>
+          <h3>⛪ Church</h3>
+          <p>
+            Connect members with announcements, events, enquiries,
+            programmes and organisational communication.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">Church Setup</a>
+      </div>
+
+      <div class="card industry">
+        <div>
+          <span class="industry-tag">SERVICES</span>
+          <h3>⚱ Undertaker & Others</h3>
+          <p>
+            Present services, receive enquiries and create specialised
+            communication workflows for your organisation.
+          </p>
+        </div>
+        <a class="btn btn-light" href="#contact">Custom Setup</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="workflow">
+  <div class="container">
+
+    <div class="section-head">
+      <h2>How Sky Blue connects your organisation</h2>
+      <p>
+        Different organisations use different workflows,
+        but the platform follows the same simple principle.
+      </p>
+    </div>
+
+    <div class="workflow-grid">
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Someone starts</h3>
+        <p>
+          A customer, parent, employee, resident, branch or member
+          starts a request.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Sky Blue guides them</h3>
+        <p>
+          The correct questions, options, forms, pictures or
+          workflow are presented.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Organisation receives it</h3>
+        <p>
+          The request reaches the correct business, teacher,
+          department, branch or administrator.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Management acts</h3>
+        <p>
+          Staff and management can process requests and communicate
+          updates through the platform.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SCHOOLS -->
+<section class="school" id="schools">
+  <div class="container school-grid">
+
+    <div>
+      <div class="badge">🏫 School communication</div>
+
+      <h2>
+        Replace the one giant WhatsApp-group problem.
+      </h2>
+
+      <p>
+        Sky Blue can structure school communication around the actual
+        organisation of the school instead of putting every parent
+        into one large WhatsApp group.
+      </p>
+
+      <div class="route">
+        <span>School</span>
+        <span>Grade</span>
+        <span>Class</span>
+        <span>Teacher</span>
+        <span>Parent</span>
+      </div>
+
+      <ul class="check-list">
+        <li>Connect parents to the correct class teacher</li>
+        <li>Grade-specific communication</li>
+        <li>Class-specific announcements</li>
+        <li>Parent enquiries routed correctly</li>
+        <li>Management announcements</li>
+        <li>Important notices can require acknowledgement</li>
+        <li>Management can communicate with all registered grades</li>
+        <li>Optional school telephone numbers and extensions</li>
+      </ul>
+
+      <a class="btn btn-primary" href="#contact">
+        Build School Communication
+      </a>
+    </div>
+
+    <div class="school-box">
+
+      <h3>School communication structure</h3>
+
+      <div style="margin-top:20px;">
+
+        <div class="card" style="margin-bottom:12px;">
+          <strong>School Management</strong>
+          <p>Controls school-wide communication.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:12px;">
+          <strong>Grade 1 → Grade 7</strong>
+          <p>Each grade can have its own structure.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:12px;">
+          <strong>Class Teacher</strong>
+          <p>Communicates directly with registered parents.</p>
+        </div>
+
+        <div class="card">
+          <strong>Parent</strong>
+          <p>Receives the information relevant to the learner's class.</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- PLATFORM -->
+<section class="platform" id="platform">
+  <div class="container">
+
+    <div class="section-head">
+      <h2>Your digital business platform</h2>
+      <p>
+        The public website is only the front door.
+        Registered businesses can access their management environment.
+      </p>
+    </div>
+
+    <div class="platform-grid">
+
+      <div class="dashboard-preview">
+
+        <div class="preview-top">
+          <strong>Sky Blue Business Dashboard</strong>
+          <span>● Online</span>
+        </div>
+
+        <div class="preview-body">
+
+          <div class="preview-stat">
+            <strong>Customers</strong>
+            Manage
+          </div>
+
+          <div class="preview-stat">
+            <strong>Products</strong>
+            Manage
+          </div>
+
+          <div class="preview-stat">
+            <strong>Sales</strong>
+            Track
+          </div>
+
+          <div class="preview-stat">
+            <strong>Orders</strong>
+            Process
+          </div>
+
+          <div class="preview-stat">
+            <strong>WhatsApp</strong>
+            Connect
+          </div>
+
+          <div class="preview-stat">
+            <strong>Staff</strong>
+            Manage
+          </div>
+
+        </div>
+
+      </div>
+
+      <div>
+
+        <h3>One place for the business</h3>
+
+        <p>
+          Registered organisations can access the Sky Blue business
+          environment to manage the parts of their operation that are
+          enabled for their account.
+        </p>
+
+        <ul class="check-list">
+          <li>Customer management</li>
+          <li>Products and services</li>
+          <li>Sales</li>
+          <li>Expenses</li>
+          <li>Payments</li>
+          <li>Online store and ecommerce</li>
+          <li>Orders</li>
+          <li>WhatsApp</li>
+          <li>Staff</li>
+          <li>Business profile</li>
+          <li>Business modules</li>
+          <li>Settings</li>
+        </ul>
+
+        <a class="btn btn-primary" href="/straight/">
+          Open Business Dashboard
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- MANAGEMENT LINKS -->
+<section>
+  <div class="container">
+
+    <div class="section-head">
+      <h2>Platform access</h2>
+      <p>
+        Different users access the part of Sky Blue that belongs to
+        their role.
+      </p>
+    </div>
+
+    <div class="grid services-grid">
+
+      <div class="card">
+        <div class="icon">🏢</div>
+        <h3>Business Dashboard</h3>
+        <p>
+          For registered businesses and organisations.
+        </p>
+        <a class="btn btn-primary" style="margin-top:18px;" href="/straight/">
+          Business Login
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="icon">🛠</div>
+        <h3>Administrator</h3>
+        <p>
+          Community/service administrators can manage reports and
+          operational information.
+        </p>
+        <a class="btn btn-light" style="margin-top:18px;" href="/admin.html">
+          Administrator Dashboard
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="icon">👑</div>
+        <h3>Owner</h3>
+        <p>
+          Sky Blue platform owner access for monitoring the overall
+          platform and subscribers.
+        </p>
+        <a class="btn btn-light" style="margin-top:18px;" href="/owner-dashboard.html">
+          Owner Dashboard
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="container">
+
+    <h2>Ready to put your organisation online?</h2>
+
+    <p>
+      Start with WhatsApp + Website and add the technology your
+      organisation actually needs.
+    </p>
+
+    <a class="btn btn-light" href="#contact">
+      Start Your Setup
+    </a>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container">
+
+    <div class="section-head">
+      <h2>Tell us what you need</h2>
+      <p>
+        Send your requirements and Sky Blue Solution can determine
+        the right platform setup for your organisation.
+      </p>
+    </div>
+
+    <div class="contact-grid">
+
+      <div class="contact-info">
+
+        <h3>Sky Blue Solution</h3>
+
+        <p>
+          <strong>SMART TECHNOLOGY. RELIABLE BUSINESS SOLUTIONS.</strong>
+        </p>
+
+        <p>
+          We provide practical digital services for businesses,
+          schools, organisations and community-focused operations.
+        </p>
+
+        <p>
+          <strong>Email</strong><br>
+          <a href="mailto:skybluesolution30@gmail.com">
+            skybluesolution30@gmail.com
+          </a>
+        </p>
+
+        <p>
+          <strong>Core platform</strong><br>
+          WhatsApp + Website
+        </p>
+
+        <p>
+          <strong>Starting price</strong><br>
+          R199/month
+        </p>
+
+        <p class="note">
+          Third-party services such as payment providers, WhatsApp
+          messaging services, telephone services and connectivity are
+          subject to their respective integration, approval,
+          supplier and coverage requirements.
+        </p>
+
+      </div>
+
+      <div class="card">
+
+        <form class="form" id="setupForm">
+
+          <input
+            type="text"
+            id="organisation"
+            placeholder="Business / Organisation name"
+            required
+          >
+
+          <input
+            type="text"
+            id="contactNumber"
+            placeholder="WhatsApp / Contact number"
+            required
+          >
+
+          <select id="organisationType" required>
+            <option value="">Select organisation type</option>
+            <option>Business</option>
+            <option>Salon</option>
+            <option>Food Service</option>
+            <option>Pharmacy</option>
+            <option>School</option>
+            <option>Councillor / Community</option>
+            <option>Online Seller</option>
+            <option>Day Care</option>
+            <option>NPO / NGO</option>
+            <option>Church</option>
+            <option>Undertaker</option>
+            <option>Other</option>
+          </select>
+
+          <select id="requirement" required>
+            <option value="">What do you need?</option>
+            <option>WhatsApp + Website</option>
+            <option>Business Number</option>
+            <option>Ecommerce</option>
+            <option>Cloud PBX</option>
+            <option>School Communication</option>
+            <option>Multi-Branch Management</option>
+            <option>Custom Digital Platform</option>
+            <option>Other</option>
+          </select>
+
+          <textarea
+            id="details"
+            placeholder="Tell us what you want the system to do..."
+            required
+          ></textarea>
+
+          <button class="btn btn-primary" type="submit">
+            Send Setup Request
+          </button>
+
+          <div class="note">
+            Your request will open an email addressed to
+            Sky Blue Solution.
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+
+  <div class="container footer-grid">
+
+    <div>
+      <div class="logo" style="color:#fff;">
+        <span class="logo-mark">SB</span>
+        <span>Sky Blue Digital Service</span>
+      </div>
+
+      <p>
+        Practical digital solutions for businesses,
+        organisations, schools and communities.
+      </p>
+    </div>
+
+    <div>
+      <h4>Platform</h4>
+      <a href="/straight/">Business Dashboard</a>
+      <a href="/admin.html">Administrator</a>
+      <a href="/owner-dashboard.html">Owner Dashboard</a>
+    </div>
+
+    <div>
+      <h4>Services</h4>
+      <a href="#services">WhatsApp</a>
+      <a href="#pricing">Website</a>
+      <a href="#pricing">Ecommerce</a>
+      <a href="#pricing">Cloud PBX</a>
+      <a href="#industries">Industry Modules</a>
+    </div>
+
+    <div>
+      <h4>Company</h4>
+      <a href="#contact">Contact</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#schools">Schools</a>
+      <a href="#platform">Platform</a>
+    </div>
+
+  </div>
+
+  <div class="container copyright">
+    © <span id="year"></span> SKY BLUE SOLUTION (PTY) LTD.
+    All rights reserved.
+  </div>
+
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+
+  "use strict";
+
+  const menuBtn = document.getElementById("menuBtn");
+  const mobilePanel = document.getElementById("mobilePanel");
+  const setupForm = document.getElementById("setupForm");
+  const toast = document.getElementById("toast");
+
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+  function showToast(message){
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    setTimeout(function(){
+      toast.classList.remove("show");
+    },3500);
+  }
+
+  if(menuBtn){
+    menuBtn.addEventListener("click",function(){
+      mobilePanel.classList.toggle("open");
+    });
+  }
+
+  document.querySelectorAll(".mobile-panel a").forEach(function(link){
+    link.addEventListener("click",function(){
+      mobilePanel.classList.remove("open");
+    });
+  });
+
+  setupForm.addEventListener("submit",function(event){
+
+    event.preventDefault();
+
+    const organisation =
+      document.getElementById("organisation").value.trim();
+
+    const contactNumber =
+      document.getElementById("contactNumber").value.trim();
+
+    const organisationType =
+      document.getElementById("organisationType").value;
+
+    const requirement =
+      document.getElementById("requirement").value;
+
+    const details =
+      document.getElementById("details").value.trim();
+
+    if(
+      !organisation ||
+      !contactNumber ||
+      !organisationType ||
+      !requirement ||
+      !details
+    ){
+      showToast("Please complete all fields.");
+      return;
+    }
+
+    const subject =
+      "Sky Blue Digital Service Setup Request - " +
+      organisation;
+
+    const body =
+      "SKY BLUE DIGITAL SERVICE SETUP REQUEST%0D%0A%0D%0A" +
+      "Organisation: " +
+      encodeURIComponent(organisation) +
+      "%0D%0A" +
+      "Contact number: " +
+      encodeURIComponent(contactNumber) +
+      "%0D%0A" +
+      "Organisation type: " +
+      encodeURIComponent(organisationType) +
+      "%0D%0A" +
+      "Requirement: " +
+      encodeURIComponent(requirement) +
+      "%0D%0A%0D%0A" +
+      "Details:%0D%0A" +
+      encodeURIComponent(details);
+
+    window.location.href =
+      "mailto:skybluesolution30@gmail.com" +
+      "?subject=" +
+      encodeURIComponent(subject) +
+      "&body=" +
+      body;
+
+    showToast("Opening your email application...");
+  });
+
+  /*
+    Keep all platform navigation relative to the same Worker/site.
+    This means the public website can connect to the existing
+    application paths without hard-coding a temporary Cloudflare
+    domain.
+  */
+
+})();
+</script>
+
+</body>
+  </html>
