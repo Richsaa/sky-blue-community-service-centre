@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sky Blue Digital Service — Owner Dashboard</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f7fb;
+  color: #172033;
+}
+
+header {
+  background: linear-gradient(135deg, #0757b8, #0088ff);
+  color: white;
+  padding: 20px;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: auto;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+header p {
+  margin: 6px 0 0;
+  opacity: .9;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.07);
+}
+
+.login-box {
+  max-width: 500px;
+  margin: 50px auto;
+}
+
+input,
+button,
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccd5e0;
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+button {
+  border: none;
+  background: #0757b8;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: .9;
+}
+
+button.secondary {
+  background: #536273;
+}
+
+button.danger {
+  background: #c62828;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+.stat {
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.07);
+}
+
+.stat-label {
+  color: #687386;
+  font-size: 13px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 8px;
+  color: #0757b8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.customer {
+  border: 1px solid #e1e6ed;
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.customer strong {
+  color: #0757b8;
+}
+
+.customer button {
+  margin-top: 10px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: #e8f2ff;
+  color: #0757b8;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.error {
+  color: #c62828;
+  margin-top: 10px;
+}
+
+.success {
+  color: #16833b;
+  margin-top: 10px;
+}
+
+.small {
+  font-size: 13px;
+  color: #697586;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e9ef;
+  text-align: left;
+  font-size: 13px;
+}
+
+th {
+  background: #f5f8fc;
+}
+
+@media (max-width: 900px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 550px) {
+  .container {
+    padding: 12px;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 20px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>Sky Blue Digital Service</h1>
+    <p>Owner Administration & Customer Management</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginSection" class="card login-box">
+    <h2>Owner Login</h2>
+
+    <p class="small">
+      Enter your Sky Blue Digital Service administrator key.
+    </p>
+
+    <input
+      id="adminKey"
+      type="password"
+      placeholder="Administrator key"
+      autocomplete="current-password"
+    >
+
+    <button onclick="login()">
+      Sign In
+    </button>
+
+    <div id="loginMessage"></div>
+  </div>
+
+
+  <!-- DASHBOARD -->
+  <div id="dashboardSection" class="hidden">
+
+    <div class="card">
+      <button onclick="loadDashboard()">
+        Refresh Dashboard
+      </button>
+
+      <button
+        class="secondary"
+        onclick="logout()"
+      >
+        Sign Out
+      </button>
+
+      <div id="statusMessage"></div>
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats">
+
+      <div class="stat">
+        <div class="stat-label">
+          Customers
+        </div>
+        <div
+          id="customersStat"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">
+          Active Subscriptions
+        </div>
+        <div
+          id="subscriptionsStat"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">
+          Revenue
+        </div>
+        <div
+          id="revenueStat"
+          class="stat-value"
+        >
+          R0.00
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">
+          Online Stores
+        </div>
+        <div
+          id="storesStat"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">
+          Orders
+        </div>
+        <div
+          id="ordersStat"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+    </div>
+
+
+    <br>
+
+
+    <div class="grid">
+
+      <!-- CUSTOMERS -->
+
+      <div class="card">
+
+        <h2>Customers</h2>
+
+        <input
+          id="customerSearch"
+          type="search"
+          placeholder="Search customers..."
+          oninput="filterCustomers()"
+        >
+
+        <div id="customerList">
+          Loading customers...
+        </div>
+
+      </div>
+
+
+      <!-- CUSTOMER DETAILS -->
+
+      <div class="card">
+
+        <h2>Customer Details</h2>
+
+        <div
+          id="customerDetails"
+          class="small"
+        >
+          Select a customer to view details.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SUPPORT -->
+
+    <div class="card">
+
+      <h2>Remote Customer Support</h2>
+
+      <p class="small">
+        Start or end an administrative support session
+        for a selected customer.
+      </p>
+
+      <input
+        id="supportAccountId"
+        type="number"
+        placeholder="Customer account ID"
+      >
+
+      <button onclick="startSupport()">
+        Start Support Session
+      </button>
+
+      <input
+        id="supportSessionId"
+        type="number"
+        placeholder="Support session ID"
+      >
+
+      <button
+        class="danger"
+        onclick="endSupport()"
+      >
+        End Support Session
+      </button>
+
+      <div id="supportMessage"></div>
+
+    </div>
+
+
+    <!-- ACTIVITY -->
+
+    <div class="card">
+
+      <h2>Administration Activity</h2>
+
+      <button
+        class="secondary"
+        onclick="loadActivity()"
+      >
+        Refresh Activity
+      </button>
+
+      <div id="activityList">
+        Loading activity...
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const API_BASE = "";
+
+let adminKey =
+  sessionStorage.getItem(
+    "skyblue_owner_admin_key"
+  ) || "";
+
+let customers = [];
+
+
+/* ================================
+   AUTH
+================================ */
+
+function login() {
+
+  const key =
+    document
+      .getElementById("adminKey")
+      .value
+      .trim();
+
+  if (!key) {
+
+    showLoginMessage(
+      "Please enter the administrator key.",
+      true
+    );
+
+    return;
+  }
+
+  adminKey = key;
+
+  sessionStorage.setItem(
+    "skyblue_owner_admin_key",
+    key
+  );
+
+  document
+    .getElementById("loginSection")
+    .classList.add("hidden");
+
+  document
+    .getElementById("dashboardSection")
+    .classList.remove("hidden");
+
+  loadDashboard();
+}
+
+
+function logout() {
+
+  sessionStorage.removeItem(
+    "skyblue_owner_admin_key"
+  );
+
+  adminKey = "";
+
+  document
+    .getElementById("dashboardSection")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginSection")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("adminKey")
+    .value = "";
+}
+
+
+/* ================================
+   API
+================================ */
+
+async function api(
+  path,
+  options = {}
+) {
+
+  options.headers =
+    Object.assign(
+      {},
+      options.headers || {},
+      {
+        "X-Admin-Key": adminKey,
+        "Accept": "application/json"
+      }
+    );
+
+  const response =
+    await fetch(
+      API_BASE + path,
+      options
+    );
+
+  let data;
+
+  try {
+    data = await response.json();
+  } catch (e) {
+    data = {
+      ok: false,
+      error: "Invalid server response."
+    };
+  }
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error ||
+      `Request failed (${response.status})`
+    );
+  }
+
+  if (data.ok === false) {
+
+    throw new Error(
+      data.error ||
+      "Request failed."
+    );
+  }
+
+  return data;
+}
+
+
+/* ================================
+   DASHBOARD
+================================ */
+
+async function loadDashboard() {
+
+  showStatus(
+    "Loading dashboard..."
+  );
+
+  try {
+
+    const data =
+      await api(
+        "/api/admin/dashboard"
+      );
+
+    const stats =
+      data.stats || {};
+
+    document
+      .getElementById("customersStat")
+      .textContent =
+      stats.customers || 0;
+
+    document
+      .getElementById("subscriptionsStat")
+      .textContent =
+      stats.active_subscriptions || 0;
+
+    document
+      .getElementById("revenueStat")
+      .textContent =
+      "R" +
+      Number(
+        stats.revenue || 0
+      ).toFixed(2);
+
+    document
+      .getElementById("storesStat")
+      .textContent =
+      stats.ecommerce_stores || 0;
+
+    document
+      .getElementById("ordersStat")
+      .textContent =
+      stats.orders || 0;
+
+    customers =
+      data.customers || [];
+
+    renderCustomers(
+      customers
+    );
+
+    await loadActivity();
+
+    showStatus(
+      "Dashboard loaded successfully.",
+      false
+    );
+
+  } catch (error) {
+
+    showStatus(
+      error.message,
+      true
+    );
+
+  }
+}
+
+
+/* ================================
+   CUSTOMERS
+================================ */
+
+function renderCustomers(
+  list
+) {
+
+  const container =
+    document.getElementById(
+      "customerList"
+    );
+
+  if (!list.length) {
+
+    container.innerHTML =
+      "<p class='small'>No customers found.</p>";
+
+    return;
+  }
+
+  container.innerHTML =
+    list.map(customer => {
+
+      const business =
+        customer.business_name ||
+        "No business name";
+
+      const status =
+        customer.status ||
+        "UNKNOWN";
+
+      return `
+        <div class="customer">
+
+          <strong>
+            ${escapeHtml(business)}
+          </strong>
+
+          <br>
+
+          <span class="small">
+            ${escapeHtml(
+              customer.email || ""
+            )}
+          </span>
+
+          <br>
+
+          <span class="badge">
+            ${escapeHtml(status)}
+          </span>
+
+          <br>
+
+          <span class="small">
+            Account ID:
+            ${customer.id}
+          </span>
+
+          <button
+            onclick="viewCustomer(${customer.id})"
+          >
+            View Customer
+          </button>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+function filterCustomers() {
+
+  const search =
+    document
+      .getElementById(
+        "customerSearch"
+      )
+      .value
+      .toLowerCase()
+      .trim();
+
+  if (!search) {
+
+    renderCustomers(
+      customers
+    );
+
+    return;
+  }
+
+  const filtered =
+    customers.filter(
+      customer => {
+
+        const text = [
+
+          customer.id,
+
+          customer.email,
+
+          customer.business_name,
+
+          customer.phone,
+
+          customer.whatsapp,
+
+          customer.status
+
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        return text.includes(search);
+      }
+    );
+
+  renderCustomers(
+    filtered
+  );
+}
+
+
+/* ================================
+   CUSTOMER DETAILS
+================================ */
+
+async function viewCustomer(
+  accountId
+) {
+
+  const container =
+    document.getElementById(
+      "customerDetails"
+    );
+
+  container.innerHTML =
+    "Loading customer...";
+
+  document
+    .getElementById(
+      "supportAccountId"
+    )
+    .value =
+    accountId;
+
+  try {
+
+    const data =
+      await api(
+        "/api/admin/customer?account_id=" +
+        encodeURIComponent(
+          accountId
+        )
+      );
+
+    container.innerHTML =
+      "<pre>" +
+      escapeHtml(
+        JSON.stringify(
+          data,
+          null,
+          2
+        )
+      ) +
+      "</pre>";
+
+  } catch (error) {
+
+    container.innerHTML =
+      "<div class='error'>" +
+      escapeHtml(
+        error.message
+      ) +
+      "</div>";
+  }
+}
+
+
+/* ================================
+   SUPPORT
+================================ */
+
+async function startSupport() {
+
+  const accountId =
+    document
+      .getElementById(
+        "supportAccountId"
+      )
+      .value
+      .trim();
+
+  if (!accountId) {
+
+    showSupportMessage(
+      "Enter a customer account ID.",
+      true
+    );
+
+    return;
+  }
+
+  try {
+
+    const data =
+      await api(
+        "/api/admin/support/start",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              account_id:
+                Number(accountId)
+            })
+        }
+      );
+
+    document
+      .getElementById(
+        "supportSessionId"
+      )
+      .value =
+      data.session_id || "";
+
+    showSupportMessage(
+      "Support session started.",
+      false
+    );
+
+    await loadActivity();
+
+  } catch (error) {
+
+    showSupportMessage(
+      error.message,
+      true
+    );
+  }
+}
+
+
+async function endSupport() {
+
+  const sessionId =
+    document
+      .getElementById(
+        "supportSessionId"
+      )
+      .value
+      .trim();
+
+  if (!sessionId) {
+
+    showSupportMessage(
+      "Enter a support session ID.",
+      true
+    );
+
+    return;
+  }
+
+  try {
+
+    await api(
+      "/api/admin/support/end",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify({
+            session_id:
+              Number(sessionId)
+          })
+      }
+    );
+
+    showSupportMessage(
+      "Support session ended.",
+      false
+    );
+
+    await loadActivity();
+
+  } catch (error) {
+
+    showSupportMessage(
+      error.message,
+      true
+    );
+  }
+}
+
+
+/* ================================
+   ACTIVITY
+================================ */
+
+async function loadActivity() {
+
+  const container =
+    document.getElementById(
+      "activityList"
+    );
+
+  try {
+
+    const data =
+      await api(
+        "/api/admin/activity"
+      );
+
+    const activity =
+      data.activity || [];
+
+    if (!activity.length) {
+
+      container.innerHTML =
+        "<p class='small'>No administration activity yet.</p>";
+
+      return;
+    }
+
+    container.innerHTML = `
+      <table>
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Action</th>
+            <th>Account</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${activity.map(item => `
+
+            <tr>
+
+              <td>
+                ${escapeHtml(
+                  item.id ?? ""
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  item.action ||
+                  item.event ||
+                  ""
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  item.account_id ??
+                  ""
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  item.created_at ||
+                  ""
+                )}
+              </td>
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+    `;
+
+  } catch (error) {
+
+    container.innerHTML =
+      "<div class='error'>" +
+      escapeHtml(
+        error.message
+      ) +
+      "</div>";
+  }
+}
+
+
+/* ================================
+   MESSAGES
+================================ */
+
+function showLoginMessage(
+  message,
+  error = false
+) {
+
+  const element =
+    document.getElementById(
+      "loginMessage"
+    );
+
+  element.className =
+    error
+      ? "error"
+      : "success";
+
+  element.textContent =
+    message;
+}
+
+
+function showStatus(
+  message,
+  error = false
+) {
+
+  const element =
+    document.getElementById(
+      "statusMessage"
+    );
+
+  element.className =
+    error
+      ? "error"
+      : "success";
+
+  element.textContent =
+    message;
+}
+
+
+function showSupportMessage(
+  message,
+  error = false
+) {
+
+  const element =
+    document.getElementById(
+      "supportMessage"
+    );
+
+  element.className =
+    error
+      ? "error"
+      : "success";
+
+  element.textContent =
+    message;
+}
+
+
+/* ================================
+   SECURITY / HTML ESCAPING
+================================ */
+
+function escapeHtml(
+  value
+) {
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+}
+
+
+/* ================================
+   AUTO LOGIN
+================================ */
+
+if (adminKey) {
+
+  document
+    .getElementById(
+      "loginSection"
+    )
+    .classList.add(
+      "hidden"
+    );
+
+  document
+    .getElementById(
+      "dashboardSection"
+    )
+    .classList.remove(
+      "hidden"
+    );
+
+  loadDashboard();
+}
+
+</script>
+
+</body>
+  </html>
