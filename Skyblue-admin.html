@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sky Blue Digital Service — Owner Dashboard</title>
+<meta name="theme-color" content="#0b63ce">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#f4f7fb;
+color:#10233f
+}
+
+button,input,select,textarea{font:inherit}
+
+.top{
+background:linear-gradient(135deg,#083b78,#0b63ce);
+color:white;
+padding:18px 16px;
+position:sticky;
+top:0;
+z-index:5;
+box-shadow:0 4px 18px #0002
+}
+
+.toprow{
+max-width:1250px;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px
+}
+
+.brand{
+font-size:20px;
+font-weight:800
+}
+
+.sub{
+opacity:.82;
+font-size:12px;
+margin-top:3px
+}
+
+.wrap{
+max-width:1250px;
+margin:0 auto;
+padding:18px 14px 50px
+}
+
+.card{
+background:white;
+border:1px solid #e4eaf2;
+border-radius:16px;
+box-shadow:0 5px 18px #183b5b0d;
+padding:16px
+}
+
+.login{
+max-width:480px;
+margin:60px auto
+}
+
+.login h1{
+margin:0 0 6px
+}
+
+label{
+display:block;
+font-size:13px;
+font-weight:700;
+margin:14px 0 6px
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+border:1px solid #ccd6e3;
+border-radius:10px;
+outline:0;
+background:white
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+border-color:#0b63ce;
+box-shadow:0 0 0 3px #0b63ce18
+}
+
+.btn{
+border:0;
+border-radius:10px;
+padding:11px 15px;
+font-weight:800;
+cursor:pointer
+}
+
+.primary{
+background:#0b63ce;
+color:white
+}
+
+.dark{
+background:#083b78;
+color:white
+}
+
+.light{
+background:#edf4fc;
+color:#0b63ce
+}
+
+.danger{
+background:#b42318;
+color:white
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:12px;
+margin:15px 0
+}
+
+.stat{
+padding:15px
+}
+
+.stat .num{
+font-size:26px;
+font-weight:900;
+margin-top:5px
+}
+
+.muted{
+color:#6b7b90;
+font-size:12px
+}
+
+.layout{
+display:grid;
+grid-template-columns:1.4fr .9fr;
+gap:15px
+}
+
+.tablewrap{
+overflow:auto
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:680px
+}
+
+th,td{
+text-align:left;
+padding:11px 9px;
+border-bottom:1px solid #edf0f4;
+font-size:13px
+}
+
+th{
+background:#f8fafc;
+color:#5d6b7c;
+position:sticky;
+top:0
+}
+
+tr.click{
+cursor:pointer
+}
+
+tr.click:hover{
+background:#f5f9ff
+}
+
+.badge{
+display:inline-block;
+padding:4px 8px;
+border-radius:99px;
+font-size:11px;
+font-weight:800;
+background:#edf4fc;
+color:#0b63ce
+}
+
+.badge.green{
+background:#eaf8ef;
+color:#16723a
+}
+
+.badge.red{
+background:#fdecec;
+color:#a51d1d
+}
+
+.section-title{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+margin-bottom:12px
+}
+
+.section-title h2{
+font-size:17px;
+margin:0
+}
+
+.actions{
+display:flex;
+flex-wrap:wrap;
+gap:8px
+}
+
+.detailbox{
+min-height:180px
+}
+
+.kv{
+display:grid;
+grid-template-columns:120px 1fr;
+gap:7px;
+font-size:13px
+}
+
+.kv b{
+color:#607086
+}
+
+.activity{
+max-height:500px;
+overflow:auto
+}
+
+.event{
+padding:11px 0;
+border-bottom:1px solid #edf0f4
+}
+
+.event strong{
+display:block;
+font-size:13px
+}
+
+.event small{
+color:#718096
+}
+
+.toolbar{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-bottom:12px
+}
+
+.notice{
+padding:11px 13px;
+border-radius:10px;
+background:#eef6ff;
+color:#164e86;
+font-size:13px;
+margin:10px 0
+}
+
+.error{
+background:#fff0f0;
+color:#9b1c1c
+}
+
+.success{
+background:#effaf2;
+color:#176b36
+}
+
+.hidden{
+display:none!important
+}
+
+@media(max-width:900px){
+
+.grid{
+grid-template-columns:repeat(2,1fr)
+}
+
+.layout{
+grid-template-columns:1fr
+}
+
+}
+
+@media(max-width:520px){
+
+.grid{
+grid-template-columns:1fr 1fr
+}
+
+.toprow{
+align-items:flex-start
+}
+
+.brand{
+font-size:17px
+}
+
+.wrap{
+padding:12px 10px 40px
+}
+
+.card{
+padding:13px
+}
+
+.btn{
+padding:10px 12px
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+
+<div class="toprow">
+
+<div>
+
+<div class="brand">
+Sky Blue Digital Service
+</div>
+
+<div class="sub">
+Owner Administration & Customer Management
+</div>
+
+</div>
+
+<button
+class="btn light hidden"
+id="logoutBtn">
+Sign out
+</button>
+
+</div>
+
+</header>
+
+
+<main class="wrap">
+
+
+<section
+id="loginCard"
+class="card login">
+
+<h1>
+Owner Dashboard
+</h1>
+
+<div class="muted">
+Secure administrator access
+</div>
+
+<div
+id="loginMsg"
+class="notice hidden">
+</div>
+
+<label for="adminKey">
+Admin Key
+</label>
+
+<input
+id="adminKey"
+type="password"
+autocomplete="current-password"
+placeholder="Enter ADMIN_KEY">
+
+<div style="margin-top:14px">
+
+<button
+class="btn primary"
+id="loginBtn">
+Open Dashboard
+</button>
+
+</div>
+
+<p class="muted" style="margin-top:12px">
+
+The key is stored only in this browser session
+and sent as X-Admin-Key.
+
+</p>
+
+</section>
+
+
+<section
+id="dashboard"
+class="hidden">
+
+
+<div
+id="msg"
+class="notice hidden">
+</div>
+
+
+<div class="grid">
+
+
+<div class="card stat">
+
+<div class="muted">
+CUSTOMERS
+</div>
+
+<div
+class="num"
+id="customers">
+0
+</div>
+
+</div>
+
+
+<div class="card stat">
+
+<div class="muted">
+ACTIVE SUBSCRIPTIONS
+</div>
+
+<div
+class="num"
+id="subs">
+0
+</div>
+
+</div>
+
+
+<div class="card stat">
+
+<div class="muted">
+REVENUE
+</div>
+
+<div
+class="num"
+id="revenue">
+R0.00
+</div>
+
+</div>
+
+
+<div class="card stat">
+
+<div class="muted">
+ONLINE STORES
+</div>
+
+<div
+class="num"
+id="stores">
+0
+</div>
+
+</div>
+
+
+<div class="card stat">
+
+<div class="muted">
+ORDERS
+</div>
+
+<div
+class="num"
+id="orders">
+0
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="layout">
+
+
+<section class="card">
+
+
+<div class="section-title">
+
+<h2>
+Customers
+</h2>
+
+<div class="actions">
+
+<button
+class="btn light"
+id="refreshBtn">
+Refresh
+</button>
+
+</div>
+
+</div>
+
+
+<div class="toolbar">
+
+<input
+id="search"
+placeholder="Search business, email or phone..."
+style="max-width:420px">
+
+</div>
+
+
+<div class="tablewrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Business</th>
+
+<th>Email</th>
+
+<th>Phone</th>
+
+<th>Status</th>
+
+<th>Created</th>
+
+</tr>
+
+</thead>
+
+<tbody
+id="customerRows">
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<section class="card">
+
+
+<div class="section-title">
+
+<h2>
+Customer Details
+</h2>
+
+</div>
+
+
+<div
+id="detail"
+class="detailbox muted">
+
+Select a customer from the list.
+
+</div>
+
+
+<div
+id="customerActions"
+class="actions hidden"
+style="margin-top:14px">
+
+<button
+class="btn dark"
+id="supportBtn">
+
+Start Support
+
+</button>
+
+</div>
+
+
+<div
+id="supportBox"
+class="hidden"
+style="margin-top:14px">
+
+<div class="notice success">
+
+Remote support session active.
+
+</div>
+
+<button
+class="btn danger"
+id="endSupportBtn">
+
+End Support
+
+</button>
+
+</div>
+
+
+</section>
+
+
+</div>
+
+
+<section
+class="card"
+style="margin-top:15px">
+
+
+<div class="section-title">
+
+<h2>
+Administration Activity
+</h2>
+
+<button
+class="btn light"
+id="activityBtn">
+
+Refresh Activity
+
+</button>
+
+</div>
+
+
+<div
+id="activity"
+class="activity">
+
+<div class="muted">
+Loading...
+</div>
+
+</div>
+
+
+</section>
+
+
+</section>
+
+</main>
+
+
+<script>
+
+const KEY="skyblue_owner_admin_key";
+
+let adminKey=sessionStorage.getItem(KEY)||"";
+
+let customers=[];
+
+let selected=null;
+
+let supportSession=null;
+
+
+const $=id=>document.getElementById(id);
+
+
+const esc=s=>String(s??"").replace(
+/[&<>"']/g,
+c=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[c])
+);
+
+
+const money=n=>
+new Intl.NumberFormat(
+"en-ZA",
+{
+style:"currency",
+currency:"ZAR"
+}
+).format(Number(n||0));
+
+
+const date=v=>
+v
+?
+new Date(v).toLocaleString("en-ZA")
+:
+"—";
+
+
+function show(el,on=true){
+
+el.classList.toggle(
+"hidden",
+!on
+);
+
+}
+
+
+function message(text,type=""){
+
+const e=$("msg");
+
+e.textContent=text;
+
+e.className="notice "+(type||"");
+
+show(e,true);
+
+}
+
+
+function loginMessage(
+text,
+type="error"
+){
+
+const e=$("loginMsg");
+
+e.textContent=text;
+
+e.className="notice "+(type||"");
+
+show(e,true);
+
+}
+
+
+async function api(
+path,
+options={}
+){
+
+const headers={
+"X-Admin-Key":adminKey,
+...(options.headers||{})
+};
+
+if(
+options.body &&
+!headers["Content-Type"]
+){
+
+headers["Content-Type"]=
+"application/json";
+
+}
+
+
+const r=await fetch(
+path,
+{
+...options,
+headers
+}
+);
+
+
+const data=
+await r.json().catch(
+()=>({
+ok:false,
+error:
+"Invalid server response"
+})
+);
+
+
+if(
+!r.ok ||
+data.ok===false
+){
+
+throw new Error(
+data.error ||
+("Request failed ("+
+r.status+
+")")
+);
+
+}
+
+
+return data;
+
+}
+
+
+async function loadDashboard(){
+
+const d=
+await api(
+"/api/admin/dashboard"
+);
+
+
+const s=d.stats||{};
+
+
+$("customers").textContent=
+s.customers??0;
+
+
+$("subs").textContent=
+s.active_subscriptions??0;
+
+
+$("revenue").textContent=
+money(s.revenue);
+
+
+$("stores").textContent=
+s.ecommerce_stores??0;
+
+
+$("orders").textContent=
+s.orders??0;
+
+
+customers=
+d.customers||[];
+
+
+renderCustomers();
+
+
+await loadActivity();
+
+}
+
+
+async function loadActivity(){
+
+const d=
+await api(
+"/api/admin/activity"
+);
+
+
+const list=
+d.activity||[];
+
+
+$("activity").innerHTML=
+list.length
+?
+list.map(
+x=>`
+
+<div class="event">
+
+<strong>
+${esc(x.action||"Activity")}
+</strong>
+
+<div class="muted">
+
+Customer #${esc(x.account_id||"—")}
+·
+${esc(date(x.created_at))}
+
+</div>
+
+<small>
+${esc(x.details||"")}
+</small>
+
+</div>
+
+`
+).join("")
+:
+"<div class='muted'>No administration activity yet.</div>";
+
+}
+
+
+function renderCustomers(){
+
+const q=
+$("search")
+.value
+.trim()
+.toLowerCase();
+
+
+const rows=
+customers.filter(
+c=>[
+c.id,
+c.business_name,
+c.email,
+c.phone,
+c.whatsapp,
+c.status
+]
+.join(" ")
+.toLowerCase()
+.includes(q)
+);
+
+
+$("customerRows").innerHTML=
+rows.length
+?
+rows.map(
+c=>`
+
+<tr
+class="click"
+data-id="${c.id}">
+
+<td>
+#${c.id}
+</td>
+
+<td>
+<b>
+${esc(
+c.business_name||
+"Unnamed business"
+)}
+</b>
+</td>
+
+<td>
+${esc(c.email)}
+</td>
+
+<td>
+${esc(
+c.phone||
+c.whatsapp||
+"—"
+)}
+</td>
+
+<td>
+
+<span
+class="badge ${
+String(c.status)
+.toUpperCase()==="ACTIVE"
+?
+"green"
+:
+"red"
+}">
+
+${esc(c.status||"—")}
+
+</span>
+
+</td>
+
+<td>
+${esc(date(c.created_at))}
+</td>
+
+</tr>
+
+`
+).join("")
+:
+`
+<tr>
+<td
+colspan="6"
+class="muted">
+
+No customers found.
+
+</td>
+</tr>
+`;
+
+
+document
+.querySelectorAll(
+"#customerRows tr[data-id]"
+)
+.forEach(
+tr=>
+tr.onclick=
+()=>selectCustomer(
+Number(tr.dataset.id)
+)
+);
+
+}
+
+
+async function selectCustomer(id){
+
+try{
+
+const d=
+await api(
+"/api/admin/customer?account_id="+
+encodeURIComponent(id)
+);
+
+
+selected=d.customer;
+
+
+const c=
+selected.account||
+selected.customer||
+selected;
+
+
+$("detail").innerHTML=`
+
+<div class="kv">
+
+<b>
+Account ID
+</b>
+
+<span>
+#${esc(c.id??id)}
+</span>
+
+
+<b>
+Email
+</b>
+
+<span>
+${esc(c.email||"—")}
+</span>
+
+
+<b>
+Status
+</b>
+
+<span>
+${esc(c.status||"—")}
+</span>
+
+
+<b>
+Business
+</b>
+
+<span>
+${esc(
+c.business_name||
+selected.business_name||
+"—"
+)}
+</span>
+
+
+<b>
+Phone
+</b>
+
+<span>
+${esc(
+c.phone||
+selected.phone||
+"—"
+)}
+</span>
+
+
+<b>
+WhatsApp
+</b>
+
+<span>
+${esc(
+c.whatsapp||
+selected.whatsapp||
+"—"
+)}
+</span>
+
+
+<b>
+Created
+</b>
+
+<span>
+${esc(date(c.created_at))}
+</span>
+
+</div>
+
+`;
+
+
+show(
+$("customerActions"),
+true
+);
+
+
+show(
+$("supportBox"),
+!!supportSession
+);
+
+
+}
+catch(e){
+
+message(
+e.message,
+"error"
+);
+
+}
+
+}
+
+
+async function startSupport(){
+
+if(!selected)return;
+
+
+const id=
+selected.account?.id||
+selected.id||
+selected.customer?.id;
+
+
+try{
+
+const d=
+await api(
+"/api/admin/support/start",
+{
+method:"POST",
+body:
+JSON.stringify({
+account_id:id
+})
+}
+);
+
+
+supportSession=
+d.session_id;
+
+
+show(
+$("supportBox"),
+true
+);
+
+
+message(
+"Remote support session started.",
+"success"
+);
+
+
+}
+catch(e){
+
+message(
+e.message,
+"error"
+);
+
+}
+
+}
+
+
+async function endSupport(){
+
+if(!supportSession)
+return;
+
+
+try{
+
+await api(
+"/api/admin/support/end",
+{
+method:"POST",
+body:
+JSON.stringify({
+session_id:
+supportSession
+})
+}
+);
+
+
+supportSession=null;
+
+
+show(
+$("supportBox"),
+false
+);
+
+
+message(
+"Remote support session ended.",
+"success"
+);
+
+
+}
+catch(e){
+
+message(
+e.message,
+"error"
+);
+
+}
+
+}
+
+
+async function openApp(){
+
+if(!adminKey)
+return;
+
+
+try{
+
+await loadDashboard();
+
+
+show(
+$("loginCard"),
+false
+);
+
+
+show(
+$("dashboard"),
+true
+);
+
+
+show(
+$("logoutBtn"),
+true
+);
+
+
+}
+catch(e){
+
+sessionStorage.removeItem(
+KEY
+);
+
+adminKey="";
+
+
+loginMessage(
+e.message||
+"Admin authorization failed."
+);
+
+}
+
+}
+
+
+$("loginBtn").onclick=
+async()=>{
+
+adminKey=
+$("adminKey")
+.value
+.trim();
+
+
+if(!adminKey){
+
+loginMessage(
+"Enter the Admin Key."
+);
+
+return;
+
+}
+
+
+sessionStorage.setItem(
+KEY,
+adminKey
+);
+
+
+await openApp();
+
+};
+
+
+$("logoutBtn").onclick=
+()=>{
+
+sessionStorage.removeItem(
+KEY
+);
+
+adminKey="";
+
+location.reload();
+
+};
+
+
+$("refreshBtn").onclick=
+async()=>{
+
+try{
+
+await loadDashboard();
+
+message(
+"Dashboard refreshed.",
+"success"
+);
+
+}
+catch(e){
+
+message(
+e.message,
+"error"
+);
+
+}
+
+};
+
+
+$("activityBtn").onclick=
+async()=>{
+
+try{
+
+await loadActivity();
+
+message(
+"Activity refreshed.",
+"success"
+);
+
+}
+catch(e){
+
+message(
+e.message,
+"error"
+);
+
+}
+
+};
+
+
+$("search").oninput=
+renderCustomers;
+
+
+$("supportBtn").onclick=
+startSupport;
+
+
+$("endSupportBtn").onclick=
+endSupport;
+
+
+openApp();
+
+</script>
+
+</body>
+  </html>
