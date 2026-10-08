@@ -1,1 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0757b8">
+<meta name="description" content="Sky Blue SaaS Solutions - affordable digital business tools for businesses, organisations and communities.">
+<title>Sky Blue SaaS Solutions | Grow Your Business Digitally</title>
 
+<style>
+:root{
+  --blue:#0757b8;
+  --blue2:#0b78e3;
+  --dark:#071b35;
+  --text:#18324d;
+  --muted:#63758a;
+  --light:#f4f8fc;
+  --white:#fff;
+  --green:#16a36a;
+  --border:#dce7f2;
+  --shadow:0 12px 35px rgba(8,48,91,.10);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#fff;
+  color:var(--text);
+  line-height:1.6;
+}
+a{text-decoration:none;color:inherit}
+button{font:inherit}
+.container{width:min(1160px,92%);margin:auto}
+
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+}
+.nav{
+  min-height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  color:var(--dark);
+  font-size:19px;
+}
+.logo-mark{
+  width:40px;
+  height:40px;
+  border-radius:11px;
+  background:linear-gradient(135deg,var(--blue),var(--blue2));
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  box-shadow:0 7px 18px rgba(7,87,184,.25);
+}
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:25px;
+  font-size:14px;
+  font-weight:700;
+}
+.nav-links a:hover{color:var(--blue)}
+.nav-cta{
+  background:var(--blue);
+  color:#fff!important;
+  padding:11px 17px;
+  border-radius:9px;
+}
+.menu{
+  display:none;
+  border:0;
+  background:none;
+  font-size:27px;
+  cursor:pointer;
+}
+
+/* HERO */
+.hero{
+  background:
+    radial-gradient(circle at 85% 20%,rgba(29,129,239,.18),transparent 28%),
+    linear-gradient(135deg,#f5faff 0%,#fff 55%,#edf6ff 100%);
+  padding:82px 0 75px;
+  overflow:hidden;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:55px;
+  align-items:center;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#e8f3ff;
+  color:var(--blue);
+  border:1px solid #cce3fb;
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:18px;
+}
+.badge span{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+}
+.hero h1{
+  font-size:clamp(40px,6vw,68px);
+  line-height:1.04;
+  letter-spacing:-2px;
+  color:var(--dark);
+  margin-bottom:20px;
+}
+.hero h1 strong{color:var(--blue)}
+.hero p{
+  max-width:650px;
+  color:var(--muted);
+  font-size:18px;
+  margin-bottom:30px;
+}
+.actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.btn{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  border:0;
+  cursor:pointer;
+  padding:14px 21px;
+  border-radius:10px;
+  font-weight:800;
+  font-size:14px;
+}
+.btn-primary{
+  color:#fff;
+  background:var(--blue);
+  box-shadow:0 10px 24px rgba(7,87,184,.22);
+}
+.btn-primary:hover{background:#064b9e}
+.btn-secondary{
+  background:#fff;
+  border:1px solid var(--border);
+  color:var(--dark);
+}
+.hero-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:25px;
+  box-shadow:var(--shadow);
+}
+.dashboard-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
+.dashboard-title{
+  font-weight:900;
+  color:var(--dark);
+}
+.live{
+  color:var(--green);
+  background:#eaf9f2;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+}
+.metric{
+  background:var(--light);
+  border-radius:13px;
+  padding:17px;
+  margin-bottom:12px;
+}
+.metric small{
+  color:var(--muted);
+  font-size:11px;
+}
+.metric strong{
+  display:block;
+  font-size:25px;
+  color:var(--dark);
+}
+.mini-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+/* GENERAL */
+section{padding:78px 0}
+.section-head{
+  text-align:center;
+  max-width:720px;
+  margin:0 auto 42px;
+}
+.section-head .eyebrow{
+  color:var(--blue);
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:1.4px;
+  margin-bottom:8px;
+}
+.section-head h2{
+  color:var(--dark);
+  font-size:clamp(29px,4vw,43px);
+  line-height:1.12;
+  margin-bottom:13px;
+}
+.section-head p{color:var(--muted)}
+
+/* PRODUCTS */
+.products{background:var(--light)}
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+.product{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:24px;
+  box-shadow:0 5px 20px rgba(8,48,91,.05);
+  display:flex;
+  flex-direction:column;
+}
+.product.featured{
+  border:2px solid var(--blue);
+  position:relative;
+}
+.popular{
+  position:absolute;
+  top:-12px;
+  right:15px;
+  background:var(--blue);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  padding:5px 9px;
+  border-radius:999px;
+}
+.icon{
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#eaf4ff;
+  color:var(--blue);
+  font-size:21px;
+  margin-bottom:16px;
+}
+.product h3{
+  color:var(--dark);
+  font-size:20px;
+  margin-bottom:7px;
+}
+.product p{
+  color:var(--muted);
+  font-size:13px;
+  min-height:65px;
+}
+.price{
+  color:var(--dark);
+  font-size:28px;
+  font-weight:900;
+  margin:17px 0 18px;
+}
+.price small{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:600;
+}
+.product .btn{
+  width:100%;
+  margin-top:auto;
+}
+
+/* BENEFITS */
+.benefit-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.benefit{
+  padding:25px;
+  border:1px solid var(--border);
+  border-radius:16px;
+}
+.benefit h3{
+  color:var(--dark);
+  margin:12px 0 7px;
+}
+.benefit p{
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* HOW */
+.steps{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+}
+.step{
+  text-align:center;
+  padding:25px 15px;
+}
+.step-number{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:var(--blue);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  margin:0 auto 15px;
+  font-weight:900;
+}
+.step h3{
+  color:var(--dark);
+  font-size:17px;
+  margin-bottom:7px;
+}
+.step p{
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* INDUSTRIES */
+.industries{background:var(--light)}
+.industry-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+}
+
+/* INDUSTRY BUTTONS */
+.industry{
+  width:100%;
+  background:#fff;
+  border:1px solid var(--border);
+  padding:17px 10px;
+  text-align:center;
+  border-radius:12px;
+  font-weight:800;
+  font-size:13px;
+  color:var(--dark);
+  cursor:pointer;
+  transition:.2s ease;
+  appearance:none;
+  -webkit-appearance:none;
+}
+
+.industry:hover{
+  border-color:var(--blue);
+  color:var(--blue);
+  background:#f5faff;
+  transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(7,87,184,.10);
+}
+
+.industry:active{
+  transform:translateY(0);
+}
+
+.industry:focus{
+  outline:3px solid rgba(7,87,184,.18);
+  outline-offset:2px;
+}
+
+/* CTA */
+.cta{
+  padding:70px 0;
+  background:linear-gradient(135deg,#063d82,#0872d7);
+  color:#fff;
+}
+.cta-inner{
+  text-align:center;
+  max-width:780px;
+  margin:auto;
+}
+.cta h2{
+  font-size:clamp(30px,4vw,46px);
+  line-height:1.1;
+  margin-bottom:15px;
+}
+.cta p{
+  opacity:.9;
+  margin-bottom:25px;
+}
+.cta .btn-primary{
+  background:#fff;
+  color:var(--blue);
+  box-shadow:none;
+}
+
+/* FOOTER */
+footer{
+  background:#06172c;
+  color:#b8c8da;
+  padding:52px 0 25px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:35px;
+}
+footer h3,
+footer h4{
+  color:#fff;
+  margin-bottom:12px;
+}
+footer p,
+footer a{
+  font-size:13px;
+  color:#aebed0;
+}
+footer a{
+  display:block;
+  margin:7px 0;
+}
+footer a:hover{color:#fff}
+.footer-brand p{max-width:350px}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.1);
+  margin-top:35px;
+  padding-top:20px;
+  font-size:12px;
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(3,17,34,.68);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:2000;
+}
+.modal.open{display:flex}
+.modal-box{
+  width:min(500px,100%);
+  background:#fff;
+  border-radius:18px;
+  padding:28px;
+  position:relative;
+  max-height:90vh;
+  overflow:auto;
+}
+.close{
+  position:absolute;
+  top:12px;
+  right:16px;
+  border:0;
+  background:none;
+  font-size:27px;
+  cursor:pointer;
+  color:#617386;
+}
+.modal h2{
+  color:var(--dark);
+  margin-bottom:8px;
+}
+.modal p{
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:20px;
+}
+.choice{
+  border:1px solid var(--border);
+  padding:15px;
+  border-radius:11px;
+  margin-bottom:10px;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.choice:hover{
+  border-color:var(--blue);
+  background:#f5faff;
+}
+.choice strong{color:var(--dark)}
+.choice span{
+  color:var(--blue);
+  font-weight:900;
+}
+.notice{
+  background:#eef7ff;
+  border:1px solid #cfe6fb;
+  padding:12px;
+  border-radius:9px;
+  font-size:12px;
+  color:#31506e;
+  margin-top:15px;
+}
+
+/* RESPONSIVE */
+@media(max-width:950px){
+  .product-grid{grid-template-columns:1fr 1fr}
+  .industry-grid{grid-template-columns:repeat(3,1fr)}
+  .hero-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:700px){
+  .nav-links{
+    display:none;
+    position:absolute;
+    top:72px;
+    left:0;
+    right:0;
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    padding:18px 5%;
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .nav-links.open{display:flex}
+
+  .nav-links a{padding:9px 0}
+
+  .nav-cta{text-align:center}
+
+  .menu{display:block}
+
+  .hero{padding:55px 0}
+
+  .hero h1{letter-spacing:-1px}
+
+  section{padding:58px 0}
+
+  .product-grid,
+  .benefit-grid,
+  .steps{
+    grid-template-columns:1fr;
+  }
+
+  .industry-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .footer-grid{
+    grid-template-columns:1fr;
+  }
+
+  .mini-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+
+    <a href="#" class="logo">
+      <span class="logo-mark">SB</span>
+      <span>Sky Blue SaaS</span>
+    </a>
+
+    <button
+      class="menu"
+      onclick="toggleMenu()"
+      aria-label="Open menu"
+      type="button"
+    >☰</button>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#products" onclick="closeMenu()">Solutions</a>
+      <a href="#industries" onclick="closeMenu()">Industries</a>
+      <a href="#how" onclick="closeMenu()">How It Works</a>
+      <a href="#contact" onclick="closeMenu()">Contact</a>
+      <a href="/login" class="nav-cta">Customer Login</a>
+    </nav>
+
+  </div>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+
+    <div>
+
+      <div class="badge">
+        <span></span>
+        Digital tools built for growing businesses
+      </div>
+
+      <h1>
+        Your business.<br>
+        <strong>One digital platform.</strong>
+      </h1>
+
+      <p>
+        Get the tools you need to manage, sell and communicate online —
+        without complicated technology or expensive systems.
+      </p>
+
+      <div class="actions">
+        <a href="#products" class="btn btn-primary">
+          Explore Solutions
+        </a>
+
+        <a href="/login" class="btn btn-secondary">
+          Customer Login
+        </a>
+      </div>
+
+    </div>
+
+    <div class="hero-card">
+
+      <div class="dashboard-top">
+        <span class="dashboard-title">Your Digital Business</span>
+        <span class="live">● ACTIVE</span>
+      </div>
+
+      <div class="metric">
+        <small>Business platform</small>
+        <strong>Connected</strong>
+      </div>
+
+      <div class="mini-grid">
+
+        <div class="metric">
+          <small>Website</small>
+          <strong>✓</strong>
+        </div>
+
+        <div class="metric">
+          <small>WhatsApp</small>
+          <strong>✓</strong>
+        </div>
+
+        <div class="metric">
+          <small>Sales</small>
+          <strong>24/7</strong>
+        </div>
+
+        <div class="metric">
+          <small>Support</small>
+          <strong>Online</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+
+  <div class="container">
+
+    <div class="section-head">
+      <div class="eyebrow">Choose your solution</div>
+
+      <h2>Simple plans. Powerful tools.</h2>
+
+      <p>
+        Start with what your business needs today and add more digital
+        services as you grow.
+      </p>
+    </div>
+
+    <div class="product-grid">
+
+      <article class="product featured">
+
+        <span class="popular">MOST POPULAR</span>
+
+        <div class="icon">💬</div>
+
+        <h3>WhatsApp + Website</h3>
+
+        <p>
+          Build your online presence and connect with customers through
+          a professional website and WhatsApp.
+        </p>
+
+        <div class="price">
+          R199 <small>/ month</small>
+        </div>
+
+        <button
+          class="btn btn-primary"
+          onclick="startProduct('core')"
+          type="button"
+        >
+          Start Now
+        </button>
+
+      </article>
+
+      <article class="product">
+
+        <div class="icon">☎</div>
+
+        <h3>Business Number</h3>
+
+        <p>
+          Give your business a professional communication number and
+          improve the way customers reach you.
+        </p>
+
+        <div class="price">
+          R69 <small>/ month</small>
+        </div>
+
+        <button
+          class="btn btn-primary"
+          onclick="startProduct('number')"
+          type="button"
+        >
+          Start Now
+        </button>
+
+      </article>
+
+      <article class="product">
+
+        <div class="icon">🛒</div>
+
+        <h3>Ecommerce</h3>
+
+        <p>
+          Launch your own online store with products, categories,
+          orders, customers and business management tools.
+        </p>
+
+        <div class="price">
+          R399 <small>/ month</small>
+        </div>
+
+        <button
+          class="btn btn-primary"
+          onclick="startProduct('ecommerce')"
+          type="button"
+        >
+          Start Now
+        </button>
+
+      </article>
+
+      <article class="product">
+
+        <div class="icon">☁</div>
+
+        <h3>Cloud PBX</h3>
+
+        <p>
+          Modern cloud-based business communication designed for
+          organisations that need professional calling.
+        </p>
+
+        <div class="price">
+          R299 <small>/ month</small>
+        </div>
+
+        <button
+          class="btn btn-primary"
+          onclick="startProduct('pbx')"
+          type="button"
+        >
+          Start Now
+        </button>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- BENEFITS -->
+<section>
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div class="eyebrow">Built for business</div>
+
+      <h2>Everything works together.</h2>
+
+      <p>
+        Sky Blue brings your essential digital business tools together
+        in one platform.
+      </p>
+
+    </div>
+
+    <div class="benefit-grid">
+
+      <div class="benefit">
+
+        <div class="icon">⚡</div>
+
+        <h3>Fast activation</h3>
+
+        <p>
+          Choose your service, create your account and complete payment.
+          Your platform is designed for automatic activation.
+        </p>
+
+      </div>
+
+      <div class="benefit">
+
+        <div class="icon">📱</div>
+
+        <h3>Mobile friendly</h3>
+
+        <p>
+          Manage your digital business from your smartphone, tablet or
+          computer.
+        </p>
+
+      </div>
+
+      <div class="benefit">
+
+        <div class="icon">🔐</div>
+
+        <h3>Secure payments</h3>
+
+        <p>
+          SaaS subscriptions are handled through PayFast's secure
+          payment infrastructure.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="products">
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div class="eyebrow">Simple process</div>
+
+      <h2>Get started in four steps.</h2>
+
+      <p>
+        No complicated setup process. Choose a solution and let the
+        platform guide you.
+      </p>
+
+    </div>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Choose</h3>
+        <p>Select the digital service that fits your business.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Create account</h3>
+        <p>Enter your business information and create your login.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Pay</h3>
+        <p>Complete your subscription payment securely through PayFast.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Start</h3>
+        <p>Access your dashboard and begin using your service.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- INDUSTRIES -->
+<section id="industries" class="industries">
+
+  <div class="container">
+
+    <div class="section-head">
+
+      <div class="eyebrow">One platform. Many businesses.</div>
+
+      <h2>Built for different industries.</h2>
+
+      <p>
+        Choose the tools that match the way your organisation operates.
+      </p>
+
+    </div>
+
+    <div class="industry-grid">
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('salon')"
+      >
+        💇 Salon
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('food')"
+      >
+        🍔 Food Service
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('pharmacy')"
+      >
+        💊 Pharmacy
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('school')"
+      >
+        🏫 School
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('councillor')"
+      >
+        🏛 Councillor
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('npo')"
+      >
+        🤝 NPO / NGO
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('church')"
+      >
+        ⛪ Church
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('undertaker')"
+      >
+        ⚱ Undertaker
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('seller')"
+      >
+        🛍 Online Seller
+      </button>
+
+      <button
+        class="industry"
+        type="button"
+        onclick="startIndustry('other')"
+      >
+        🏢 Other Business
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contact">
+
+  <div class="container cta-inner">
+
+    <h2>Ready to take your business digital?</h2>
+
+    <p>
+      Start with one solution and expand your platform as your business grows.
+    </p>
+
+    <a href="#products" class="btn btn-primary">
+      Choose Your Solution
+    </a>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+
+  <div class="container">
+
+    <div class="footer-grid">
+
+      <div class="footer-brand">
+
+        <h3>Sky Blue SaaS Solutions</h3>
+
+        <p>
+          Smart technology and reliable digital business solutions
+          designed to help businesses and organisations grow.
+        </p>
+
+        <br>
+
+        <p>
+          <strong>Sky Blue Solution (Pty) Ltd</strong><br>
+          Alexandra, Johannesburg, South Africa
+        </p>
+
+      </div>
+
+      <div>
+
+        <h4>Solutions</h4>
+
+        <a href="#products">WhatsApp + Website</a>
+        <a href="#products">Business Number</a>
+        <a href="#products">Ecommerce</a>
+        <a href="#products">Cloud PBX</a>
+
+      </div>
+
+      <div>
+
+        <h4>Company</h4>
+
+        <a href="#industries">Industries</a>
+        <a href="#how">How It Works</a>
+        <a href="/login">Customer Login</a>
+
+      </div>
+
+      <div>
+
+        <h4>Legal</h4>
+
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/terms">Terms & Conditions</a>
+        <a href="/refund-policy">Refund Policy</a>
+        <a href="/cancellation-policy">Cancellation Policy</a>
+
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+      <span>
+        © 2026 Sky Blue Solution (Pty) Ltd. All rights reserved.
+      </span>
+
+      <span>
+        SMART TECHNOLOGY. RELIABLE BUSINESS SOLUTIONS.
+      </span>
+
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- PRODUCT START MODAL -->
+<div class="modal" id="productModal">
+
+  <div class="modal-box">
+
+    <button
+      class="close"
+      onclick="closeModal()"
+      type="button"
+      aria-label="Close"
+    >
+      ×
+    </button>
+
+    <h2 id="modalTitle">Start your service</h2>
+
+    <p id="modalDescription">
+      Choose a service to continue.
+    </p>
+
+    <div
+      class="choice"
+      onclick="continueSignup()"
+      role="button"
+      tabindex="0"
+      onkeydown="if(event.key==='Enter'||event.key===' '){continueSignup();}"
+    >
+
+      <div>
+
+        <strong id="selectedProduct">
+          Sky Blue SaaS
+        </strong>
+
+        <br>
+
+        <small>
+          Continue to account setup
+        </small>
+
+      </div>
+
+      <span>→</span>
+
+    </div>
+
+    <div class="notice">
+
+      After creating your account, you can configure your service and
+      complete your subscription through PayFast.
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+let selectedProduct = "";
+
+const products = {
+
+  core: {
+    name: "WhatsApp + Website",
+    price: "R199 / month",
+    description: "Professional website and WhatsApp business tools."
+  },
+
+  number: {
+    name: "Business Number",
+    price: "R69 / month",
+    description: "Professional business communication number."
+  },
+
+  ecommerce: {
+    name: "Ecommerce",
+    price: "R399 / month",
+    description: "Your own online store and ecommerce management dashboard."
+  },
+
+  pbx: {
+    name: "Cloud PBX",
+    price: "R299 / month",
+    description: "Cloud-based business communication solution."
+  }
+
+};
+
+function startProduct(product){
+
+  selectedProduct = product;
+
+  const item = products[product];
+
+  if(!item){
+    return;
+  }
+
+  document.getElementById("modalTitle").textContent =
+    "Start " + item.name;
+
+  document.getElementById("modalDescription").textContent =
+    item.description + " " + item.price;
+
+  document.getElementById("selectedProduct").textContent =
+    item.name + " — " + item.price;
+
+  document.getElementById("productModal").classList.add("open");
+
+}
+
+function startIndustry(industry){
+
+  const industries = {
+
+    salon: {
+      name: "Salon",
+      description: "Digital tools for salons, beauty businesses and personal care services."
+    },
+
+    food: {
+      name: "Food Service",
+      description: "Digital tools for restaurants, takeaways, catering and food businesses."
+    },
+
+    pharmacy: {
+      name: "Pharmacy",
+      description: "Digital business tools for pharmacies and healthcare retailers."
+    },
+
+    school: {
+      name: "School",
+      description: "Digital communication and management tools for schools and educational organisations."
+    },
+
+    councillor: {
+      name: "Councillor",
+      description: "Digital community communication and service management tools for councillors and wards."
+    },
+
+    npo: {
+      name: "NPO / NGO",
+      description: "Digital tools for nonprofit organisations, community programmes and social services."
+    },
+
+    church: {
+      name: "Church",
+      description: "Digital communication and organisation tools for churches and faith organisations."
+    },
+
+    undertaker: {
+      name: "Undertaker",
+      description: "Digital business tools for funeral homes and undertaker services."
+    },
+
+    seller: {
+      name: "Online Seller",
+      description: "Digital ecommerce tools for online sellers and growing businesses."
+    },
+
+    other: {
+      name: "Other Business",
+      description: "Flexible digital business tools that can be configured for your organisation."
+    }
+
+  };
+
+  const item = industries[industry];
+
+  if(!item){
+    return;
+  }
+
+  selectedProduct = "industry-" + industry;
+
+  document.getElementById("modalTitle").textContent =
+    "Start your " + item.name + " solution";
+
+  document.getElementById("modalDescription").textContent =
+    item.description;
+
+  document.getElementById("selectedProduct").textContent =
+    item.name + " — Continue to account setup";
+
+  document.getElementById("productModal").classList.add("open");
+
+}
+
+function closeModal(){
+
+  document
+    .getElementById("productModal")
+    .classList.remove("open");
+
+}
+
+function continueSignup(){
+
+  const target =
+    "/login?product=" +
+    encodeURIComponent(selectedProduct) +
+    "&start=signup";
+
+  window.location.href = target;
+
+}
+
+function toggleMenu(){
+
+  document
+    .getElementById("navLinks")
+    .classList.toggle("open");
+
+}
+
+function closeMenu(){
+
+  document
+    .getElementById("navLinks")
+    .classList.remove("open");
+
+}
+
+document
+  .getElementById("productModal")
+  .addEventListener("click",function(e){
+
+    if(e.target === this){
+      closeModal();
+    }
+
+  });
+
+</script>
+
+</body>
+  </html>
