@@ -1,1 +1,1211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sky Blue Digital Service</title>
 
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7fb;
+  color:#172033
+}
+
+button,input{
+  font:inherit
+}
+
+.hidden{
+  display:none!important
+}
+
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:20px
+}
+
+.card{
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  box-shadow:0 6px 22px rgba(15,23,42,.06)
+}
+
+/* LOGIN */
+
+#login{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(135deg,#eef6ff,#fff)
+}
+
+.login-card{
+  width:min(430px,100%);
+  padding:30px
+}
+
+.brand{
+  text-align:center;
+  margin-bottom:25px
+}
+
+.logo{
+  width:64px;
+  height:64px;
+  border-radius:18px;
+  background:#1261d6;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  margin:0 auto 12px;
+  font-weight:900;
+  font-size:24px
+}
+
+.brand h1{
+  margin:0;
+  color:#0b3f91;
+  font-size:25px
+}
+
+.brand p{
+  color:#6b7280;
+  font-size:14px
+}
+
+.field{
+  margin-bottom:16px
+}
+
+.field label{
+  display:block;
+  font-weight:700;
+  font-size:14px;
+  margin-bottom:7px
+}
+
+.field input{
+  width:100%;
+  padding:13px;
+  border:1px solid #dbe3ed;
+  border-radius:10px
+}
+
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:13px 16px;
+  font-weight:700;
+  cursor:pointer
+}
+
+.primary{
+  background:#1261d6;
+  color:#fff;
+  width:100%
+}
+
+.message{
+  margin-top:13px;
+  text-align:center;
+  font-size:13px;
+  min-height:18px
+}
+
+.error{
+  color:#dc2626
+}
+
+.success{
+  color:#15803d
+}
+
+/* APPLICATION */
+
+header{
+  background:#fff;
+  border-bottom:1px solid #e2e8f0;
+  position:sticky;
+  top:0;
+  z-index:10
+}
+
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 20px
+}
+
+.top-brand{
+  font-weight:900;
+  color:#0b3f91
+}
+
+.top button{
+  width:auto;
+  background:#fee2e2;
+  color:#991b1b
+}
+
+.layout{
+  display:flex;
+  min-height:calc(100vh - 68px)
+}
+
+aside{
+  width:240px;
+  background:#fff;
+  border-right:1px solid #e2e8f0;
+  padding:15px;
+  flex-shrink:0
+}
+
+.nav{
+  width:100%;
+  border:0;
+  background:transparent;
+  text-align:left;
+  padding:11px;
+  border-radius:9px;
+  margin-bottom:4px;
+  cursor:pointer
+}
+
+.nav.active,
+.nav:hover{
+  background:#eaf3ff;
+  color:#0b3f91;
+  font-weight:700
+}
+
+.main{
+  flex:1;
+  padding:24px
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px
+}
+
+.stat{
+  padding:18px
+}
+
+.stat small{
+  color:#6b7280
+}
+
+.stat strong{
+  display:block;
+  font-size:25px;
+  margin-top:8px
+}
+
+.panel{
+  padding:20px;
+  margin-top:18px
+}
+
+.two{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:18px
+}
+
+.list{
+  margin:0;
+  padding:0;
+  list-style:none
+}
+
+.list li{
+  padding:11px 0;
+  border-bottom:1px solid #edf0f4
+}
+
+.pill{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  background:#eaf8ef;
+  color:#16703a;
+  font-size:11px;
+  font-weight:700
+}
+
+.mobile-menu{
+  display:none;
+  background:#eaf3ff;
+  color:#0b3f91;
+  width:auto
+}
+
+.view{
+  display:none
+}
+
+.view.active{
+  display:block
+}
+
+@media(max-width:850px){
+
+  aside{
+    position:fixed;
+    top:68px;
+    bottom:0;
+    left:-260px;
+    z-index:20;
+    transition:.2s;
+    box-shadow:0 10px 30px #0002
+  }
+
+  aside.open{
+    left:0
+  }
+
+  .mobile-menu{
+    display:block
+  }
+
+  .grid{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .two{
+    grid-template-columns:1fr
+  }
+
+  .main{
+    padding:16px
+  }
+}
+
+@media(max-width:500px){
+
+  .grid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .stat strong{
+    font-size:20px
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<section id="login">
+
+  <div class="card login-card">
+
+    <div class="brand">
+
+      <div class="logo">
+        SB
+      </div>
+
+      <h1>
+        Sky Blue Digital Service
+      </h1>
+
+      <p>
+        Smart technology. Reliable business solutions.
+      </p>
+
+    </div>
+
+    <form id="loginForm">
+
+      <div class="field">
+
+        <label for="email">
+          Email
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          required
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label for="password">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+
+      </div>
+
+      <button
+        id="loginBtn"
+        class="btn primary"
+        type="submit"
+      >
+        Sign In
+      </button>
+
+      <div
+        id="loginMessage"
+        class="message"
+      ></div>
+
+    </form>
+
+    <p
+      style="text-align:center;font-size:13px;color:#6b7280"
+    >
+      Need an account?
+      <a href="/signup.html">
+        Create one
+      </a>
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- CUSTOMER APPLICATION -->
+
+<section
+  id="app"
+  class="hidden"
+>
+
+<header>
+
+  <div class="top">
+
+    <div class="top-brand">
+      Sky Blue Digital Service
+    </div>
+
+    <div style="display:flex;gap:8px">
+
+      <button
+        class="btn mobile-menu"
+        onclick="toggleNav()"
+      >
+        ☰
+      </button>
+
+      <button
+        class="btn"
+        onclick="logout()"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<div class="layout">
+
+  <aside id="sidebar">
+
+    <button
+      class="nav active"
+      onclick="showView('dashboard',this)"
+    >
+      📊 Dashboard
+    </button>
+
+    <button
+      class="nav"
+      onclick="showView('business',this)"
+    >
+      🏢 Business Profile
+    </button>
+
+    <button
+      class="nav"
+      onclick="showView('subscriptions',this)"
+    >
+      ⭐ Subscriptions
+    </button>
+
+    <button
+      class="nav"
+      onclick="showView('products',this)"
+    >
+      📦 Products
+    </button>
+
+    <button
+      class="nav"
+      onclick="showView('orders',this)"
+    >
+      🛒 Orders
+    </button>
+
+    <button
+      class="nav"
+      onclick="showView('services',this)"
+    >
+      🛠 Services
+    </button>
+
+    <button
+      class="nav"
+      onclick="showView('modules',this)"
+    >
+      🧩 Modules
+    </button>
+
+  </aside>
+
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+
+    <div
+      id="dashboard"
+      class="view active"
+    >
+
+      <h1>
+        Dashboard
+      </h1>
+
+      <p
+        id="welcome"
+        style="color:#6b7280"
+      >
+        Loading your account...
+      </p>
+
+      <div class="grid">
+
+        <div class="card stat">
+
+          <small>
+            Products
+          </small>
+
+          <strong id="countProducts">
+            0
+          </strong>
+
+        </div>
+
+        <div class="card stat">
+
+          <small>
+            Orders
+          </small>
+
+          <strong id="countOrders">
+            0
+          </strong>
+
+        </div>
+
+        <div class="card stat">
+
+          <small>
+            Services
+          </small>
+
+          <strong id="countServices">
+            0
+          </strong>
+
+        </div>
+
+        <div class="card stat">
+
+          <small>
+            Modules
+          </small>
+
+          <strong id="countModules">
+            0
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="two">
+
+        <div class="card panel">
+
+          <h2>
+            Account
+          </h2>
+
+          <p id="accountInfo">
+            Loading...
+          </p>
+
+        </div>
+
+
+        <div class="card panel">
+
+          <h2>
+            Status
+          </h2>
+
+          <p>
+            <span
+              id="accountStatus"
+              class="pill"
+            >
+              Loading
+            </span>
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- BUSINESS -->
+
+    <div
+      id="business"
+      class="view"
+    >
+
+      <h1>
+        Business Profile
+      </h1>
+
+      <div
+        class="card panel"
+        id="businessInfo"
+      >
+        Loading...
+      </div>
+
+    </div>
+
+
+    <!-- SUBSCRIPTIONS -->
+
+    <div
+      id="subscriptions"
+      class="view"
+    >
+
+      <h1>
+        Subscriptions
+      </h1>
+
+      <div class="card panel">
+
+        <ul
+          id="subscriptionList"
+          class="list"
+        ></ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCTS -->
+
+    <div
+      id="products"
+      class="view"
+    >
+
+      <h1>
+        Products
+      </h1>
+
+      <div class="card panel">
+
+        <ul
+          id="productList"
+          class="list"
+        ></ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- ORDERS -->
+
+    <div
+      id="orders"
+      class="view"
+    >
+
+      <h1>
+        Orders
+      </h1>
+
+      <div class="card panel">
+
+        <ul
+          id="orderList"
+          class="list"
+        ></ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- SERVICES -->
+
+    <div
+      id="services"
+      class="view"
+    >
+
+      <h1>
+        Services
+      </h1>
+
+      <div class="card panel">
+
+        <ul
+          id="serviceList"
+          class="list"
+        ></ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- MODULES -->
+
+    <div
+      id="modules"
+      class="view"
+    >
+
+      <h1>
+        Modules
+      </h1>
+
+      <div class="card panel">
+
+        <ul
+          id="moduleList"
+          class="list"
+        ></ul>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+</section>
+
+
+<script>
+
+let dashboardData = null;
+
+const $ = id =>
+  document.getElementById(id);
+
+
+const esc = value =>
+  String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+
+async function api(path,options={}){
+
+  const response =
+    await fetch(
+      path,
+      {
+        credentials:"include",
+        ...options
+      }
+    );
+
+  const data =
+    await response
+      .json()
+      .catch(() => ({}));
+
+  if(!response.ok){
+
+    throw new Error(
+      data.error ||
+      "Request failed."
+    );
+
+  }
+
+  return data;
+}
+
+
+function toggleNav(){
+
+  $("sidebar")
+    .classList
+    .toggle("open");
+
+}
+
+
+function showView(id,button){
+
+  document
+    .querySelectorAll(".view")
+    .forEach(
+      x => x.classList.remove("active")
+    );
+
+  $(id)
+    .classList
+    .add("active");
+
+  document
+    .querySelectorAll(".nav")
+    .forEach(
+      x => x.classList.remove("active")
+    );
+
+  button.classList.add("active");
+
+  $("sidebar")
+    .classList
+    .remove("open");
+
+}
+
+
+function renderList(
+  id,
+  items,
+  empty,
+  render
+){
+
+  $(id).innerHTML =
+    items && items.length
+      ? items.map(render).join("")
+      : "<li>"+empty+"</li>";
+
+}
+
+
+function renderDashboard(d){
+
+  dashboardData = d;
+
+  const account =
+    d.account || {};
+
+  const profile =
+    d.profile || null;
+
+
+  $("welcome").textContent =
+    "Welcome to your business workspace.";
+
+
+  $("accountInfo").innerHTML =
+    "<strong>"+
+    esc(account.email)+
+    "</strong><br>"+
+    "Account ID: "+
+    esc(account.id)+
+    "<br>Status: "+
+    esc(account.status);
+
+
+  $("accountStatus").textContent =
+    account.status || "ACTIVE";
+
+
+  $("countProducts").textContent =
+    (d.products || []).length;
+
+  $("countOrders").textContent =
+    (d.orders || []).length;
+
+  $("countServices").textContent =
+    (d.services || []).length;
+
+  $("countModules").textContent =
+    (d.modules || []).length;
+
+
+  if(profile){
+
+    $("businessInfo").innerHTML =
+      "<h2>"+
+      esc(
+        profile.business_name ||
+        "Business profile"
+      )+
+      "</h2>"+
+
+      "<p>Owner: "+
+      esc(
+        profile.owner_name ||
+        "Not set"
+      )+
+      "</p>"+
+
+      "<p>Email: "+
+      esc(
+        profile.email ||
+        account.email ||
+        ""
+      )+
+      "</p>"+
+
+      "<p>Phone: "+
+      esc(
+        profile.phone ||
+        "Not set"
+      )+
+      "</p>"+
+
+      "<p>WhatsApp: "+
+      esc(
+        profile.whatsapp ||
+        "Not set"
+      )+
+      "</p>";
+
+  }else{
+
+    $("businessInfo").innerHTML =
+      "<p>No business profile has been saved yet.</p>";
+
+  }
+
+
+  renderList(
+    "subscriptionList",
+    d.subscriptions,
+    "No subscriptions yet.",
+    x =>
+      "<li>"+
+      "<strong>"+
+      esc(
+        x.product_name ||
+        x.product_code
+      )+
+      "</strong> — R"+
+      Number(x.amount || 0).toFixed(2)+
+      " <span class=\"pill\">"+
+      esc(x.status)+
+      "</span></li>"
+  );
+
+
+  renderList(
+    "productList",
+    d.products,
+    "No products yet.",
+    x =>
+      "<li>"+
+      "<strong>"+
+      esc(x.name)+
+      "</strong> — R"+
+      Number(x.price || 0).toFixed(2)+
+      " — Stock: "+
+      esc(x.stock || 0)+
+      "</li>"
+  );
+
+
+  renderList(
+    "orderList",
+    d.orders,
+    "No orders yet.",
+    x =>
+      "<li>"+
+      "<strong>"+
+      esc(x.order_number)+
+      "</strong> — R"+
+      Number(x.total || 0).toFixed(2)+
+      " — "+
+      esc(
+        x.order_status ||
+        "NEW"
+      )+
+      "</li>"
+  );
+
+
+  renderList(
+    "serviceList",
+    d.services,
+    "No services yet.",
+    x =>
+      "<li>"+
+      "<strong>"+
+      esc(x.service_name)+
+      "</strong> — R"+
+      Number(x.price || 0).toFixed(2)+
+      "</li>"
+  );
+
+
+  renderList(
+    "moduleList",
+    d.modules,
+    "No active modules yet.",
+    x =>
+      "<li>"+
+      "<strong>"+
+      esc(x.module_code)+
+      "</strong> — "+
+      "<span class=\"pill\">"+
+      esc(x.status)+
+      "</span></li>"
+  );
+
+}
+
+
+async function loadDashboard(){
+
+  try{
+
+    const data =
+      await api(
+        "/api/customer/dashboard"
+      );
+
+    if(
+      !data.ok ||
+      !data.dashboard
+    ){
+
+      throw new Error(
+        "Dashboard data unavailable."
+      );
+
+    }
+
+    renderDashboard(
+      data.dashboard
+    );
+
+  }catch(error){
+
+    $("loginMessage").textContent =
+      error.message;
+
+    $("loginMessage")
+      .className =
+      "message error";
+
+    $("app")
+      .classList
+      .add("hidden");
+
+    $("login")
+      .classList
+      .remove("hidden");
+
+  }
+
+}
+
+
+async function checkSession(){
+
+  try{
+
+    const data =
+      await api(
+        "/api/auth/me"
+      );
+
+    if(
+      data.ok &&
+      data.authenticated
+    ){
+
+      $("login")
+        .classList
+        .add("hidden");
+
+      $("app")
+        .classList
+        .remove("hidden");
+
+      await loadDashboard();
+
+      return;
+
+    }
+
+  }catch(error){}
+
+  $("login")
+    .classList
+    .remove("hidden");
+
+  $("app")
+    .classList
+    .add("hidden");
+
+}
+
+
+$("loginForm")
+  .addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+      $("loginBtn").disabled =
+        true;
+
+      $("loginBtn").textContent =
+        "Signing In...";
+
+      $("loginMessage").textContent =
+        "";
+
+      try{
+
+        const data =
+          await api(
+            "/api/auth/login",
+            {
+              method:"POST",
+              headers:{
+                "Content-Type":
+                  "application/json"
+              },
+              body:JSON.stringify({
+                email:
+                  $("email")
+                    .value
+                    .trim(),
+
+                password:
+                  $("password")
+                    .value
+              })
+            }
+          );
+
+
+        if(
+          !data.ok ||
+          !data.authenticated
+        ){
+
+          throw new Error(
+            data.error ||
+            "Login failed."
+          );
+
+        }
+
+
+        $("login")
+          .classList
+          .add("hidden");
+
+        $("app")
+          .classList
+          .remove("hidden");
+
+        await loadDashboard();
+
+      }catch(error){
+
+        $("loginMessage")
+          .textContent =
+          error.message;
+
+        $("loginMessage")
+          .className =
+          "message error";
+
+      }finally{
+
+        $("loginBtn").disabled =
+          false;
+
+        $("loginBtn").textContent =
+          "Sign In";
+
+      }
+
+    }
+  );
+
+
+async function logout(){
+
+  try{
+
+    await fetch(
+      "/api/auth/logout",
+      {
+        method:"POST",
+        credentials:"include"
+      }
+    );
+
+  }finally{
+
+    location.reload();
+
+  }
+
+}
+
+
+checkSession();
+
+</script>
+
+</body>
+  </html>
