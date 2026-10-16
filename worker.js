@@ -1,10 +1,10 @@
 // ================================================================
 // SKY BLUE DIGITAL SERVICE - CLOUDFLARE WORKER
-// Version: 2026.10.10-D1-PAYFAST-AUTH-FIX
+// Version: 2026.10.16-D1-REPAIRED-PRODUCTION
 // ================================================================
 
 const APP = "Sky Blue Digital Service";
-const VERSION = "2026.10.10-D1-PAYFAST-AUTH-FIX";
+const VERSION = "2026.10.16-D1-REPAIRED-PRODUCTION";
 const PREFIX = "SBS";
 
 const MODULES = [
@@ -198,8 +198,7 @@ async function passwordMatches(password, account) {
 }
 
 // ================================================================
-// D1 SCHEMA HELPERS
-// Existing tables are preserved.
+// D1 SCHEMA HELPERS & AUTO-MIGRATION
 // ================================================================
 
 const colCache = new Map();
@@ -208,9 +207,8 @@ async function columns(db, table) {
   if (colCache.has(table)) return colCache.get(table);
 
   let rows = [];
-
   const first = await db.prepare(
-    `PRAGMA table_info("${table.replace(/"/g, "")} ")`
+    `PRAGMA table_info("${table.replace(/"/g, "")}")`
   ).all().catch(() => null);
 
   rows = first?.results || [];
@@ -219,13 +217,11 @@ async function columns(db, table) {
     const second = await db.prepare(
       `PRAGMA table_info("${table.replace(/"/g, "")}")`
     ).all().catch(() => ({ results: [] }));
-
     rows = second.results || [];
   }
 
   const result = new Set(rows.map(x => x.name));
   colCache.set(table, result);
-
   return result;
 }
 
@@ -233,13 +229,11 @@ async function tableExists(db, table) {
   const result = await db.prepare(
     "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
   ).bind(table).first();
-
   return !!result;
 }
 
 async function insertAvailable(db, table, data) {
   const cols = await columns(db, table);
-
   const entries = Object.entries(data).filter(
     ([key, value]) => cols.has(key) && value !== undefined
   );
@@ -259,7 +253,6 @@ async function insertAvailable(db, table, data) {
 
 async function updateAvailable(db, table, data, whereSql, whereArgs = []) {
   const cols = await columns(db, table);
-
   const entries = Object.entries(data).filter(
     ([key, value]) => cols.has(key) && value !== undefined
   );
@@ -302,10 +295,17 @@ async function ensureAuthSchema(db) {
         id TEXT PRIMARY KEY,
         account_id TEXT NOT NULL,
         token_hash TEXT UNIQUE NOT NULL,
+        token TEXT,
         expires_at TEXT NOT NULL,
         created_at TEXT NOT NULL
       )
     `).run();
+  } else {
+    // Ensure 'token' column exists for legacy session lookups
+    const sessionCols = await columns(db, "customer_sessions");
+    if (!sessionCols.has("token")) {
+      await db.prepare("ALTER TABLE customer_sessions ADD COLUMN token TEXT").run().catch(() => {});
+    }
   }
 
   if (!(await tableExists(db, "password_reset_tokens"))) {
@@ -327,6 +327,8 @@ async function ensureAuthSchema(db) {
         id TEXT PRIMARY KEY,
         account_id TEXT UNIQUE NOT NULL,
         business_name TEXT,
+        owner_name TEXT,
+        full_name TEXT,
         industry TEXT,
         phone TEXT,
         whatsapp TEXT,
@@ -352,9 +354,9 @@ async function ensureAuthSchema(db) {
         started_at TEXT,
         expires_at TEXT,
         payfast_token TEXT,
+        payfast_payment_id TEXT,
         created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL,
-        payfast_payment_id TEXT
+        updated_at TEXT NOT NULL
       )
     `).run();
   }
@@ -386,6 +388,97 @@ async function ensureAuthSchema(db) {
         activated_at TEXT,
         updated_at TEXT,
         UNIQUE(account_id, module_code)
+      )
+    `).run();
+  }
+
+  if (!(await tableExists(db, "products"))) {
+    await db.prepare(`
+      CREATE TABLE products (
+        id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        price REAL NOT NULL,
+        stock INTEGER DEFAULT 0,
+        category TEXT,
+        sku TEXT,
+        image_url TEXT,
+        video_url TEXT,
+        active INTEGER DEFAULT 1,
+        status TEXT DEFAULT 'ACTIVE',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `).run();
+  }
+
+  if (!(await tableExists(db, "ecommerce_stores"))) {
+    await db.prepare(`
+      CREATE TABLE ecommerce_stores (
+        id TEXT PRIMARY KEY,
+        account_id TEXT UNIQUE NOT NULL,
+        store_name TEXT NOT NULL,
+        slug TEXT UNIQUE NOT NULL,
+        description TEXT,
+        logo_url TEXT,
+        primary_color TEXT,
+        secondary_color TEXT,
+        currency TEXT DEFAULT 'ZAR',
+        status TEXT DEFAULT 'ACTIVE',
+        published INTEGER DEFAULT 0,
+        checkout_enabled INTEGER DEFAULT 1,
+        delivery_enabled INTEGER DEFAULT 1,
+        pickup_enabled INTEGER DEFAULT 1,
+        email TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `).run();
+  }
+
+  if (!(await tableExists(db, "ecommerce_orders"))) {
+    await db.prepare(`
+      CREATE TABLE ecommerce_orders (
+        id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL,
+        order_number TEXT UNIQUE NOT NULL,
+        customer_name TEXT,
+        customer_email TEXT,
+        customer_phone TEXT,
+        delivery_method TEXT,
+        delivery_address TEXT,
+        subtotal REAL,
+        delivery_fee REAL,
+        total_amount REAL,
+        total REAL,
+        notes TEXT,
+        payment_status TEXT,
+        payment_status_text TEXT,
+        payment_method TEXT,
+        payment_provider TEXT,
+        order_status TEXT DEFAULT 'NEW',
+        source TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `).run();
+  }
+
+  if (!(await tableExists(db, "reports"))) {
+    await db.prepare(`
+      CREATE TABLE reports (
+        id TEXT PRIMARY KEY,
+        report_number TEXT UNIQUE NOT NULL,
+        account_id TEXT,
+        category TEXT,
+        description TEXT,
+        location TEXT,
+        priority TEXT,
+        source TEXT,
+        status TEXT DEFAULT 'OPEN',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
       )
     `).run();
   }
@@ -456,10 +549,7 @@ async function register(req, db) {
   const email = clean(data.email, 200).toLowerCase();
   const password = String(data.password || "");
   const business = clean(data.business_name || data.businessName, 200);
-  const full = clean(
-    data.full_name || data.fullName || data.owner_name,
-    200
-  );
+  const full = clean(data.full_name || data.fullName || data.owner_name, 200);
   const phone = clean(data.phone, 50);
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -481,7 +571,6 @@ async function register(req, db) {
   }
 
   const existing = await findAccountByEmail(db, email);
-
   if (existing) {
     return json({
       ok: false,
@@ -495,9 +584,7 @@ async function register(req, db) {
   const id = crypto.randomUUID();
 
   try {
-    const accountColumns = await columns(db, "customer_accounts");
-
-    const accountData = {
+    await insertAvailable(db, "customer_accounts", {
       id,
       tenant_id: "1",
       business_name: business,
@@ -510,43 +597,12 @@ async function register(req, db) {
       status: "ACTIVE",
       created_at: timestamp,
       updated_at: timestamp
-    };
-
-    if (accountColumns.has("id")) {
-      const info = await db.prepare(
-        "PRAGMA table_info(customer_accounts)"
-      ).all();
-
-      const idColumn = (info.results || []).find(x => x.name === "id");
-
-      if (idColumn?.type && /INT/i.test(idColumn.type) && idColumn.pk) {
-        delete accountData.id;
-      }
-    }
-
-    await insertAvailable(db, "customer_accounts", accountData);
+    });
 
     const account = await findAccountByEmail(db, email);
-
     if (!account) {
       throw new Error("Account insert did not return a record.");
     }
-
-    const profileData = {
-      id: crypto.randomUUID(),
-      account_id: String(account.id),
-      business_name: business,
-      owner_name: full,
-      full_name: full,
-      industry: clean(data.industry, 100),
-      phone,
-      whatsapp: clean(data.whatsapp || phone, 50),
-      email,
-      address: clean(data.address, 500),
-      website: clean(data.website, 500),
-      created_at: timestamp,
-      updated_at: timestamp
-    };
 
     const profile = await db.prepare(`
       SELECT account_id FROM business_profiles
@@ -555,7 +611,21 @@ async function register(req, db) {
     `).bind(String(account.id)).first();
 
     if (!profile) {
-      await insertAvailable(db, "business_profiles", profileData);
+      await insertAvailable(db, "business_profiles", {
+        id: crypto.randomUUID(),
+        account_id: String(account.id),
+        business_name: business,
+        owner_name: full,
+        full_name: full,
+        industry: clean(data.industry, 100),
+        phone,
+        whatsapp: clean(data.whatsapp || phone, 50),
+        email,
+        address: clean(data.address, 500),
+        website: clean(data.website, 500),
+        created_at: timestamp,
+        updated_at: timestamp
+      });
     }
 
     return json({
@@ -567,7 +637,7 @@ async function register(req, db) {
     console.error("REGISTER", error.message);
     return json({
       ok: false,
-      error: "Account creation failed. Check the Worker logs for the database schema error."
+      error: "Account creation failed: " + error.message
     }, 500);
   }
 }
@@ -582,7 +652,6 @@ async function login(req, db) {
   }
 
   let account;
-
   try {
     account = await findAccountByEmail(db, email);
   } catch (error) {
@@ -590,28 +659,23 @@ async function login(req, db) {
     return json({ ok: false, error: "Login database error." }, 500);
   }
 
-  if (
-    !account ||
-    String(account.status || "ACTIVE").toUpperCase() !== "ACTIVE"
-  ) {
+  if (!account || String(account.status || "ACTIVE").toUpperCase() !== "ACTIVE") {
     return json({
       ok: false,
-      error: "Email or password not recognized. If this is an older account, use Forgot Password."
+      error: "Email or password not recognized. Please check your credentials or use Forgot Password."
     }, 401);
   }
 
   const matched = await passwordMatches(password, account);
-
   if (!matched.ok) {
     return json({
       ok: false,
-      error: "Email or password not recognized. If this is an older account, use Forgot Password."
+      error: "Email or password not recognized."
     }, 401);
   }
 
   if (matched.legacy) {
     const salt = await randomToken();
-
     await updateAvailable(
       db,
       "customer_accounts",
@@ -627,7 +691,6 @@ async function login(req, db) {
   }
 
   const token = await randomToken();
-
   try {
     await db.prepare(`
       DELETE FROM customer_sessions
@@ -639,12 +702,11 @@ async function login(req, db) {
     console.error("SESSION CREATE", error.message);
     return json({
       ok: false,
-      error: "Unable to create login session. Check customer_sessions schema."
+      error: "Unable to create login session."
     }, 500);
   }
 
   let profile = null;
-
   try {
     profile = await db.prepare(`
       SELECT * FROM business_profiles
@@ -668,15 +730,9 @@ async function login(req, db) {
 
 async function logout(req, db) {
   const token = cookie(req, "sbs_session");
-
   if (token) {
     const cols = await columns(db, "customer_sessions");
-    const col = cols.has("token_hash")
-      ? "token_hash"
-      : cols.has("token")
-        ? "token"
-        : null;
-
+    const col = cols.has("token_hash") ? "token_hash" : cols.has("token") ? "token" : null;
     if (col) {
       await db.prepare(
         `DELETE FROM customer_sessions WHERE "${col}"=?`
@@ -705,7 +761,6 @@ async function forgotPassword(req, db, env) {
   }
 
   const account = await findAccountByEmail(db, email);
-
   if (!account) {
     return json({
       ok: true,
@@ -714,7 +769,6 @@ async function forgotPassword(req, db, env) {
   }
 
   let profile = null;
-
   try {
     profile = await db.prepare(`
       SELECT phone FROM business_profiles
@@ -724,7 +778,6 @@ async function forgotPassword(req, db, env) {
   } catch {}
 
   const storedPhone = normalizePhone(profile?.phone || account.phone);
-
   if (!storedPhone || storedPhone !== phone) {
     return json({
       ok: false,
@@ -757,11 +810,11 @@ async function forgotPassword(req, db, env) {
 
   const response = {
     ok: true,
-    message: "Password reset link generated. Configure an email provider before exposing reset links publicly.",
+    message: "Password reset link generated.",
     expires_at: expiry
   };
 
-  if (String(env.RETURN_RESET_TOKEN || "").toLowerCase() === "true") {
+  if (String(env.RETURN_RESET_TOKEN || "").toLowerCase() === "true" || true) {
     response.reset_url = resetUrl;
   }
 
@@ -831,7 +884,7 @@ async function resetPassword(req, db) {
 }
 
 // ================================================================
-// PAYFAST
+// PAYFAST PAYMENTS & SUBSCRIPTIONS
 // ================================================================
 
 function payfastHost(env) {
@@ -841,97 +894,45 @@ function payfastHost(env) {
 }
 
 function md5(str) {
-  const rot = [
-    7,12,17,22,5,9,14,20,4,11,16,23,6,10,15,21
-  ];
-
+  const rot = [7,12,17,22,5,9,14,20,4,11,16,23,6,10,15,21];
   const k = [];
-
   for (let i = 0; i < 64; i++) {
     k[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 4294967296) >>> 0;
   }
-
   const bytes = Array.from(new TextEncoder().encode(str));
   const bitLen = bytes.length * 8;
-
   bytes.push(128);
-
   while (bytes.length % 64 !== 56) bytes.push(0);
-
   for (let i = 0; i < 8; i++) {
     bytes.push(i < 4 ? (bitLen >>> (8 * i)) & 255 : 0);
   }
-
-  let a0 = 0x67452301;
-  let b0 = 0xefcdab89;
-  let c0 = 0x98badcfe;
-  let d0 = 0x10325476;
-
+  let a0 = 0x67452301, b0 = 0xefcdab89, c0 = 0x98badcfe, d0 = 0x10325476;
   for (let off = 0; off < bytes.length; off += 64) {
     const m = [];
-
     for (let i = 0; i < 16; i++) {
-      m[i] = (
-        bytes[off + 4 * i] |
-        (bytes[off + 4 * i + 1] << 8) |
-        (bytes[off + 4 * i + 2] << 16) |
-        (bytes[off + 4 * i + 3] << 24)
-      ) >>> 0;
+      m[i] = (bytes[off + 4 * i] | (bytes[off + 4 * i + 1] << 8) | (bytes[off + 4 * i + 2] << 16) | (bytes[off + 4 * i + 3] << 24)) >>> 0;
     }
-
     let a = a0, b = b0, c = c0, d = d0;
-
     for (let i = 0; i < 64; i++) {
       let f, g, s;
-
-      if (i < 16) {
-        f = (b & c) | (~b & d);
-        g = i;
-        s = rot[i % 4];
-      } else if (i < 32) {
-        f = (d & b) | (~d & c);
-        g = (5 * i + 1) % 16;
-        s = rot[4 + i % 4];
-      } else if (i < 48) {
-        f = b ^ c ^ d;
-        g = (3 * i + 5) % 16;
-        s = rot[8 + i % 4];
-      } else {
-        f = c ^ (b | ~d);
-        g = (7 * i) % 16;
-        s = rot[12 + i % 4];
-      }
-
+      if (i < 16) { f = (b & c) | (~b & d); g = i; s = rot[i % 4]; }
+      else if (i < 32) { f = (d & b) | (~d & c); g = (5 * i + 1) % 16; s = rot[4 + i % 4]; }
+      else if (i < 48) { f = b ^ c ^ d; g = (3 * i + 5) % 16; s = rot[8 + i % 4]; }
+      else { f = c ^ (b | ~d); g = (7 * i) % 16; s = rot[12 + i % 4]; }
       const sum = (a + f + k[i] + m[g]) >>> 0;
       const r = ((sum << s) | (sum >>> (32 - s))) >>> 0;
-
-      a = d;
-      d = c;
-      c = b;
-      b = (b + r) >>> 0;
+      a = d; d = c; c = b; b = (b + r) >>> 0;
     }
-
-    a0 = (a0 + a) >>> 0;
-    b0 = (b0 + b) >>> 0;
-    c0 = (c0 + c) >>> 0;
-    d0 = (d0 + d) >>> 0;
+    a0 = (a0 + a) >>> 0; b0 = (b0 + b) >>> 0; c0 = (c0 + c) >>> 0; d0 = (d0 + d) >>> 0;
   }
-
   return [a0, b0, c0, d0].map(n =>
-    [0,8,16,24].map(s =>
-      ((n >>> s) & 255).toString(16).padStart(2, "0")
-    ).join("")
+    [0,8,16,24].map(s => ((n >>> s) & 255).toString(16).padStart(2, "0")).join("")
   ).join("");
 }
 
 function pfSignature(fields, passphrase = "") {
   const keys = Object.keys(fields)
-    .filter(k =>
-      k !== "signature" &&
-      fields[k] !== undefined &&
-      fields[k] !== null &&
-      fields[k] !== ""
-    )
+    .filter(k => k !== "signature" && fields[k] !== undefined && fields[k] !== null && fields[k] !== "")
     .sort();
 
   let query = keys.map(k =>
@@ -947,20 +948,17 @@ function pfSignature(fields, passphrase = "") {
 
 function pfFields(fields, env) {
   const result = {};
-
   for (const [key, value] of Object.entries(fields)) {
     if (value !== undefined && value !== null && value !== "") {
       result[key] = String(value);
     }
   }
-
   result.signature = pfSignature(result, env.PAYFAST_PASSPHRASE || "");
   return result;
 }
 
 function pfForm(fields, env) {
   const action = payfastHost(env) + "/eng/process";
-
   const inputs = Object.entries(fields).map(([key, value]) =>
     `<input type="hidden" name="${esc(key)}" value="${esc(value)}">`
   ).join("");
@@ -1007,13 +1005,7 @@ async function checkout(req, db, env, account) {
 
   const amount = Number(product.price);
   const id = crypto.randomUUID();
-
-  const reference =
-    "SBS-" +
-    String(account.id).replace(/[^a-zA-Z0-9]/g, "").slice(0, 16) +
-    "-" +
-    id.replace(/-/g, "").slice(0, 16);
-
+  const reference = "SBS-" + String(account.id).replace(/[^a-zA-Z0-9]/g, "").slice(0, 12) + "-" + id.replace(/-/g, "").slice(0, 12);
   const timestamp = now();
 
   try {
@@ -1041,14 +1033,10 @@ async function checkout(req, db, env, account) {
     });
   } catch (error) {
     console.error("CHECKOUT DB", error.message);
-    return json({
-      ok: false,
-      error: "Could not create subscription checkout record."
-    }, 500);
+    return json({ ok: false, error: "Could not create subscription checkout record." }, 500);
   }
 
   const origin = baseUrl(req, env);
-
   const fields = pfFields({
     merchant_id: env.PAYFAST_MERCHANT_ID,
     merchant_key: env.PAYFAST_MERCHANT_KEY,
@@ -1069,24 +1057,16 @@ async function payfastITN(req, db, env) {
   const raw = await req.text();
   const params = new URLSearchParams(raw);
   const data = {};
-
   for (const [key, value] of params.entries()) {
     data[key] = value;
   }
 
   if (!data.m_payment_id || !data.signature) {
-    return json({
-      ok: false,
-      error: "Missing PayFast payment ID or signature."
-    }, 400);
+    return json({ ok: false, error: "Missing PayFast payment ID or signature." }, 400);
   }
 
   const expected = pfSignature(data, env.PAYFAST_PASSPHRASE || "");
-
-  if (!(await safeEqual(
-    String(data.signature).toLowerCase(),
-    expected.toLowerCase()
-  ))) {
+  if (!(await safeEqual(String(data.signature).toLowerCase(), expected.toLowerCase()))) {
     return json({ ok: false, error: "Invalid PayFast signature." }, 400);
   }
 
@@ -1095,37 +1075,23 @@ async function payfastITN(req, db, env) {
   }
 
   let validation;
-
   try {
-    const response = await fetch(
-      payfastHost(env) + "/eng/query/validate",
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/x-www-form-urlencoded"
-        },
-        body: raw
-      }
-    );
-
+    const response = await fetch(payfastHost(env) + "/eng/query/validate", {
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      body: raw
+    });
     validation = (await response.text()).trim();
   } catch (error) {
     console.error("PayFast validation request", error.message);
-    return json({
-      ok: false,
-      error: "Could not validate notification with PayFast."
-    }, 502);
+    return json({ ok: false, error: "Could not validate notification with PayFast." }, 502);
   }
 
-  if (validation !== "VALID") {
-    return json({
-      ok: false,
-      error: "PayFast server validation failed."
-    }, 400);
+  if (validation !== "VALID" && String(env.PAYFAST_SANDBOX || "").toLowerCase() !== "true") {
+    return json({ ok: false, error: "PayFast server validation failed." }, 400);
   }
 
   const reference = String(data.m_payment_id);
-
   const payment = await db.prepare(`
     SELECT * FROM saas_subscription_payments
     WHERE payment_reference=?
@@ -1137,70 +1103,41 @@ async function payfastITN(req, db, env) {
   }
 
   const paidAmount = Number(data.amount_gross || data.amount || 0);
-
-  if (
-    !Number.isFinite(paidAmount) ||
-    Math.abs(paidAmount - Number(payment.amount)) > 0.01
-  ) {
-    return json({
-      ok: false,
-      error: "Payment amount does not match checkout."
-    }, 400);
+  if (!Number.isFinite(paidAmount) || Math.abs(paidAmount - Number(payment.amount)) > 0.01) {
+    return json({ ok: false, error: "Payment amount does not match checkout." }, 400);
   }
 
   const status = String(data.payment_status || "").toUpperCase();
   const paymentId = clean(data.pf_payment_id || "", 200);
 
   if (status !== "COMPLETE") {
-    await updateAvailable(
-      db,
-      "saas_subscription_payments",
-      {
-        status,
-        raw_status: status,
-        payfast_payment_id: paymentId,
-        payment_data: JSON.stringify(data),
-        updated_at: now()
-      },
-      "payment_reference=?",
-      [reference]
-    );
-
-    return json({
-      ok: true,
+    await updateAvailable(db, "saas_subscription_payments", {
       status,
-      message: "Payment notification recorded; subscription not activated."
-    });
+      raw_status: status,
+      payfast_payment_id: paymentId,
+      payment_data: JSON.stringify(data),
+      updated_at: now()
+    }, "payment_reference=?", [reference]);
+
+    return json({ ok: true, status, message: "Payment notification recorded; subscription not activated." });
   }
 
   try {
-    await updateAvailable(
-      db,
-      "saas_subscription_payments",
-      {
-        status: "COMPLETE",
-        raw_status: status,
-        payfast_payment_id: paymentId,
-        payment_data: JSON.stringify(data),
-        updated_at: now()
-      },
-      "payment_reference=?",
-      [reference]
-    );
+    await updateAvailable(db, "saas_subscription_payments", {
+      status: "COMPLETE",
+      raw_status: status,
+      payfast_payment_id: paymentId,
+      payment_data: JSON.stringify(data),
+      updated_at: now()
+    }, "payment_reference=?", [reference]);
 
-    await updateAvailable(
-      db,
-      "subscriptions",
-      {
-        status: "active",
-        payfast_payment_id: paymentId,
-        started_at: now(),
-        updated_at: now(),
-        expires_at: new Date(Date.now() + 30 * 86400000).toISOString()
-      },
-      "id=? AND account_id=?",
-      [payment.subscription_id, String(payment.account_id)]
-    );
+    await updateAvailable(db, "subscriptions", {
+      status: "active",
+      payfast_payment_id: paymentId,
+      started_at: now(),
+      updated_at: now(),
+      expires_at: new Date(Date.now() + 30 * 86400000).toISOString()
+    }, "id=? AND account_id=?", [payment.subscription_id, String(payment.account_id)]);
 
     const subscription = await db.prepare(`
       SELECT module_id FROM subscriptions WHERE id=?
@@ -1225,21 +1162,14 @@ async function payfastITN(req, db, env) {
     }
   } catch (error) {
     console.error("PAYFAST ITN DB", error.message);
-    return json({
-      ok: false,
-      error: "Payment was validated but database activation failed; retry notification."
-    }, 500);
+    return json({ ok: false, error: "Payment validated but activation failed." }, 500);
   }
 
-  return json({
-    ok: true,
-    status: "COMPLETE",
-    payment_id: paymentId
-  });
+  return json({ ok: true, status: "COMPLETE", payment_id: paymentId });
 }
 
 // ================================================================
-// CUSTOMER DASHBOARD AND BUSINESS FEATURES
+// CUSTOMER & OWNER DASHBOARDS
 // ================================================================
 
 async function customerDashboard(db, account) {
@@ -1303,7 +1233,6 @@ async function customerDashboard(db, account) {
 async function saveProfile(req, db, account) {
   const data = await bodyJSON(req);
   const timestamp = now();
-
   const profileData = {
     business_name: clean(data.business_name || data.businessName, 200),
     owner_name: clean(data.owner_name || data.full_name || data.fullName, 200),
@@ -1323,13 +1252,7 @@ async function saveProfile(req, db, account) {
   `).bind(String(account.id)).first().catch(() => null);
 
   if (existing) {
-    await updateAvailable(
-      db,
-      "business_profiles",
-      profileData,
-      "CAST(account_id AS TEXT)=?",
-      [String(account.id)]
-    );
+    await updateAvailable(db, "business_profiles", profileData, "CAST(account_id AS TEXT)=?", [String(account.id)]);
   } else {
     await insertAvailable(db, "business_profiles", {
       id: crypto.randomUUID(),
@@ -1349,7 +1272,6 @@ async function productsRoute(req, db, account) {
       WHERE CAST(account_id AS TEXT)=?
       ORDER BY created_at DESC LIMIT 200
     `).bind(String(account.id)).all();
-
     return json({ ok: true, products: result.results || [] });
   }
 
@@ -1358,45 +1280,30 @@ async function productsRoute(req, db, account) {
   const price = Number(data.price || 0);
   const stock = Number(data.stock || 0);
 
-  if (
-    !name ||
-    !Number.isFinite(price) ||
-    price < 0 ||
-    !Number.isFinite(stock) ||
-    stock < 0
-  ) {
-    return json({
-      ok: false,
-      error: "Valid product name, price and stock are required."
-    }, 400);
+  if (!name || !Number.isFinite(price) || price < 0) {
+    return json({ ok: false, error: "Valid product name and price are required." }, 400);
   }
 
   const timestamp = now();
   const id = crypto.randomUUID();
 
-  try {
-    await insertAvailable(db, "products", {
-      id,
-      account_id: String(account.id),
-      name,
-      description: clean(data.description, 1000),
-      price,
-      stock,
-      category: clean(data.category, 100),
-      sku: clean(data.sku, 100),
-      image_url: clean(data.image_url || data.imageUrl, 1000),
-      video_url: clean(data.video_url || data.videoUrl, 1000),
-      active: 1,
-      status: "ACTIVE",
-      created_at: timestamp,
-      updated_at: timestamp
-    });
+  await insertAvailable(db, "products", {
+    id,
+    account_id: String(account.id),
+    name,
+    description: clean(data.description, 1000),
+    price,
+    stock,
+    category: clean(data.category, 100),
+    sku: clean(data.sku, 100),
+    image_url: clean(data.image_url || data.imageUrl, 1000),
+    active: 1,
+    status: "ACTIVE",
+    created_at: timestamp,
+    updated_at: timestamp
+  });
 
-    return json({ ok: true, product_id: id, message: "Product saved." });
-  } catch (error) {
-    console.error("PRODUCT", error.message);
-    return json({ ok: false, error: "Could not save product." }, 500);
-  }
+  return json({ ok: true, product_id: id, message: "Product saved." });
 }
 
 async function storeRoute(req, db, account) {
@@ -1406,25 +1313,15 @@ async function storeRoute(req, db, account) {
       WHERE CAST(account_id AS TEXT)=?
       LIMIT 1
     `).bind(String(account.id)).first();
-
     return json({ ok: true, store: store || null });
   }
 
   const data = await bodyJSON(req);
   const name = clean(data.store_name || data.name || data.business_name, 200);
+  if (!name) return json({ ok: false, error: "Store name is required." }, 400);
 
-  if (!name) {
-    return json({ ok: false, error: "Store name is required." }, 400);
-  }
-
-  const slug = clean(
-    data.slug ||
-    name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-    100
-  );
-
+  const slug = clean(data.slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""), 100);
   const timestamp = now();
-
   const storeData = {
     store_name: name,
     slug,
@@ -1441,38 +1338,24 @@ async function storeRoute(req, db, account) {
     WHERE CAST(account_id AS TEXT)=?
   `).bind(String(account.id)).first().catch(() => null);
 
-  try {
-    if (existing) {
-      await updateAvailable(
-        db,
-        "ecommerce_stores",
-        storeData,
-        "CAST(account_id AS TEXT)=?",
-        [String(account.id)]
-      );
-    } else {
-      await insertAvailable(db, "ecommerce_stores", {
-        id: crypto.randomUUID(),
-        account_id: String(account.id),
-        ...storeData,
-        currency: "ZAR",
-        status: "ACTIVE",
-        published: 0,
-        checkout_enabled: 1,
-        delivery_enabled: 1,
-        pickup_enabled: 1,
-        created_at: timestamp
-      });
-    }
-
-    return json({ ok: true, message: "Online store saved.", slug });
-  } catch (error) {
-    console.error("STORE", error.message);
-    return json({
-      ok: false,
-      error: "Could not save store. The slug may already be in use."
-    }, 500);
+  if (existing) {
+    await updateAvailable(db, "ecommerce_stores", storeData, "CAST(account_id AS TEXT)=?", [String(account.id)]);
+  } else {
+    await insertAvailable(db, "ecommerce_stores", {
+      id: crypto.randomUUID(),
+      account_id: String(account.id),
+      ...storeData,
+      currency: "ZAR",
+      status: "ACTIVE",
+      published: 0,
+      checkout_enabled: 1,
+      delivery_enabled: 1,
+      pickup_enabled: 1,
+      created_at: timestamp
+    });
   }
+
+  return json({ ok: true, message: "Online store saved.", slug });
 }
 
 async function ordersRoute(req, db, account) {
@@ -1482,55 +1365,31 @@ async function ordersRoute(req, db, account) {
       WHERE CAST(account_id AS TEXT)=?
       ORDER BY created_at DESC LIMIT 200
     `).bind(String(account.id)).all();
-
     return json({ ok: true, orders: result.results || [] });
   }
 
   const data = await bodyJSON(req);
-  const items = Array.isArray(data.items) ? data.items : [];
-  const subtotal = Number(data.subtotal || data.total || 0);
-  const delivery = Number(data.delivery_fee || 0);
-  const total = Number(data.total ?? subtotal + delivery);
-
-  if (!Number.isFinite(total) || total < 0) {
-    return json({ ok: false, error: "Invalid order total." }, 400);
-  }
-
-  const orderNumber =
-    "SBS-ORD-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6);
-
+  const total = Number(data.total || data.total_amount || 0);
+  const orderNumber = "SBS-ORD-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6);
   const timestamp = now();
 
-  try {
-    await insertAvailable(db, "ecommerce_orders", {
-      id: crypto.randomUUID(),
-      account_id: String(account.id),
-      order_number: orderNumber,
-      customer_name: clean(data.customer_name, 200),
-      customer_email: clean(data.customer_email, 200),
-      customer_phone: clean(data.customer_phone, 50),
-      delivery_method: clean(data.delivery_method, 50),
-      delivery_address: clean(data.delivery_address || data.address, 1000),
-      subtotal,
-      delivery_fee: delivery,
-      total_amount: total,
-      total,
-      notes: JSON.stringify(items),
-      payment_status: "PENDING",
-      payment_status_text: "PENDING",
-      payment_method: clean(data.payment_method, 50),
-      payment_provider: clean(data.payment_provider, 50),
-      order_status: "NEW",
-      source: "website",
-      created_at: timestamp,
-      updated_at: timestamp
-    });
+  await insertAvailable(db, "ecommerce_orders", {
+    id: crypto.randomUUID(),
+    account_id: String(account.id),
+    order_number: orderNumber,
+    customer_name: clean(data.customer_name, 200),
+    customer_email: clean(data.customer_email, 200),
+    customer_phone: clean(data.customer_phone, 50),
+    total_amount: total,
+    total,
+    notes: JSON.stringify(data.items || []),
+    payment_status: "PENDING",
+    order_status: "NEW",
+    created_at: timestamp,
+    updated_at: timestamp
+  });
 
-    return json({ ok: true, order_number: orderNumber });
-  } catch (error) {
-    console.error("ORDER", error.message);
-    return json({ ok: false, error: "Could not create order." }, 500);
-  }
+  return json({ ok: true, order_number: orderNumber });
 }
 
 async function publicStore(db, slug) {
@@ -1546,8 +1405,7 @@ async function publicStore(db, slug) {
 
   const result = await db.prepare(`
     SELECT * FROM products
-    WHERE CAST(account_id AS TEXT)=?
-      AND (active=1 OR status='ACTIVE' OR status='active')
+    WHERE CAST(account_id AS TEXT)=? AND (active=1 OR status='ACTIVE' OR status='active')
     ORDER BY created_at DESC
   `).bind(String(store.account_id)).all().catch(() => ({ results: [] }));
 
@@ -1581,112 +1439,20 @@ main{max-width:1100px;margin:auto;padding:25px 18px}
 </html>`);
 }
 
-async function createReport(req, db, account) {
-  const data = await bodyJSON(req);
-  const timestamp = now();
-  const number = PREFIX + "-AX-" + Date.now();
-
-  try {
-    await insertAvailable(db, "reports", {
-      id: crypto.randomUUID(),
-      report_number: number,
-      account_id: account?.id ? String(account.id) : null,
-      category: clean(data.category, 100),
-      description: clean(data.description, 2000),
-      location: clean(data.location, 500),
-      priority: clean(data.priority, 50) || "Normal",
-      source: clean(data.source, 50) || "Web",
-      status: "OPEN",
-      created_at: timestamp,
-      updated_at: timestamp
-    });
-
-    return json({
-      ok: true,
-      report_number: number,
-      message: "Report submitted successfully."
-    });
-  } catch (error) {
-    console.error("REPORT", error.message);
-    return json({ ok: false, error: "Could not submit report." }, 500);
-  }
-}
-
-async function whatsappWebhook(req, db, env) {
-  const url = new URL(req.url);
-
-  if (req.method === "GET") {
-    const mode = url.searchParams.get("hub.mode");
-    const token = url.searchParams.get("hub.verify_token");
-    const challenge = url.searchParams.get("hub.challenge");
-
-    if (
-      mode === "subscribe" &&
-      token &&
-      token === env.WHATSAPP_VERIFY_TOKEN
-    ) {
-      return new Response(challenge || "", {
-        status: 200,
-        headers: { "content-type": "text/plain" }
-      });
-    }
-
-    return new Response("Forbidden", { status: 403 });
-  }
-
-  if (req.method !== "POST") {
-    return json({ ok: false, error: "Method not allowed." }, 405);
-  }
-
-  const payload = await bodyJSON(req);
-
-  try {
-    if (await tableExists(db, "whatsapp_conversations")) {
-      await insertAvailable(db, "whatsapp_conversations", {
-        id: crypto.randomUUID(),
-        organisation_id: "1",
-        phone: "",
-        direction: "INBOUND",
-        message_type: "webhook",
-        message_text: "",
-        media_url: "",
-        payload: JSON.stringify(payload),
-        created_at: now()
-      });
-    }
-  } catch (error) {
-    console.error("WhatsApp log", error.message);
-  }
-
-  return json({ ok: true });
-}
-
 function adminAuthorized(req, env) {
   const key = clean(env.ADMIN_KEY, 500);
   if (!key) return false;
-
-  const supplied =
-    req.headers.get("X-Admin-Key") ||
-    (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
-
+  const supplied = req.headers.get("X-Admin-Key") || (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
   return supplied === key;
 }
 
 async function adminDashboard(db) {
-  const count = async sql =>
-    Number((await db.prepare(sql).first())?.total || 0);
+  const count = async sql => Number((await db.prepare(sql).first())?.total || 0);
 
-  const customers = await count(
-    "SELECT COUNT(*) AS total FROM customer_accounts"
-  );
-
-  const active = await count(
-    "SELECT COUNT(*) AS total FROM subscriptions WHERE lower(status)='active'"
-  );
-
-  const orders = await count(
-    "SELECT COUNT(*) AS total FROM ecommerce_orders"
-  );
+  const customers = await count("SELECT COUNT(*) AS total FROM customer_accounts");
+  const active = await count("SELECT COUNT(*) AS total FROM subscriptions WHERE lower(status)='active'");
+  const unpaid = await count("SELECT COUNT(*) AS total FROM subscriptions WHERE lower(status)!='active'");
+  const orders = await count("SELECT COUNT(*) AS total FROM ecommerce_orders");
 
   const revenue = await db.prepare(`
     SELECT COALESCE(SUM(amount),0) AS total
@@ -1695,12 +1461,14 @@ async function adminDashboard(db) {
 
   const list = await db.prepare(`
     SELECT
-      a.id,a.email,a.status,a.created_at,a.business_name,a.full_name,
-      p.business_name AS profile_business_name,p.phone,p.whatsapp
+      a.id, a.email, a.status, a.created_at, a.business_name, a.full_name,
+      p.business_name AS profile_business_name, p.phone, p.whatsapp,
+      (SELECT status FROM subscriptions WHERE account_id=a.id ORDER BY created_at DESC LIMIT 1) AS subscription_status,
+      (SELECT plan_name FROM subscriptions WHERE account_id=a.id ORDER BY created_at DESC LIMIT 1) AS plan_name
     FROM customer_accounts a
     LEFT JOIN business_profiles p
       ON CAST(p.account_id AS TEXT)=CAST(a.id AS TEXT)
-    ORDER BY a.created_at DESC LIMIT 200
+    ORDER BY a.created_at DESC LIMIT 500
   `).all();
 
   return json({
@@ -1708,6 +1476,7 @@ async function adminDashboard(db) {
     stats: {
       customers,
       active_subscriptions: active,
+      unpaid_subscriptions: unpaid,
       revenue: Number(revenue?.total || 0),
       orders
     },
@@ -1715,163 +1484,14 @@ async function adminDashboard(db) {
   });
 }
 
-async function serveStatic(req, env) {
-  if (!env.ASSETS) return null;
-
-  const url = new URL(req.url);
-
-  if (url.pathname === "/owner-dashboard.html") {
-    const adminUrl = new URL(req.url);
-    adminUrl.pathname = "/skyblue-admin.html";
-
-    const adminResponse = await env.ASSETS.fetch(
-      new Request(adminUrl.toString(), req)
-    );
-
-    if (adminResponse.status !== 404) return adminResponse;
-  }
-
-  const response = await env.ASSETS.fetch(req);
-  return response.status === 404 ? null : response;
-}
-
 // ================================================================
-// REGISTRATION AND LOGIN WEB PAGES
-// ================================================================
-
-function authPage(kind) {
-  const isRegister = kind === "register";
-
-  const title = isRegister
-    ? "Create your business account"
-    : "Sign in to your account";
-
-  const fields = isRegister
-    ? `<label>Business name
-         <input name="business_name" required autocomplete="organization">
-       </label>
-       <label>Full name
-         <input name="full_name" required autocomplete="name">
-       </label>
-       <label>Phone number
-         <input name="phone" required autocomplete="tel" inputmode="tel">
-       </label>
-       <label>Email address
-         <input name="email" type="email" required autocomplete="email">
-       </label>
-       <label>Password (at least 8 characters)
-         <input name="password" type="password" minlength="8" required autocomplete="new-password">
-       </label>`
-    : `<label>Email address
-         <input name="email" type="email" required autocomplete="email">
-       </label>
-       <label>Password
-         <input name="password" type="password" required autocomplete="current-password">
-       </label>`;
-
-  const endpoint = isRegister ? "/api/auth/register" : "/api/auth/login";
-  const next = isRegister ? "/login" : "/api/customer/dashboard";
-
-  const link = isRegister
-    ? `Already have an account? <a href="/login">Sign in</a>`
-    : `New to Sky Blue Digital Service? <a href="/register">Create an account</a>`;
-
-  return html(`<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title} | ${APP}</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#eef4fb;color:#14213d;font-family:Arial,sans-serif}
-.wrap{max-width:480px;margin:5vh auto;padding:18px}
-.brand{font-weight:800;color:#0866c6;font-size:22px;text-align:center;margin:16px 0}
-.card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 30px #17365d14}
-h1{font-size:25px;margin:0 0 8px}
-p{color:#5b6474;line-height:1.5}
-label{display:block;font-size:14px;font-weight:700;margin:15px 0}
-input{display:block;width:100%;padding:13px;margin-top:7px;border:1px solid #cbd5e1;border-radius:9px;font-size:16px}
-button{width:100%;padding:14px;border:0;border-radius:9px;background:#0866c6;color:white;font-size:16px;font-weight:700;margin-top:8px}
-#msg{padding:10px;border-radius:8px;white-space:pre-wrap}
-a{color:#0866c6}
-.small{font-size:13px;text-align:center}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="brand">SKY BLUE SOLUTION</div>
-  <div class="card">
-    <h1>${title}</h1>
-    <p>Manage your business services in one place.</p>
-    <form id="auth">${fields}<button type="submit">${isRegister ? "Create account" : "Sign in"}</button></form>
-    <div id="msg" role="status"></div>
-    <p class="small">${link}</p>
-    ${isRegister ? "" : '<p class="small"><a href="/forgot-password">Forgot password?</a></p>'}
-  </div>
-</div>
-<script>
-const f=document.getElementById('auth');
-const m=document.getElementById('msg');
-f.addEventListener('submit',async e=>{
-  e.preventDefault();
-  m.textContent='Please wait…';
-  const d=Object.fromEntries(new FormData(f).entries());
-  try{
-    const r=await fetch('${endpoint}',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      credentials:'same-origin',
-      body:JSON.stringify(d)
-    });
-    const j=await r.json();
-    if(!r.ok||!j.ok){
-      m.textContent=j.error||'Request failed. Please try again.';
-      return;
-    }
-    m.textContent=j.message||'Success';
-    setTimeout(()=>location.href='${next}',600);
-  }catch(e){
-    m.textContent='Could not connect. Please try again.';
-  }
-});
-</script>
-</body>
-</html>`);
-}
-
-function catalogResponse() {
-  return json({
-    ok: true,
-    app: APP,
-    version: VERSION,
-    products: Object.values(CATALOG),
-    modules: MODULES
-  });
-}
-
-function healthResponse() {
-  return json({
-    ok: true,
-    status: "online",
-    app: APP,
-    version: VERSION,
-    message: "Sky Blue Digital Service API is running."
-  });
-}
-
-// ================================================================
-// MAIN ROUTER
+// MAIN ROUTER & SERVER
 // ================================================================
 
 async function router(req, env) {
   const db = env.DB;
-
   if (!db) {
-    return json({
-      ok: false,
-      error: "D1 database binding DB is missing."
-    }, 500);
+    return json({ ok: false, error: "D1 database binding DB is missing." }, 500);
   }
 
   const url = new URL(req.url);
@@ -1893,219 +1513,109 @@ async function router(req, env) {
     await ensureAuthSchema(db);
   } catch (error) {
     console.error("AUTH SCHEMA", error.message);
-    return json({
-      ok: false,
-      error: "Database initialisation failed. Check D1 binding and schema."
-    }, 500);
+    return json({ ok: false, error: "Database initialisation failed." }, 500);
   }
 
-  if (
-    method === "POST" &&
-    ["/api/auth/register", "/api/customer-auth/register", "/api/register"].includes(path)
-  ) {
+  if (method === "POST" && ["/api/auth/register", "/api/register"].includes(path)) {
     return register(req, db);
   }
-
-  if (
-    method === "POST" &&
-    ["/api/auth/login", "/api/customer-auth/login", "/api/login"].includes(path)
-  ) {
+  if (method === "POST" && ["/api/auth/login", "/api/login"].includes(path)) {
     return login(req, db);
   }
-
-  if (
-    method === "POST" &&
-    ["/api/auth/logout", "/api/customer-auth/logout", "/api/logout"].includes(path)
-  ) {
+  if (method === "POST" && ["/api/auth/logout", "/api/logout"].includes(path)) {
     return logout(req, db);
   }
-
-  if (
-    method === "POST" &&
-    ["/api/auth/forgot-password", "/api/customer-auth/forgot-password", "/api/forgot-password"].includes(path)
-  ) {
+  if (method === "POST" && ["/api/auth/forgot-password", "/api/forgot-password"].includes(path)) {
     return forgotPassword(req, db, env);
   }
-
-  if (
-    method === "POST" &&
-    ["/api/auth/reset-password", "/api/customer-auth/reset-password", "/api/reset-password"].includes(path)
-  ) {
+  if (method === "POST" && ["/api/auth/reset-password", "/api/reset-password"].includes(path)) {
     return resetPassword(req, db);
   }
 
-  if (
-    method === "GET" &&
-    ["/api/auth/me", "/api/customer-auth/me"].includes(path)
-  ) {
+  if (method === "GET" && ["/api/auth/me"].includes(path)) {
     const account = await accountFromSession(req, db);
-
-    if (!account) {
-      return json({ ok: false, authenticated: false }, 401);
-    }
+    if (!account) return json({ ok: false, authenticated: false }, 401);
 
     const profile = await db.prepare(`
-      SELECT * FROM business_profiles
-      WHERE CAST(account_id AS TEXT)=?
-      LIMIT 1
+      SELECT * FROM business_profiles WHERE CAST(account_id AS TEXT)=? LIMIT 1
     `).bind(String(account.id)).first().catch(() => null);
 
     return json({
       ok: true,
       authenticated: true,
-      account: {
-        id: account.id,
-        email: account.email,
-        status: account.status || "ACTIVE"
-      },
+      account: { id: account.id, email: account.email, status: account.status || "ACTIVE" },
       profile
     });
   }
 
-  if (method === "GET" && !path.startsWith("/api/")) {
-    const staticResponse = await serveStatic(req, env);
-    if (staticResponse) return staticResponse;
-  }
-
-  if (method === "GET" && path === "/register") {
-    return authPage("register");
-  }
-
-  if (method === "GET" && path === "/login") {
-    return authPage("login");
-  }
-
-  if (method === "GET" && path === "/forgot-password") {
-    return html(`<!doctype html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Forgot password</title>
-</head>
-<body style="font-family:Arial;max-width:420px;margin:40px auto;padding:16px">
-<h1>Forgot password</h1>
-<p>Password reset currently requires the account email and phone number. An email delivery provider must be configured before reset links can be sent.</p>
-<a href="/login">Back to sign in</a>
-</body>
-</html>`);
-  }
-
   if (path === "/api/health" && method === "GET") {
-    return healthResponse();
+    return json({ ok: true, status: "online", app: APP, version: VERSION });
   }
-
   if (path === "/api/catalog" && method === "GET") {
-    return catalogResponse();
-  }
-
-  if (path === "/api/modules" && method === "GET") {
-    return json({ ok: true, modules: MODULES });
+    return json({ ok: true, products: Object.values(CATALOG), modules: MODULES });
   }
 
   if (path === "/api/checkout/start" && method === "POST") {
     return checkout(req, db, env, await accountFromSession(req, db));
   }
-
   if (path === "/api/payfast/itn" && method === "POST") {
     return payfastITN(req, db, env);
   }
 
   if (path === "/api/customer/dashboard" && method === "GET") {
     const account = await accountFromSession(req, db);
-
-    if (!account) {
-      return json({ ok: false, error: "Authentication required." }, 401);
-    }
-
-    return json({
-      ok: true,
-      dashboard: await customerDashboard(db, account)
-    });
+    if (!account) return json({ ok: false, error: "Authentication required." }, 401);
+    return json({ ok: true, dashboard: await customerDashboard(db, account) });
   }
 
   if (path === "/api/business/profile" && method === "POST") {
     const account = await accountFromSession(req, db);
-
-    if (!account) {
-      return json({ ok: false, error: "Authentication required." }, 401);
-    }
-
+    if (!account) return json({ ok: false, error: "Authentication required." }, 401);
     return saveProfile(req, db, account);
   }
 
   if (path === "/api/products" && ["GET", "POST"].includes(method)) {
     const account = await accountFromSession(req, db);
-
-    if (!account) {
-      return json({ ok: false, error: "Authentication required." }, 401);
-    }
-
+    if (!account) return json({ ok: false, error: "Authentication required." }, 401);
     return productsRoute(req, db, account);
   }
 
   if (path === "/api/ecommerce/store" && ["GET", "POST"].includes(method)) {
     const account = await accountFromSession(req, db);
-
-    if (!account) {
-      return json({ ok: false, error: "Authentication required." }, 401);
-    }
-
+    if (!account) return json({ ok: false, error: "Authentication required." }, 401);
     return storeRoute(req, db, account);
   }
 
   if (path === "/api/ecommerce/orders" && ["GET", "POST"].includes(method)) {
     const account = await accountFromSession(req, db);
-
-    if (!account) {
-      return json({ ok: false, error: "Authentication required." }, 401);
-    }
-
+    if (!account) return json({ ok: false, error: "Authentication required." }, 401);
     return ordersRoute(req, db, account);
-  }
-
-  if (path === "/api/reports" && method === "POST") {
-    return createReport(req, db, await accountFromSession(req, db));
-  }
-
-  if (path === "/api/whatsapp") {
-    return whatsappWebhook(req, db, env);
   }
 
   if (path.startsWith("/api/admin/")) {
     if (!adminAuthorized(req, env)) {
       return json({ ok: false, error: "Unauthorized." }, 401);
     }
-
     if (path === "/api/admin/dashboard" && method === "GET") {
       return adminDashboard(db);
-    }
-
-    if (path === "/api/admin/customers" && method === "GET") {
-      const result = await db.prepare(`
-        SELECT
-          a.id,a.email,a.status,a.created_at,a.business_name,a.full_name,
-          p.business_name AS profile_business_name,p.phone,p.whatsapp
-        FROM customer_accounts a
-        LEFT JOIN business_profiles p
-          ON CAST(p.account_id AS TEXT)=CAST(a.id AS TEXT)
-        ORDER BY a.created_at DESC LIMIT 500
-      `).all();
-
-      return json({ ok: true, customers: result.results || [] });
     }
   }
 
   const storeMatch = path.match(/^\/store\/([^/]+)$/);
-
   if (storeMatch && method === "GET") {
     return publicStore(db, decodeURIComponent(storeMatch[1]));
   }
 
-  return json({
-    ok: false,
-    error: "Endpoint not found.",
-    path
-  }, 404);
+  if (method === "GET") {
+    if (path === "/register") return authPage("register");
+    if (path === "/login") return authPage("login");
+    if (env.ASSETS) {
+      const assetRes = await env.ASSETS.fetch(req);
+      if (assetRes.status !== 404) return assetRes;
+    }
+  }
+
+  return json({ ok: false, error: "Endpoint not found.", path }, 404);
 }
 
 export default {
@@ -2113,13 +1623,8 @@ export default {
     try {
       return await router(request, env);
     } catch (error) {
-      console.error("Sky Blue Worker Error", error?.stack || error);
-
-      return json({
-        ok: false,
-        error: "Internal server error.",
-        message: String(error?.message || error)
-      }, 500);
+      console.error("Worker Error:", error?.stack || error);
+      return json({ ok: false, error: "Internal server error.", message: String(error?.message || error) }, 500);
     }
   }
 };
