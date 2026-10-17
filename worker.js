@@ -1488,6 +1488,87 @@ async function adminDashboard(db) {
 // MAIN ROUTER & SERVER
 // ================================================================
 
+
+function authPage(mode) {
+  const isRegister = mode === "register";
+  const title = isRegister ? "Create your business account" : "Welcome back";
+  const action = isRegister ? "/api/auth/register" : "/api/auth/login";
+
+  const field = (name, label, type = "text", required = true) =>
+    `<label>${label}<input name="${name}" type="${type}" ${required ? "required" : ""} autocomplete="${name === "password" ? (isRegister ? "new-password" : "current-password") : "on"}"></label>`;
+
+  return new Response(`<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title} | Sky Blue SaaS Solutions</title>
+<style>
+body{margin:0;background:#f1f5f9;font:16px Arial,sans-serif;color:#172554}
+main{max-width:430px;margin:35px auto;padding:24px;background:white;border-radius:14px;box-shadow:0 4px 20px #0001}
+h1{font-size:25px}p{line-height:1.5;color:#475569}
+label{display:block;margin:15px 0;font-size:14px;font-weight:bold}
+input{box-sizing:border-box;display:block;width:100%;padding:12px;margin-top:7px;border:1px solid #cbd5e1;border-radius:7px;font-size:16px}
+button{width:100%;padding:13px;background:#1459c7;color:white;border:0;border-radius:7px;font-size:16px;font-weight:bold}
+#message{overflow-wrap:anywhere}
+a{color:#1459c7}
+</style>
+</head>
+<body><main>
+<h1>Sky Blue SaaS Solutions</h1>
+<p>${title}</p>
+<form id="authForm">
+${isRegister ? field("business_name","Business name") + field("full_name","Full name") + field("phone","Phone number","tel") : ""}
+${field("email","Email address","email")}
+${field("password","Password","password")}
+${isRegister ? '<p>Password must contain at least 8 characters.</p>' : ""}
+<button id="submitBtn" type="submit">${isRegister ? "Create account" : "Sign in"}</button>
+<p id="message" role="status"></p>
+</form>
+<p>${isRegister ? 'Already registered? <a href="/login">Sign in</a>' : 'New here? <a href="/register">Create an account</a>'}</p>
+<p><a href="/forgot-password">Forgot your password?</a></p>
+</main>
+<script>
+const form = document.getElementById("authForm");
+form.addEventListener("submit", async function(event) {
+  event.preventDefault();
+  const button = document.getElementById("submitBtn");
+  const message = document.getElementById("message");
+  button.disabled = true;
+  message.textContent = "Please wait...";
+  try {
+    const response = await fetch("${action}", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      credentials: "same-origin",
+      body: JSON.stringify(Object.fromEntries(new FormData(form).entries()))
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.error || "Request failed. Please try again.");
+    }
+    message.textContent = result.message || "Success. Opening your dashboard...";
+    if (${isRegister ? "true" : "false"}) {
+      window.location.href = "/login";
+    } else {
+      window.location.href = "/customer-dashboard.html";
+    }
+  } catch (error) {
+    message.textContent = error.message || "Unable to connect. Please try again.";
+  } finally {
+    button.disabled = false;
+  }
+});
+</script>
+</body></html>`, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store"
+    }
+  });
+}
+
 async function router(req, env) {
   const db = env.DB;
   if (!db) {
@@ -1607,8 +1688,10 @@ async function router(req, env) {
   }
 
   if (method === "GET") {
-    if (path === "/register") return authPage("register");
-    if (path === "/login") return authPage("login");
+  if (path === "/register") return authPage("register");
+  if (path === "/login") return authPage("login");
+  if (path === "/forgot-password") return forgotPasswordPage();
+  if (path === "/reset-password.html") return resetPasswordPage(url);
     if (env.ASSETS) {
       const assetRes = await env.ASSETS.fetch(req);
       if (assetRes.status !== 404) return assetRes;
