@@ -1,1 +1,732 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sky Blue Digital Service — Dashboard</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#172033}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+.sidebar{width:250px;background:#0b3d91;color:#fff;position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:20}
+.brand{padding:22px 18px;border-bottom:1px solid #ffffff26}
+.brand h1{margin:0;font-size:21px}.brand p{margin:6px 0 0;font-size:12px;opacity:.8}
+.nav{padding:12px}.nav button{display:block;width:100%;text-align:left;border:0;background:transparent;color:#fff;padding:12px 13px;border-radius:8px;margin-bottom:4px}
+.nav button:hover,.nav button.active{background:#ffffff26}
+.main{margin-left:250px;width:calc(100% - 250px);min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e4e8ef;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.topbar h2{margin:0;font-size:20px}.content{padding:22px;max-width:1500px;margin:auto}
+.page{display:none}.page.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:#fff;border:1px solid #e3e8ef;border-radius:12px;padding:18px;box-shadow:0 2px 7px #1428500a;margin-bottom:18px}
+.stat{padding:18px}.stat .label{font-size:13px;color:#6b7280}.stat .value{font-size:28px;font-weight:700;margin-top:8px}
+.card h3{margin:0 0 15px}.card h4{margin:0 0 10px}.muted{color:#6b7280;font-size:13px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.form-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.field{margin-bottom:12px}.field.full{grid-column:1/-1}
+label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
+input,select,textarea{width:100%;border:1px solid #ccd4df;border-radius:8px;padding:10px 11px;background:#fff;color:#172033}
+textarea{min-height:100px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#0b67d1;box-shadow:0 0 0 3px #0b67d114}
+input[type=checkbox]{width:auto}
+.actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.btn{border:0;border-radius:8px;padding:10px 14px;font-weight:600}
+.btn-primary{background:#0b67d1;color:#fff}.btn-secondary{background:#eef3f8;color:#17324d}
+.btn-danger{background:#c62828;color:#fff}.btn-success{background:#168447;color:#fff}
+.btn-small{padding:7px 9px;font-size:12px}
+.status{padding:10px 12px;border-radius:8px;margin:10px 0;font-size:13px;display:none;overflow-wrap:anywhere}
+.status.show{display:block}.status.success{background:#e8f7ee;color:#126536}
+.status.error{background:#fdecec;color:#9d1c1c}.status.info{background:#eaf3ff;color:#12549a}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #e9edf2;font-size:13px;vertical-align:middle}
+th{background:#f7f9fc;font-weight:700}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;background:#eef2f7;color:#405064}
+.badge-green{background:#e7f7ed;color:#126536}.badge-red{background:#fdeaea;color:#a31e1e}.badge-orange{background:#fff2df;color:#985500}
+.store-status,.info-box{background:#f5faff;border:1px solid #cfe6ff;border-radius:10px;padding:14px;margin-bottom:18px;font-size:13px}
+.module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.module-card{border:1px solid #e2e7ee;border-radius:10px;padding:15px;background:#fff}
+.product-preview{width:52px;height:52px;border-radius:8px;object-fit:cover;background:#edf1f5;display:block}
+.empty{text-align:center;padding:35px 15px;color:#718096}
+.hidden{display:none!important}
+.check-row{display:flex;align-items:center;gap:8px;margin:9px 0}
+.section-title{margin:22px 0 12px;font-size:16px;font-weight:700}
+.media-row,.variant-row{border:1px solid #e2e7ee;border-radius:9px;padding:12px;margin-bottom:10px;background:#fafbfd}
+.media-row-grid{display:grid;grid-template-columns:100px minmax(0,1fr);gap:12px;align-items:start}
+.media-preview{width:100px;height:80px;object-fit:cover;border-radius:7px;background:#e9edf2}
+.modal{position:fixed;inset:0;background:#0007;display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+.modal.show{display:flex}.modal-box{background:#fff;width:min(1000px,100%);max-height:92vh;overflow-y:auto;border-radius:13px;padding:20px}
+.modal-head{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:15px}
+.modal-head h3{margin:0}.close{border:0;background:#eef2f6;width:35px;height:35px;border-radius:50%;font-size:20px}
+.product-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.product-tools input{max-width:360px}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){.sidebar{width:210px}.main{margin-left:210px;width:calc(100% - 210px)}.form-grid,.form-grid-3,.grid-2{grid-template-columns:1fr}.module-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.sidebar{width:72px}.brand{padding:16px 8px;text-align:center}.brand h1{font-size:12px}.brand p{display:none}.nav{padding:7px}.nav button{padding:12px 5px;text-align:center;font-size:0}.nav button::first-letter{font-size:18px}.main{margin-left:72px;width:calc(100% - 72px)}.content{padding:12px}.topbar{padding:13px}.grid{grid-template-columns:1fr}.actions .btn{max-width:100%}.product-tools input{max-width:none}.media-row-grid{grid-template-columns:1fr}.modal{padding:8px}.modal-box{padding:14px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><h1>SKY BLUE</h1><p>Digital Service</p></div>
+  <nav class="nav">
+    <button class="nav-btn active" data-page="dashboard">🏠 Dashboard</button>
+    <button class="nav-btn" data-page="business">🏢 Business Profile</button>
+    <button class="nav-btn" data-page="customers">👥 Customers</button>
+    <button class="nav-btn" data-page="products">📦 Products</button>
+    <button class="nav-btn" data-page="services">🛠 Services</button>
+    <button class="nav-btn" data-page="sales">💰 Sales</button>
+    <button class="nav-btn" data-page="expenses">💳 Expenses</button>
+    <button class="nav-btn" data-page="payments">💵 Payments</button>
+    <button class="nav-btn" data-page="staff">👨‍💼 Staff</button>
+    <button class="nav-btn" data-page="online-store">🛒 Online Store</button>
+    <button class="nav-btn" data-page="store-products">🛍 Store Products</button>
+    <button class="nav-btn" data-page="orders">📋 Orders</button>
+    <button class="nav-btn" data-page="whatsapp">💬 WhatsApp</button>
+    <button class="nav-btn" data-page="modules">🧩 Modules</button>
+    <button class="nav-btn" data-page="activity">📊 Activity</button>
+    <button class="nav-btn" data-page="settings">⚙️ Settings</button>
+    <button id="logoutBtn">🚪 Logout</button>
+  </nav>
+</aside>
+<main class="main">
+<header class="topbar"><h2 id="pageTitle">Dashboard</h2><div class="muted">Sky Blue Digital Service</div></header>
+<div class="content">
+
+<section class="page active" id="page-dashboard">
+  <div class="grid">
+    <div class="card stat"><div class="label">Customers</div><div class="value" id="dashboardCustomers">0</div></div>
+    <div class="card stat"><div class="label">Products</div><div class="value" id="dashboardProducts">0</div></div>
+    <div class="card stat"><div class="label">Sales</div><div class="value" id="dashboardSales">0</div></div>
+    <div class="card stat"><div class="label">Revenue</div><div class="value" id="dashboardRevenue">R0.00</div></div>
+  </div>
+  <div class="card"><h3>Business Overview</h3><p class="muted">Manage your business, ecommerce store, customers, products, orders and digital services from one platform.</p></div>
+  <div class="card"><h3>Ecommerce Overview</h3><div id="ecommerceDashboardStatus" class="status"></div><div class="grid">
+    <div class="stat"><div class="label">Store Products</div><div class="value" id="ecomProductCount">0</div></div>
+    <div class="stat"><div class="label">Orders</div><div class="value" id="ecomOrderCount">0</div></div>
+    <div class="stat"><div class="label">Pending Orders</div><div class="value" id="ecomPendingOrders">0</div></div>
+    <div class="stat"><div class="label">Store Revenue</div><div class="value" id="ecomRevenue">R0.00</div></div>
+  </div></div>
+</section>
+
+<section class="page" id="page-business"><div class="card"><h3>Business Profile</h3><div id="businessStatus" class="status"></div>
+<div class="form-grid">
+<div class="field"><label>Business Name</label><input id="businessName"></div>
+<div class="field"><label>Trading Name</label><input id="businessTradingName"></div>
+<div class="field"><label>Email</label><input id="businessEmail" type="email"></div>
+<div class="field"><label>Phone</label><input id="businessPhone"></div>
+<div class="field full"><label>Address</label><textarea id="businessAddress"></textarea></div>
+<div class="field"><label>Website</label><input id="businessWebsite" type="url"></div>
+<div class="field"><label>Industry</label><input id="businessIndustry"></div>
+</div><button class="btn btn-primary" id="saveBusinessBtn">Save Business Profile</button></div></section>
+
+<section class="page" id="page-customers"><div class="card"><h3>Customers</h3><div id="customersStatus" class="status"></div><div class="table-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Created</th></tr></thead><tbody id="customersTable"></tbody></table></div></div></section>
+
+<section class="page" id="page-products"><div class="card"><h3>Business Products</h3><div id="coreProductsStatus" class="status"></div><div class="table-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>SKU</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead><tbody id="coreProductsTable"></tbody></table></div></div></section>
+
+<section class="page" id="page-services"><div class="card"><h3>Services</h3><p class="muted">Manage your business services through the SaaS Core.</p></div></section>
+<section class="page" id="page-sales"><div class="card"><h3>Sales</h3><p class="muted">Sales management and reports.</p></div></section>
+<section class="page" id="page-expenses"><div class="card"><h3>Expenses</h3><p class="muted">Business expense management.</p></div></section>
+<section class="page" id="page-payments"><div class="card"><h3>Payments</h3><p class="muted">Payment records and provider integrations.</p></div></section>
+<section class="page" id="page-staff"><div class="card"><h3>Staff</h3><p class="muted">Staff and business user management.</p></div></section>
+
+<section class="page" id="page-online-store"><div class="card"><h3>Online Store</h3><div id="storeStatus" class="status"></div><div class="store-status"><strong>Store status</strong><div class="muted" id="storeStatusText">Loading store settings...</div></div>
+<div class="form-grid">
+<div class="field"><label>Store Name</label><input id="storeName"></div><div class="field"><label>Store Email</label><input id="storeEmail" type="email"></div>
+<div class="field"><label>Store Phone / WhatsApp</label><input id="storePhone"></div>
+<div class="field"><label>Currency</label><select id="storeCurrency"><option value="ZAR">ZAR — South African Rand</option><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — British Pound</option></select></div>
+<div class="field full"><label>Store Description</label><textarea id="storeDescription"></textarea></div>
+</div><div class="actions"><button class="btn btn-primary" id="saveStoreBtn">Save Store</button><button class="btn btn-secondary" data-page-link="store-products">Manage Products</button><button class="btn btn-secondary" data-page-link="orders">View Orders</button><button class="btn btn-secondary" data-page-link="whatsapp">WhatsApp</button></div></div></section>
+
+<section class="page" id="page-store-products">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3>Store Products</h3><div class="muted">Create and manage your online store products.</div></div><button class="btn btn-primary" id="addProductBtn">+ Add Product</button></div>
+<div id="storeProductsStatus" class="status"></div>
+<div class="product-tools" style="margin-top:18px"><input id="productSearch" type="search" placeholder="Search products..."><select id="productStatusFilter"><option value="">All Statuses</option><option value="active">Active</option><option value="draft">Draft</option><option value="hidden">Hidden</option></select><button class="btn btn-secondary" id="refreshProductsBtn">Refresh</button></div>
+<div class="table-wrap"><table><thead><tr><th>Image</th><th>Product</th><th>SKU</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody id="ecommerceProductsTable"></tbody></table></div>
+</div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h3>Store Categories</h3><div class="muted">Organise products into categories and subcategories.</div></div><button class="btn btn-secondary" id="addCategoryBtn">+ Add Category</button></div>
+<div id="categoryStatus" class="status"></div><div class="table-wrap"><table><thead><tr><th>Name</th><th>Parent</th><th>Slug</th><th>Status</th><th>Actions</th></tr></thead><tbody id="categoriesTable"></tbody></table></div></div>
+</section>
+
+<section class="page" id="page-orders"><div class="card"><h3>Orders</h3><div id="ordersStatus" class="status"></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Payment</th><th>Order Status</th><th>Created</th></tr></thead><tbody id="ordersTable"></tbody></table></div></div></section>
+
+<section class="page" id="page-whatsapp"><div class="card"><h3>WhatsApp Commerce</h3><div class="module-grid">
+<div class="module-card"><h4>Product Media</h4><p class="muted">Manage product images and videos for WhatsApp publishing.</p></div>
+<div class="module-card"><h4>Orders</h4><p class="muted">Connect WhatsApp orders to your ecommerce engine.</p></div>
+<div class="module-card"><h4>Notifications</h4><p class="muted">Customer and business notifications.</p></div>
+</div></div></section>
+
+<section class="page" id="page-modules"><div class="card"><h3>SaaS Modules</h3><div class="module-grid">
+<div class="module-card"><h4>🛒 Ecommerce</h4><p class="muted">Online stores, products, orders and payments.</p></div>
+<div class="module-card"><h4>🏘 Community Service</h4><p class="muted">Community reports and service management.</p></div>
+<div class="module-card"><h4>🤝 NPO / NGO</h4><p class="muted">Organisation, projects and beneficiaries.</p></div>
+<div class="module-card"><h4>💈 Salon / Barber</h4><p class="muted">Appointments, customers and services.</p></div>
+<div class="module-card"><h4>🍔 Restaurant</h4><p class="muted">Menus, orders and delivery.</p></div>
+<div class="module-card"><h4>🚚 Transport</h4><p class="muted">Transport, bookings and fleet workflows.</p></div>
+</div></div></section>
+
+<section class="page" id="page-activity"><div class="card"><h3>Activity</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Action</th><th>Description</th></tr></thead><tbody id="activityTable"><tr><td colspan="3" class="empty">No activity loaded.</td></tr></tbody></table></div></div></section>
+<section class="page" id="page-settings"><div class="card"><h3>Settings</h3><p class="muted">Account, subscription, payment-provider and platform settings.</p></div></section>
+</div></main></div>
+
+<div class="modal" id="productModal"><div class="modal-box">
+<div class="modal-head"><h3 id="productModalTitle">Add Store Product</h3><button type="button" class="close" id="closeProductModal">×</button></div>
+<div id="productFormStatus" class="status"></div>
+<form id="productForm"><input type="hidden" id="productId">
+<div class="section-title">Basic Product Information</div><div class="form-grid">
+<div class="field"><label>Product Name *</label><input id="productName" required></div><div class="field"><label>SKU</label><input id="productSku"></div>
+<div class="field"><label>Barcode</label><input id="productBarcode"></div><div class="field"><label>Category</label><select id="productCategory"><option value="">Select category</option></select></div>
+<div class="field full"><label>Short Description</label><textarea id="productShortDescription"></textarea></div><div class="field full"><label>Full Description</label><textarea id="productDescription"></textarea></div></div>
+<div class="section-title">Pricing</div><div class="form-grid-3">
+<div class="field"><label>Selling Price *</label><input id="productSellingPrice" type="number" min="0" step=".01" required></div>
+<div class="field"><label>Cost Price</label><input id="productCostPrice" type="number" min="0" step=".01"></div>
+<div class="field"><label>Sale Price</label><input id="productSalePrice" type="number" min="0" step=".01"></div></div>
+<div class="section-title">Tax & Inventory</div><div class="form-grid-3">
+<div class="field"><label>Tax / VAT Rate (%)</label><input id="productTaxRate" type="number" min="0" step=".01" value="0"></div>
+<div class="field"><label>Stock Quantity</label><input id="productStock" type="number" min="0" step="1" value="0"></div>
+<div class="field"><label>Low Stock Threshold</label><input id="productLowStock" type="number" min="0" step="1" value="0"></div></div>
+<div class="check-row"><input id="productTrackInventory" type="checkbox" checked><label for="productTrackInventory">Track inventory</label></div>
+<div class="section-title">Physical Product</div><div class="form-grid-3">
+<div class="field"><label>Weight</label><input id="productWeight" type="number" min="0" step=".01"></div><div class="field"><label>Length</label><input id="productLength" type="number" min="0" step=".01"></div><div class="field"><label>Width</label><input id="productWidth" type="number" min="0" step=".01"></div><div class="field"><label>Height</label><input id="productHeight" type="number" min="0" step=".01"></div></div>
+<div class="section-title">Product URL & SEO</div><div class="form-grid">
+<div class="field"><label>Product Slug</label><input id="productSlug"></div><div class="field"><label>Brand</label><input id="productBrand"></div><div class="field"><label>SEO Title</label><input id="productSeoTitle"></div><div class="field"><label>SEO Description</label><input id="productSeoDescription"></div></div>
+<div class="section-title">Product Status</div><div class="form-grid">
+<div class="field"><label>Status</label><select id="productStatus"><option value="active">Active</option><option value="draft">Draft</option><option value="hidden">Hidden</option></select></div>
+<div class="field"><label>Product Type</label><select id="productType"><option value="physical">Physical</option><option value="digital">Digital</option></select></div></div>
+<div class="check-row"><input id="productFeatured" type="checkbox"><label for="productFeatured">Featured product</label></div>
+<div class="check-row"><input id="productDownloadable" type="checkbox"><label for="productDownloadable">Digital / downloadable product</label></div>
+<div class="section-title">Product Media</div><div class="info-box">Upload pictures or videos, or enter media URLs. Media can be marked for WhatsApp publishing.</div>
+<div class="field"><label>Upload Product Images or Videos</label><input id="productMediaUpload" type="file" accept="image/*,video/*" multiple></div>
+<div id="mediaContainer"></div><button type="button" class="btn btn-secondary" id="addMediaBtn">+ Add Image / Video URL</button>
+<div class="section-title">Product Variants</div><div id="variantsContainer"></div><button type="button" class="btn btn-secondary" id="addVariantBtn">+ Add Variant</button>
+<div class="section-title">Actions</div><div class="actions"><button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button><button type="button" class="btn btn-secondary" id="cancelProductBtn">Cancel</button></div>
+</form></div></div>
+
+<div class="modal" id="categoryModal"><div class="modal-box" style="max-width:600px">
+<div class="modal-head"><h3 id="categoryModalTitle">Add Category</h3><button type="button" class="close" id="closeCategoryModal">×</button></div>
+<div id="categoryFormStatus" class="status"></div>
+<form id="categoryForm"><input type="hidden" id="categoryId">
+<div class="field"><label>Category Name *</label><input id="categoryName" required></div>
+<div class="field"><label>Parent Category</label><select id="categoryParent"><option value="">No parent — main category</option></select></div>
+<div class="field"><label>Slug</label><input id="categorySlug"></div><div class="field"><label>Description</label><textarea id="categoryDescription"></textarea></div>
+<div class="field"><label>Image URL</label><input id="categoryImageUrl" type="url"></div>
+<div class="check-row"><input id="categoryActive" type="checkbox" checked><label for="categoryActive">Active</label></div>
+<div class="actions"><button type="submit" class="btn btn-primary">Save Category</button><button type="button" class="btn btn-secondary" id="cancelCategoryBtn">Cancel</button></div>
+</form></div></div>
+
+<script>
+"use strict";
+
+const API="/api/core";
+const $=id=>document.getElementById(id);
+let ecommerceProducts=[];
+let ecommerceCategories=[];
+let editingProductId=null;
+let editingCategoryId=null;
+let uploadedMediaUrls=[];
+
+const pageTitles={
+ dashboard:"Dashboard",business:"Business Profile",customers:"Customers",
+ products:"Products",services:"Services",sales:"Sales",expenses:"Expenses",
+ payments:"Payments",staff:"Staff","online-store":"Online Store",
+ "store-products":"Store Products",orders:"Orders",whatsapp:"WhatsApp",
+ modules:"Modules",activity:"Activity",settings:"Settings"
+};
+
+function escapeHTML(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+ }[c]));
+}
+function formatMoney(value){
+ return new Intl.NumberFormat("en-ZA",{style:"currency",currency:"ZAR"}).format(Number(value)||0);
+}
+function formatDate(value){
+ if(!value)return "-";
+ const date=new Date(value);
+ return Number.isNaN(date.getTime())?String(value):date.toLocaleString("en-ZA");
+}
+function setStatus(id,message,type="info"){
+ const el=$(id);if(!el)return;
+ el.className="status show "+type;el.textContent=message;
+}
+function clearStatus(id){
+ const el=$(id);if(el){el.className="status";el.textContent="";}
+}
+async function apiFetch(path,options={}){
+ const headers={...(options.headers||{})};
+ if(!(options.body instanceof FormData)&&options.body!==undefined){
+  headers["Content-Type"]="application/json";
+ }
+ const response=await fetch(API+path,{credentials:"include",...options,headers});
+ let data={};
+ try{data=await response.json()}catch{}
+ if(!response.ok||data.success===false||data.ok===false){
+  throw new Error(data.error||data.message||"Request failed ("+response.status+")");
+ }
+ return data;
+}
+function getArray(data,...keys){
+ for(const key of keys){if(Array.isArray(data?.[key]))return data[key]}
+ if(Array.isArray(data))return data;
+ return [];
+}
+function setCellMessage(tableId,colspan,message){
+ const table=$(tableId);if(table)table.innerHTML='<tr><td colspan="'+colspan+'" class="empty">'+escapeHTML(message)+'</td></tr>';
+}
+
+/* Navigation: delegated events ensure every sidebar button works. */
+async function showPage(page){
+ const target=$("page-"+page);
+ if(!target)return;
+ document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el===target));
+ document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===page));
+ $("pageTitle").textContent=pageTitles[page]||"Sky Blue Digital Service";
+ if(page==="dashboard"){await loadDashboard();await loadEcommerceDashboard()}
+ if(page==="business")await loadBusiness();
+ if(page==="customers")await loadCustomers();
+ if(page==="products")await loadCoreProducts();
+ if(page==="online-store")await loadEcommerceStore();
+ if(page==="store-products"){await loadCategories();await loadEcommerceProducts()}
+ if(page==="orders")await loadOrders();
+}
+document.addEventListener("click",event=>{
+ const nav=event.target.closest("[data-page]");
+ if(nav){event.preventDefault();showPage(nav.dataset.page);return}
+ const link=event.target.closest("[data-page-link]");
+ if(link){event.preventDefault();showPage(link.dataset.pageLink)}
+});
+
+/* Dashboard */
+async function loadDashboard(){
+ try{
+  const d=await apiFetch("/dashboard");
+  const x=d.dashboard||d.summary||d.data||d;
+  $("dashboardCustomers").textContent=x.customers??x.customer_count??0;
+  $("dashboardProducts").textContent=x.products??x.product_count??0;
+  $("dashboardSales").textContent=x.sales??x.sale_count??0;
+  $("dashboardRevenue").textContent=formatMoney(x.revenue??x.total_revenue??0);
+ }catch(e){console.error("Dashboard:",e)}
+}
+async function loadEcommerceDashboard(){
+ try{
+  const d=await apiFetch("/ecommerce/dashboard"),x=d.dashboard||d.summary||d.data||d;
+  $("ecomProductCount").textContent=x.products??x.product_count??0;
+  $("ecomOrderCount").textContent=x.orders??x.order_count??0;
+  $("ecomPendingOrders").textContent=x.pending_orders??x.pendingOrderCount??0;
+  $("ecomRevenue").textContent=formatMoney(x.revenue??x.total_revenue??0);
+  clearStatus("ecommerceDashboardStatus");
+ }catch(e){setStatus("ecommerceDashboardStatus",e.message,"error")}
+}
+
+/* Business profile */
+async function loadBusiness(){
+ try{
+  const d=await apiFetch("/business"),b=d.business||d.data||d;
+  $("businessName").value=b.business_name||b.name||"";
+  $("businessTradingName").value=b.trading_name||"";
+  $("businessEmail").value=b.email||"";
+  $("businessPhone").value=b.phone||"";
+  $("businessAddress").value=b.address||"";
+  $("businessWebsite").value=b.website||"";
+  $("businessIndustry").value=b.industry||"";
+  clearStatus("businessStatus");
+ }catch(e){setStatus("businessStatus",e.message,"error")}
+}
+$("saveBusinessBtn").addEventListener("click",async()=>{
+ try{
+  setStatus("businessStatus","Saving business profile...","info");
+  await apiFetch("/business",{method:"POST",body:JSON.stringify({
+   business_name:$("businessName").value.trim(),
+   trading_name:$("businessTradingName").value.trim(),
+   email:$("businessEmail").value.trim(),phone:$("businessPhone").value.trim(),
+   address:$("businessAddress").value.trim(),website:$("businessWebsite").value.trim(),
+   industry:$("businessIndustry").value.trim()
+  })});
+  setStatus("businessStatus","Business profile saved.","success");
+ }catch(e){setStatus("businessStatus",e.message,"error")}
+});
+
+/* Customers */
+async function loadCustomers(){
+ setCellMessage("customersTable",5,"Loading...");
+ try{
+  const d=await apiFetch("/customers"),items=getArray(d,"customers","data");
+  if(!items.length)return setCellMessage("customersTable",5,"No customers found.");
+  $("customersTable").innerHTML=items.map(c=>`<tr>
+   <td>${escapeHTML(c.id??"-")}</td><td>${escapeHTML(c.name||c.full_name||"-")}</td>
+   <td>${escapeHTML(c.email||"-")}</td><td>${escapeHTML(c.phone||"-")}</td>
+   <td>${escapeHTML(formatDate(c.created_at))}</td></tr>`).join("");
+ }catch(e){setCellMessage("customersTable",5,e.message)}
+}
+
+/* Core products */
+async function loadCoreProducts(){
+ setCellMessage("coreProductsTable",7,"Loading...");
+ try{
+  const d=await apiFetch("/products"),items=getArray(d,"products","data");
+  if(!items.length)return setCellMessage("coreProductsTable",7,"No business products found.");
+  $("coreProductsTable").innerHTML=items.map(p=>`<tr>
+   <td>${escapeHTML(p.id??"-")}</td><td>${escapeHTML(p.name||"-")}</td>
+   <td>${escapeHTML(p.sku||p.product_code||"-")}</td><td>${escapeHTML(p.category||"-")}</td>
+   <td>${formatMoney(p.selling_price??p.price)}</td><td>${escapeHTML(p.stock_quantity??0)}</td>
+   <td>${Number(p.active)===0?'<span class="badge badge-red">Inactive</span>':'<span class="badge badge-green">Active</span>'}</td></tr>`).join("");
+ }catch(e){setCellMessage("coreProductsTable",7,e.message);setStatus("coreProductsStatus",e.message,"error")}
+}
+
+/* Store settings */
+async function loadEcommerceStore(){
+ try{
+  const d=await apiFetch("/ecommerce/store"),s=d.store||d.data||d;
+  $("storeName").value=s.store_name||"";
+  $("storeEmail").value=s.email||"";
+  $("storePhone").value=s.phone||s.whatsapp||"";
+  $("storeCurrency").value=s.currency||"ZAR";
+  $("storeDescription").value=s.description||"";
+  $("storeStatusText").textContent=s.published?"Your store is published.":"Store settings loaded.";
+  clearStatus("storeStatus");
+ }catch(e){$("storeStatusText").textContent="Unable to load store settings.";setStatus("storeStatus",e.message,"error")}
+}
+$("saveStoreBtn").addEventListener("click",async()=>{
+ try{
+  setStatus("storeStatus","Saving store...","info");
+  await apiFetch("/ecommerce/store",{method:"POST",body:JSON.stringify({
+   store_name:$("storeName").value.trim(),email:$("storeEmail").value.trim(),
+   phone:$("storePhone").value.trim(),whatsapp:$("storePhone").value.trim(),
+   currency:$("storeCurrency").value,description:$("storeDescription").value.trim()
+  })});
+  $("storeStatusText").textContent="Store settings saved.";
+  setStatus("storeStatus","Store saved successfully.","success");
+ }catch(e){setStatus("storeStatus",e.message,"error")}
+});
+
+/* Categories */
+function categoryById(id){return ecommerceCategories.find(c=>String(c.id)===String(id))||null}
+function categoryName(id){const c=categoryById(id);return c?c.name:"-"}
+function populateCategorySelects(){
+ const productSelect=$("productCategory"),parentSelect=$("categoryParent");
+ if(productSelect){
+  const current=productSelect.value;
+  productSelect.innerHTML='<option value="">Select category</option>'+ecommerceCategories.map(c=>`<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join("");
+  productSelect.value=current;
+ }
+ if(parentSelect){
+  const current=parentSelect.value;
+  parentSelect.innerHTML='<option value="">No parent — main category</option>'+ecommerceCategories.filter(c=>String(c.id)!==String(editingCategoryId||"")).map(c=>`<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join("");
+  parentSelect.value=current;
+ }
+}
+async function loadCategories(){
+ try{
+  const d=await apiFetch("/ecommerce/categories");
+  ecommerceCategories=getArray(d,"categories","data");
+  renderCategories();populateCategorySelects();clearStatus("categoryStatus");
+ }catch(e){
+  ecommerceCategories=[];renderCategories();populateCategorySelects();
+  setStatus("categoryStatus",e.message,"error");
+ }
+}
+function renderCategories(){
+ const table=$("categoriesTable");if(!table)return;
+ if(!ecommerceCategories.length)return setCellMessage("categoriesTable",5,"No categories yet.");
+ table.innerHTML=ecommerceCategories.map(c=>`<tr>
+ <td>${escapeHTML(c.name||"-")}</td><td>${escapeHTML(categoryName(c.parent_id))}</td>
+ <td>${escapeHTML(c.slug||"-")}</td><td>${Number(c.active??1)?'<span class="badge badge-green">Active</span>':'<span class="badge badge-red">Inactive</span>'}</td>
+ <td><div class="actions"><button class="btn btn-secondary btn-small" data-edit-category="${escapeHTML(c.id)}">Edit</button><button class="btn btn-danger btn-small" data-delete-category="${escapeHTML(c.id)}">Delete</button></div></td></tr>`).join("");
+}
+$("addCategoryBtn").addEventListener("click",()=>{
+ editingCategoryId=null;$("categoryModalTitle").textContent="Add Category";
+ $("categoryId").value="";$("categoryName").value="";$("categoryParent").value="";
+ $("categorySlug").value="";$("categoryDescription").value="";$("categoryImageUrl").value="";
+ $("categoryActive").checked=true;clearStatus("categoryFormStatus");populateCategorySelects();
+ $("categoryModal").classList.add("show");
+});
+function closeCategoryModal(){$("categoryModal").classList.remove("show")}
+$("closeCategoryModal").addEventListener("click",closeCategoryModal);
+$("cancelCategoryBtn").addEventListener("click",closeCategoryModal);
+$("categoryForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const payload={name:$("categoryName").value.trim(),parent_id:$("categoryParent").value?Number($("categoryParent").value):null,slug:$("categorySlug").value.trim(),description:$("categoryDescription").value.trim(),image_url:$("categoryImageUrl").value.trim(),active:$("categoryActive").checked?1:0};
+ if(!payload.name)return setStatus("categoryFormStatus","Category name is required.","error");
+ try{
+  setStatus("categoryFormStatus","Saving category...","info");
+  const path=editingCategoryId?"/ecommerce/categories/"+encodeURIComponent(editingCategoryId):"/ecommerce/categories";
+  await apiFetch(path,{method:editingCategoryId?"PATCH":"POST",body:JSON.stringify(payload)});
+  closeCategoryModal();await loadCategories();setStatus("categoryStatus","Category saved successfully.","success");
+ }catch(e){setStatus("categoryFormStatus",e.message,"error")}
+});
+window.editCategory=id=>{
+ const c=categoryById(id);if(!c)return;
+ editingCategoryId=c.id;$("categoryModalTitle").textContent="Edit Category";
+ $("categoryId").value=c.id;$("categoryName").value=c.name||"";
+ populateCategorySelects();$("categoryParent").value=c.parent_id||"";
+ $("categorySlug").value=c.slug||"";$("categoryDescription").value=c.description||"";
+ $("categoryImageUrl").value=c.image_url||"";$("categoryActive").checked=Number(c.active??1)===1;
+ clearStatus("categoryFormStatus");$("categoryModal").classList.add("show");
+};
+window.deleteCategory=async id=>{
+ const c=categoryById(id);if(!c||!confirm('Delete category "'+c.name+'"?'))return;
+ try{await apiFetch("/ecommerce/categories/"+encodeURIComponent(id),{method:"DELETE"});await loadCategories();setStatus("categoryStatus","Category deleted.","success")}
+ catch(e){setStatus("categoryStatus",e.message,"error")}
+};
+$("categoriesTable").addEventListener("click",e=>{
+ const edit=e.target.closest("[data-edit-category]"),del=e.target.closest("[data-delete-category]");
+ if(edit)window.editCategory(edit.dataset.editCategory);
+ if(del)window.deleteCategory(del.dataset.deleteCategory);
+});
+
+/* Ecommerce products */
+function getProductMedia(p){return Array.isArray(p.media)?p.media:Array.isArray(p.media_items)?p.media_items:[]}
+function productImage(p){if(p.image_url)return p.image_url;const m=getProductMedia(p);return (m.find(x=>Number(x.is_primary)===1)||m.find(x=>String(x.media_type).toLowerCase()==="image")||{}).media_url||""}
+function getProductStatus(p){if(p.status)return String(p.status).toLowerCase();return p.active===false||Number(p.active)===0?"hidden":"active"}
+async function loadEcommerceProducts(){
+ setCellMessage("ecommerceProductsTable",8,"Loading products...");
+ try{
+  const d=await apiFetch("/ecommerce/products");ecommerceProducts=getArray(d,"products","data");
+  renderEcommerceProducts();clearStatus("storeProductsStatus");
+ }catch(e){ecommerceProducts=[];setCellMessage("ecommerceProductsTable",8,e.message);setStatus("storeProductsStatus",e.message,"error")}
+}
+function renderEcommerceProducts(){
+ const search=$("productSearch").value.trim().toLowerCase(),filter=$("productStatusFilter").value;
+ const items=ecommerceProducts.filter(p=>{
+  const hay=[p.name,p.sku,p.barcode,p.slug,p.brand,p.category].filter(Boolean).join(" ").toLowerCase();
+  return (!search||hay.includes(search))&&(!filter||getProductStatus(p)===filter);
+ });
+ if(!items.length)return setCellMessage("ecommerceProductsTable",8,"No products found.");
+ $("ecommerceProductsTable").innerHTML=items.map(p=>{
+  const img=productImage(p),stock=Number(p.stock_quantity??p.stock??0),low=Number(p.low_stock_threshold??p.low_stock_level??0),status=getProductStatus(p);
+  const stockBadge=stock<=0?'<span class="badge badge-red">0 Out</span>':low>0&&stock<=low?'<span class="badge badge-orange">'+stock+' Low</span>':'<span class="badge badge-green">'+stock+'</span>';
+  const statusBadge=status==="draft"?'<span class="badge badge-orange">Draft</span>':status==="hidden"?'<span class="badge badge-red">Hidden</span>':'<span class="badge badge-green">Active</span>';
+  return `<tr><td>${img?`<img class="product-preview" src="${escapeHTML(img)}" alt="" onerror="this.style.display='none'">`:'<div class="product-preview"></div>'}</td>
+  <td><strong>${escapeHTML(p.name||"-")}</strong>${p.featured||p.is_featured?'<div><span class="badge">Featured</span></div>':""}</td>
+  <td>${escapeHTML(p.sku||p.product_code||"-")}</td><td>${escapeHTML(p.category_name||categoryName(p.category_id)||p.category||"-")}</td>
+  <td>${formatMoney(p.sale_price??p.selling_price??p.price??0)}</td><td>${stockBadge}</td><td>${statusBadge}</td>
+  <td><div class="actions"><button class="btn btn-secondary btn-small" data-edit-product="${escapeHTML(p.id)}">Edit</button><button class="btn btn-danger btn-small" data-delete-product="${escapeHTML(p.id)}">Delete</button></div></td></tr>`;
+ }).join("");
+}
+$("ecommerceProductsTable").addEventListener("click",e=>{
+ const edit=e.target.closest("[data-edit-product]"),del=e.target.closest("[data-delete-product]");
+ if(edit)window.editProduct(edit.dataset.editProduct);
+ if(del)window.deleteProduct(del.dataset.deleteProduct);
+});
+$("productSearch").addEventListener("input",renderEcommerceProducts);
+$("productStatusFilter").addEventListener("change",renderEcommerceProducts);
+$("refreshProductsBtn").addEventListener("click",async()=>{await loadCategories();await loadEcommerceProducts()});
+
+/* Product modal and form */
+function resetProductForm(){
+ editingProductId=null;uploadedMediaUrls=[];
+ $("productModalTitle").textContent="Add Store Product";
+ $("productId").value="";
+ ["productName","productSku","productBarcode","productShortDescription","productDescription","productSellingPrice","productCostPrice","productSalePrice","productWeight","productLength","productWidth","productHeight","productSlug","productBrand","productSeoTitle","productSeoDescription"].forEach(id=>$(id).value="");
+ $("productTaxRate").value="0";$("productStock").value="0";$("productLowStock").value="0";
+ $("productTrackInventory").checked=true;$("productStatus").value="active";$("productType").value="physical";
+ $("productFeatured").checked=false;$("productDownloadable").checked=false;
+ $("mediaContainer").innerHTML="";$("variantsContainer").innerHTML="";clearStatus("productFormStatus");
+}
+function openProductModal(){$("productModal").classList.add("show")}
+function closeProductModal(){$("productModal").classList.remove("show")}
+$("addProductBtn").addEventListener("click",()=>{resetProductForm();populateCategorySelects();openProductModal()});
+$("closeProductModal").addEventListener("click",closeProductModal);
+$("cancelProductBtn").addEventListener("click",closeProductModal);
+
+function updateMediaPreview(row){
+ const wrap=row.querySelector(".media-preview-wrap");
+ const type=row.querySelector(".media-type").value;
+ const url=row.querySelector(".media-url").value.trim();
+ if(!wrap)return;
+ if(!url){wrap.innerHTML='<div class="media-preview"></div>';return}
+ wrap.innerHTML=type==="video"
+  ?`<video class="media-preview" src="${escapeHTML(url)}" controls></video>`
+  :`<img class="media-preview" src="${escapeHTML(url)}" alt="" onerror="this.style.display='none'">`;
+}
+function addMediaRow(media={}){
+ const row=document.createElement("div");row.className="media-row";row.dataset.mediaId=media.id||"";
+ row.innerHTML=`<div class="media-row-grid"><div class="media-preview-wrap"><div class="media-preview"></div></div><div>
+ <div class="form-grid-3"><div class="field"><label>Media Type</label><select class="media-type"><option value="image">Image</option><option value="video">Video</option></select></div>
+ <div class="field full"><label>Media URL</label><input class="media-url" type="url" placeholder="https://..."></div>
+ <div class="field"><label>Thumbnail URL</label><input class="media-thumbnail" type="url"></div>
+ <div class="field"><label>Alt Text</label><input class="media-alt"></div><div class="field"><label>Caption</label><input class="media-caption"></div></div>
+ <div class="check-row"><input type="checkbox" class="media-primary"><label>Featured / Main Media</label></div>
+ <div class="check-row"><input type="checkbox" class="media-whatsapp"><label>Publish to WhatsApp</label></div>
+ <button type="button" class="btn btn-danger btn-small remove-media">Remove</button></div></div>`;
+ $("mediaContainer").appendChild(row);
+ row.querySelector(".media-type").value=media.media_type==="video"?"video":"image";
+ row.querySelector(".media-url").value=media.media_url||"";
+ row.querySelector(".media-thumbnail").value=media.thumbnail_url||"";
+ row.querySelector(".media-alt").value=media.alt_text||"";
+ row.querySelector(".media-caption").value=media.caption||"";
+ row.querySelector(".media-primary").checked=Number(media.is_primary||0)===1;
+ row.querySelector(".media-whatsapp").checked=Number(media.whatsapp_publish||0)===1;
+ row.querySelector(".remove-media").addEventListener("click",()=>row.remove());
+ row.querySelector(".media-url").addEventListener("input",()=>updateMediaPreview(row));
+ row.querySelector(".media-type").addEventListener("change",()=>updateMediaPreview(row));
+ updateMediaPreview(row);
+}
+$("addMediaBtn").addEventListener("click",()=>addMediaRow());
+$("productMediaUpload").addEventListener("change",async e=>{
+ const files=Array.from(e.target.files||[]);
+ for(const file of files){
+  try{
+   const form=new FormData();form.append("file",file);
+   const response=await fetch("/api/media/upload",{method:"POST",credentials:"include",body:form});
+   let result={};try{result=await response.json()}catch{}
+   if(!response.ok||result.success===false||result.ok===false)throw new Error(result.error||"Upload failed");
+   const url=result.url||result.media_url;
+   if(!url)throw new Error("Upload response did not contain a media URL");
+   addMediaRow({media_type:result.media_type||(file.type.startsWith("video/")?"video":"image"),media_url:url,alt_text:file.name});
+  }catch(err){alert("Upload failed for "+file.name+": "+err.message)}
+ }
+ e.target.value="";
+});
+function collectMedia(){
+ return [...$("mediaContainer").querySelectorAll(".media-row")].map(row=>({
+  id:row.dataset.mediaId?Number(row.dataset.mediaId):null,
+  media_type:row.querySelector(".media-type").value,
+  media_url:row.querySelector(".media-url").value.trim(),
+  thumbnail_url:row.querySelector(".media-thumbnail").value.trim(),
+  alt_text:row.querySelector(".media-alt").value.trim(),
+  caption:row.querySelector(".media-caption").value.trim(),
+  is_primary:row.querySelector(".media-primary").checked?1:0,
+  whatsapp_publish:row.querySelector(".media-whatsapp").checked?1:0
+ })).filter(m=>m.media_url);
+}
+function addVariantRow(v={}){
+ const row=document.createElement("div");row.className="variant-row";row.dataset.variantId=v.id||"";
+ row.innerHTML=`<div class="form-grid-3">
+ <div class="field"><label>Variant Name</label><input class="variant-name" placeholder="Large / Red"></div>
+ <div class="field"><label>SKU</label><input class="variant-sku"></div><div class="field"><label>Barcode</label><input class="variant-barcode"></div>
+ <div class="field"><label>Price</label><input class="variant-price" type="number" min="0" step=".01"></div>
+ <div class="field"><label>Sale Price</label><input class="variant-sale-price" type="number" min="0" step=".01"></div>
+ <div class="field"><label>Stock</label><input class="variant-stock" type="number" min="0" step="1" value="0"></div>
+ <div class="field full"><label>Option Values JSON</label><input class="variant-options" placeholder='{"size":"Large","colour":"Blue"}'></div></div>
+ <button type="button" class="btn btn-danger btn-small remove-variant">Remove</button>`;
+ $("variantsContainer").appendChild(row);
+ row.querySelector(".variant-name").value=v.variant_name||v.name||"";
+ row.querySelector(".variant-sku").value=v.sku||"";
+ row.querySelector(".variant-barcode").value=v.barcode||"";
+ row.querySelector(".variant-price").value=v.selling_price??v.price??"";
+ row.querySelector(".variant-sale-price").value=v.sale_price??"";
+ row.querySelector(".variant-stock").value=v.stock_quantity??0;
+ row.querySelector(".variant-options").value=v.option_values_json||"";
+ row.querySelector(".remove-variant").addEventListener("click",()=>row.remove());
+}
+$("addVariantBtn").addEventListener("click",()=>addVariantRow());
+function numberOrNull(value){
+ if(value===null||value===undefined||String(value).trim()==="")return null;
+ const n=Number(value);return Number.isFinite(n)?n:null;
+}
+function collectVariants(){
+ return [...$("variantsContainer").querySelectorAll(".variant-row")].map(row=>({
+  id:row.dataset.variantId?Number(row.dataset.variantId):null,
+  variant_name:row.querySelector(".variant-name").value.trim(),
+  sku:row.querySelector(".variant-sku").value.trim(),
+  barcode:row.querySelector(".variant-barcode").value.trim(),
+  selling_price:numberOrNull(row.querySelector(".variant-price").value),
+  sale_price:numberOrNull(row.querySelector(".variant-sale-price").value),
+  stock_quantity:numberOrNull(row.querySelector(".variant-stock").value),
+  option_values_json:row.querySelector(".variant-options").value.trim()
+ })).filter(v=>v.variant_name);
+}
+function buildProductPayload(){
+ const name=$("productName").value.trim(),price=numberOrNull($("productSellingPrice").value);
+ if(!name)throw new Error("Product name is required.");
+ if(price===null||price<0)throw new Error("Enter a valid selling price.");
+ return {
+  name,sku:$("productSku").value.trim(),barcode:$("productBarcode").value.trim(),
+  category_id:$("productCategory").value?Number($("productCategory").value):null,
+  short_description:$("productShortDescription").value.trim(),description:$("productDescription").value.trim(),
+  selling_price:price,cost_price:numberOrNull($("productCostPrice").value),sale_price:numberOrNull($("productSalePrice").value),
+  tax_rate:numberOrNull($("productTaxRate").value)??0,stock_quantity:numberOrNull($("productStock").value)??0,
+  low_stock_threshold:numberOrNull($("productLowStock").value)??0,track_inventory:$("productTrackInventory").checked?1:0,
+  weight:numberOrNull($("productWeight").value),length:numberOrNull($("productLength").value),
+  width:numberOrNull($("productWidth").value),height:numberOrNull($("productHeight").value),
+  slug:$("productSlug").value.trim(),brand:$("productBrand").value.trim(),
+  seo_title:$("productSeoTitle").value.trim(),seo_description:$("productSeoDescription").value.trim(),
+  status:$("productStatus").value,product_type:$("productType").value,
+  featured:$("productFeatured").checked?1:0,is_featured:$("productFeatured").checked?1:0,
+  downloadable:$("productDownloadable").checked?1:0,media:collectMedia(),variants:collectVariants()
+ };
+}
+$("productForm").addEventListener("submit",async e=>{
+ e.preventDefault();const btn=$("saveProductBtn");
+ try{
+  const payload=buildProductPayload();btn.disabled=true;btn.textContent="Saving...";
+  setStatus("productFormStatus","Saving product...","info");
+  const path=editingProductId?"/ecommerce/products/"+encodeURIComponent(editingProductId):"/ecommerce/products";
+  await apiFetch(path,{method:editingProductId?"PATCH":"POST",body:JSON.stringify(payload)});
+  closeProductModal();await loadEcommerceProducts();
+  setStatus("storeProductsStatus",editingProductId?"Product updated successfully.":"Product created successfully.","success");
+  editingProductId=null;
+ }catch(err){setStatus("productFormStatus",err.message,"error")}
+ finally{btn.disabled=false;btn.textContent="Save Product"}
+});
+window.editProduct=async id=>{
+ try{
+  const cached=ecommerceProducts.find(p=>String(p.id)===String(id));
+  let p=cached||{};
+  try{const d=await apiFetch("/ecommerce/products/"+encodeURIComponent(id));p=d.product||d.data||d}catch(e){if(!cached)throw e}
+  resetProductForm();editingProductId=p.id??id;
+  $("productModalTitle").textContent="Edit Store Product";$("productId").value=editingProductId;
+  $("productName").value=p.name||"";$("productSku").value=p.sku||"";$("productBarcode").value=p.barcode||"";
+  populateCategorySelects();$("productCategory").value=p.category_id||"";
+  $("productShortDescription").value=p.short_description||"";$("productDescription").value=p.description||"";
+  $("productSellingPrice").value=p.selling_price??p.price??"";$("productCostPrice").value=p.cost_price??"";
+  $("productSalePrice").value=p.sale_price??"";$("productTaxRate").value=p.tax_rate??0;
+  $("productStock").value=p.stock_quantity??p.stock??0;$("productLowStock").value=p.low_stock_threshold??p.low_stock_level??0;
+  $("productTrackInventory").checked=Number(p.track_inventory??1)===1;
+  $("productWeight").value=p.weight??"";$("productLength").value=p.length??"";$("productWidth").value=p.width??"";$("productHeight").value=p.height??"";
+  $("productSlug").value=p.slug||"";$("productBrand").value=p.brand||"";
+  $("productSeoTitle").value=p.seo_title||"";$("productSeoDescription").value=p.seo_description||"";
+  $("productStatus").value=getProductStatus(p);$("productType").value=p.product_type||"physical";
+  $("productFeatured").checked=Number(p.featured??p.is_featured??0)===1;
+  $("productDownloadable").checked=Number(p.downloadable??0)===1;
+  getProductMedia(p).forEach(addMediaRow);(Array.isArray(p.variants)?p.variants:[]).forEach(addVariantRow);
+  clearStatus("productFormStatus");openProductModal();
+ }catch(err){setStatus("storeProductsStatus",err.message,"error")}
+};
+window.deleteProduct=async id=>{
+ const p=ecommerceProducts.find(x=>String(x.id)===String(id));if(!p||!confirm('Delete product "'+(p.name||"")+'"?'))return;
+ try{await apiFetch("/ecommerce/products/"+encodeURIComponent(id),{method:"DELETE"});await loadEcommerceProducts();setStatus("storeProductsStatus","Product deleted successfully.","success")}
+ catch(e){setStatus("storeProductsStatus",e.message,"error")}
+};
+
+/* Orders */
+async function loadOrders(){
+ setCellMessage("ordersTable",6,"Loading orders...");
+ try{
+  const d=await apiFetch("/ecommerce/orders"),items=getArray(d,"orders","data");
+  if(!items.length)return setCellMessage("ordersTable",6,"No orders found.");
+  $("ordersTable").innerHTML=items.map(o=>`<tr>
+   <td><strong>${escapeHTML(o.order_number||o.id||"-")}</strong></td>
+   <td>${escapeHTML(o.customer_name||o.customer_email||"-")}</td>
+   <td>${formatMoney(o.total_amount??o.total??0)}</td><td>${escapeHTML(o.payment_status||"-")}</td>
+   <td>${escapeHTML(o.order_status||"-")}</td><td>${escapeHTML(formatDate(o.created_at))}</td></tr>`).join("");
+ }catch(e){setCellMessage("ordersTable",6,e.message);setStatus("ordersStatus",e.message,"error")}
+}
+
+/* Logout */
+$("logoutBtn").addEventListener("click",async()=>{
+ const button=$("logoutBtn");button.disabled=true;
+ try{await fetch("/api/auth/logout",{method:"POST",credentials:"include"})}
+ catch(e){console.error("Logout request failed:",e)}
+ finally{window.location.href="/"}
+});
+
+/* Close modals by clicking their backdrop or pressing Escape. */
+$("productModal").addEventListener("click",e=>{if(e.target===$("productModal"))closeProductModal()});
+$("categoryModal").addEventListener("click",e=>{if(e.target===$("categoryModal"))closeCategoryModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeProductModal();closeCategoryModal()}});
+
+/* Initialise navigation and dashboard without stopping other controls on API errors. */
+async function init(){
+ await loadDashboard();
+ await loadEcommerceDashboard();
+}
+init();
+</script>
+</body>
+</html>
