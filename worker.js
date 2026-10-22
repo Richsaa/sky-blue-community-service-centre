@@ -1,1 +1,531 @@
 
+ // ================================================================
+ // SKY BLUE DIGITAL SERVICE - CLOUDFLARE WORKER
+ // Complete D1-compatible repair with core dashboard and ecommerce API
+ // ================================================================
+const APP = "Sky Blue Digital Service";
+const VERSION = "2026.10.22-CORE-DASHBOARD-REPAIR";
+const MODULES = ["whatsapp","website","ecommerce","salon","food","pharmacy","school","councillor","civic","npo","ngo","church","undertaker","hosting","cyber","voice","directory","retail","cloud-pbx"];
+const CATALOG = {
+  core:{code:"core",name:"WhatsApp + Website",price:199,frequency:3,modules:["whatsapp","website"]},
+  number:{code:"number",name:"Business Number",price:69,frequency:3,modules:["voice"]},
+  ecommerce:{code:"ecommerce",name:"Ecommerce",price:399,frequency:3,modules:["ecommerce"]},
+  pbx:{code:"pbx",name:"Cloud PBX",price:299,frequency:3,modules:["voice","cloud-pbx"]}
+};
+
+const now=()=>new Date().toISOString();
+const clean=(v,max=500)=>v===undefined||v===null?"":String(v).trim().slice(0,max);
+const money=v=>Number(v||0).toFixed(2);
+const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+const normalizePhone=v=>{let p=String(v||"").replace(/\D/g,"");if(p.startsWith("0027"))p="0"+p.slice(4);else if(p.startsWith("27"))p="0"+p.slice(2);return p;};
+const slugify=v=>clean(v,200).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,100);
+
+function json(data,status=200,headers={}) {
+  return new Response(JSON.stringify(data),{status,headers:{
+    "content-type":"application/json; charset=utf-8",
+    "access-control-allow-origin":"*",
+    "access-control-allow-methods":"GET,POST,PUT,PATCH,DELETE,OPTIONS",
+    "access-control-allow-headers":"Content-Type,Authorization,X-Admin-Key",
+    ...headers
+  }});
+}
+function html(data,status=200){return new Response(data,{status,headers:{"content-type":"text/html; charset=utf-8","cache-control":"no-store"}});}
+async function bodyJSON(req){try{return await req.json();}catch{return {};}}
+function cookie(req,name){for(const part of (req.headers.get("Cookie")||"").split(";")){const p=part.trim();if(p.startsWith(name+"=")){try{return decodeURIComponent(p.slice(name.length+1));}catch{return p.slice(name.length+1);}}}return "";}
+function setCookie(token){return `sbs_session=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;}
+function clearCookie(){return "sbs_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";}
+function baseUrl(req,env){return clean(env.PUBLIC_URL||new URL(req.url).origin,500).replace(/\/$/,"");}
+async function sha256(value){const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(String(value)));return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+async function randomToken(){return crypto.randomUUID()+"-"+crypto.randomUUID();}
+async function safeEqual(a,b){const x=new TextEncoder().encode(String(a)),y=new TextEncoder().encode(String(b));if(x.length!==y.length)return false;let n=0;for(let i=0;i<x.length;i++)n|=x[i]^y[i];return n===0;}
+async function pbkdf2(password,salt,iterations=100000){const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(password),"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt:new TextEncoder().encode(salt),iterations:Number(iterations)||100000,hash:"SHA-256"},key,256);return [...new Uint8Array(bits)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+async function passwordMatches(password,account){
+  if(account.password_hash&&await safeEqual(await sha256(password),account.password_hash))return {ok:true,legacy:false};
+  if(account.password_hash&&account.password_salt){const h=await pbkdf2(password,account.password_salt,account.password_iterations||100000);if(await safeEqual(h,account.password_hash))return {ok:true,legacy:true};}
+  return {ok:false,legacy:false};
+}
+
+// D1 helpers: inspect real schema before inserting or updating.
+const colCache=new Map();
+async function tableInfo(db,table){const safe=String(table).replace(/[^A-Za-z0-9_]/g,"");const r=await db.prepare(`PRAGMA table_info("${safe}")`).all().catch(()=>({results:[]}));return r.results||[];}
+async function columns(db,table){const info=await tableInfo(db,table);const result=new Set(info.map(x=>x.name));colCache.set(table,result);return result;}
+async function tableExists(db,table){return !!(await db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").bind(table).first());}
+function normaliseForColumn(info,value){if(value===undefined||value===null)return value;const type=String(info?.type||"").toUpperCase();if(type.includes("INT")&&typeof value==="string"&&/^\d+$/.test(value))return Number(value);return value;}
+async function insertAvailable(db,table,data){
+  const info=await tableInfo(db,table),byName=new Map(info.map(c=>[c.name,c])),entries=[];
+  for(const [key,raw] of Object.entries(data)){
+    const c=byName.get(key);if(!c||raw===undefined)continue;
+    if(key==="id"&&Number(c.pk)>0&&String(c.type||"").toUpperCase().includes("INT")&&typeof raw==="string"&&!/^\d+$/.test(raw))continue;
+    entries.push([key,normaliseForColumn(c,raw)]);
+  }
+  if(!entries.length)throw new Error(`No compatible columns for ${table}`);
+  const sql=`INSERT INTO "${table}" (${entries.map(([k])=>`"${k}"`).join(",")}) VALUES (${entries.map(()=>"?").join(",")})`;
+  return db.prepare(sql).bind(...entries.map(([,v])=>v)).run();
+}
+async function updateAvailable(db,table,data,whereSql,whereArgs=[]){
+  const info=await tableInfo(db,table),byName=new Map(info.map(c=>[c.name,c]));
+  const entries=Object.entries(data).filter(([k,v])=>byName.has(k)&&v!==undefined).map(([k,v])=>[k,normaliseForColumn(byName.get(k),v)]);
+  if(!entries.length)return null;
+  const sql=`UPDATE "${table}" SET ${entries.map(([k])=>`"${k}"=?`).join(",")} WHERE ${whereSql}`;
+  return db.prepare(sql).bind(...entries.map(([,v])=>v),...whereArgs).run();
+}
+
+async function ensureAuthSchema(db){
+  const create=[
+    ["customer_accounts",`CREATE TABLE customer_accounts (id INTEGER PRIMARY KEY AUTOINCREMENT,tenant_id INTEGER NOT NULL DEFAULT 1,business_name TEXT NOT NULL,full_name TEXT NOT NULL,email TEXT UNIQUE NOT NULL,phone TEXT,password_hash TEXT NOT NULL,password_salt TEXT NOT NULL,password_iterations INTEGER,subscription_status TEXT NOT NULL DEFAULT 'pending',status TEXT DEFAULT 'ACTIVE',created_at TEXT DEFAULT CURRENT_TIMESTAMP,updated_at TEXT DEFAULT CURRENT_TIMESTAMP)`],
+    ["customer_sessions",`CREATE TABLE customer_sessions (id INTEGER PRIMARY KEY AUTOINCREMENT,account_id INTEGER NOT NULL,token_hash TEXT UNIQUE NOT NULL,token TEXT,expires_at TEXT NOT NULL,created_at TEXT NOT NULL)`],
+    ["password_reset_tokens",`CREATE TABLE password_reset_tokens (id INTEGER PRIMARY KEY AUTOINCREMENT,account_id INTEGER NOT NULL,token_hash TEXT UNIQUE NOT NULL,expires_at TEXT NOT NULL,used_at TEXT,created_at TEXT NOT NULL)`],
+    ["business_profiles",`CREATE TABLE business_profiles (id TEXT PRIMARY KEY,account_id TEXT UNIQUE NOT NULL,business_name TEXT,owner_name TEXT,full_name TEXT,industry TEXT,phone TEXT,whatsapp TEXT,email TEXT,address TEXT,website TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL)`],
+    ["subscriptions",`CREATE TABLE subscriptions (id TEXT PRIMARY KEY,account_id TEXT NOT NULL,module_id TEXT NOT NULL,plan_name TEXT NOT NULL,amount REAL NOT NULL DEFAULT 0,currency TEXT NOT NULL DEFAULT 'ZAR',status TEXT NOT NULL DEFAULT 'pending',started_at TEXT,expires_at TEXT,payfast_token TEXT,payfast_payment_id TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL)`],
+    ["saas_subscription_payments",`CREATE TABLE saas_subscription_payments (id TEXT PRIMARY KEY,account_id TEXT NOT NULL,subscription_id TEXT NOT NULL,payment_reference TEXT UNIQUE NOT NULL,payfast_payment_id TEXT,amount REAL NOT NULL,status TEXT NOT NULL,raw_status TEXT,payment_data TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL)`],
+    ["customer_modules",`CREATE TABLE customer_modules (account_id TEXT NOT NULL,module_code TEXT NOT NULL,status TEXT DEFAULT 'active',activated_at TEXT,updated_at TEXT,UNIQUE(account_id,module_code))`],
+    ["products",`CREATE TABLE products (id TEXT PRIMARY KEY,account_id TEXT NOT NULL,name TEXT NOT NULL,description TEXT,price REAL NOT NULL,stock INTEGER DEFAULT 0,category TEXT,sku TEXT,image_url TEXT,video_url TEXT,active INTEGER DEFAULT 1,status TEXT DEFAULT 'ACTIVE',created_at TEXT NOT NULL,updated_at TEXT NOT NULL)`],
+    ["ecommerce_stores",`CREATE TABLE ecommerce_stores (id TEXT PRIMARY KEY,account_id TEXT UNIQUE NOT NULL,store_name TEXT NOT NULL,slug TEXT UNIQUE NOT NULL,description TEXT,logo_url TEXT,primary_color TEXT,secondary_color TEXT,currency TEXT DEFAULT 'ZAR',status TEXT DEFAULT 'ACTIVE',published INTEGER DEFAULT 0,checkout_enabled INTEGER DEFAULT 1,delivery_enabled INTEGER DEFAULT 1,pickup_enabled INTEGER DEFAULT 1,email TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL)`],
+    ["ecommerce_orders",`CREATE TABLE ecommerce_orders (id TEXT PRIMARY KEY,account_id TEXT NOT NULL,order_number TEXT UNIQUE NOT NULL,customer_name TEXT,customer_email TEXT,customer_phone TEXT,delivery_method TEXT,delivery_address TEXT,subtotal REAL,delivery_fee REAL,total_amount REAL,total REAL,notes TEXT,payment_status TEXT,payment_status_text TEXT,payment_method TEXT,payment_provider TEXT,order_status TEXT DEFAULT 'NEW',source TEXT,created_at TEXT NOT NULL,updated_at TEXT NOT NULL)`],
+    ["ecommerce_categories",`CREATE TABLE ecommerce_categories (id TEXT PRIMARY KEY,account_id TEXT NOT NULL,name TEXT NOT NULL,slug TEXT,parent_id TEXT,active INTEGER DEFAULT 1,created_at TEXT NOT NULL,updated_at TEXT NOT NULL)`],
+    ["reports",`CREATE TABLE reports (id TEXT PRIMARY KEY,report_number TEXT UNIQUE NOT NULL,account_id TEXT,category TEXT,description TEXT,location TEXT,priority TEXT,source TEXT,status TEXT DEFAULT 'OPEN',created_at TEXT NOT NULL,updated_at TEXT NOT NULL)`]
+  ];
+  for(const [name,sql] of create)if(!(await tableExists(db,name)))await db.prepare(sql).run();
+  const sc=await columns(db,"customer_sessions");
+  if(!sc.has("token"))await db.prepare("ALTER TABLE customer_sessions ADD COLUMN token TEXT").run().catch(()=>{});
+  colCache.clear();
+}
+async function findAccountByEmail(db,email){return db.prepare("SELECT * FROM customer_accounts WHERE LOWER(email)=? LIMIT 1").bind(email).first();}
+async function accountFromSession(req,db){
+  const token=cookie(req,"sbs_session");if(!token)return null;
+  const hash=await sha256(token),sc=await columns(db,"customer_sessions"),tc=sc.has("token_hash")?"token_hash":sc.has("token")?"token":null;
+  if(!tc)return null;
+  const ac=await columns(db,"customer_accounts"),statusFilter=ac.has("status")?" AND (a.status='ACTIVE' OR a.status='active')":"";
+  return db.prepare(`SELECT a.* FROM customer_accounts a JOIN customer_sessions s ON CAST(s.account_id AS TEXT)=CAST(a.id AS TEXT) WHERE s."${tc}"=? AND s.expires_at>? ${statusFilter} LIMIT 1`).bind(tc==="token_hash"?hash:token,now()).first().catch(()=>null);
+}
+async function createSession(db,accountId,token){return insertAvailable(db,"customer_sessions",{account_id:String(accountId),token_hash:await sha256(token),token,expires_at:new Date(Date.now()+30*86400000).toISOString(),created_at:now()});}
+
+async function register(req,db){
+  const data=await bodyJSON(req),email=clean(data.email,200).toLowerCase(),password=String(data.password||""),business=clean(data.business_name||data.businessName,200),full=clean(data.full_name||data.fullName||data.owner_name,200),phone=clean(data.phone,50);
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return json({ok:false,error:"A valid business email is required."},400);
+  if(password.length<8)return json({ok:false,error:"Password must contain at least 8 characters."},400);
+  if(!business||!full||!phone)return json({ok:false,error:"Business name, full name and phone number are required."},400);
+  if(await findAccountByEmail(db,email))return json({ok:false,error:"An account with this email already exists. Please sign in or use Forgot Password."},409);
+  const timestamp=now(),salt=await randomToken(),hash=await pbkdf2(password,salt,100000);
+  try{
+    await insertAvailable(db,"customer_accounts",{tenant_id:1,business_name:business,full_name:full,email,phone,password_hash:hash,password_salt:salt,password_iterations:100000,status:"ACTIVE",created_at:timestamp,updated_at:timestamp});
+    const account=await findAccountByEmail(db,email);if(!account)throw new Error("Account insert did not return a record.");
+    const profile=await db.prepare("SELECT account_id FROM business_profiles WHERE CAST(account_id AS TEXT)=? LIMIT 1").bind(String(account.id)).first().catch(()=>null);
+    if(!profile)await insertAvailable(db,"business_profiles",{id:crypto.randomUUID(),account_id:String(account.id),business_name:business,owner_name:full,full_name:full,industry:clean(data.industry,100),phone,whatsapp:clean(data.whatsapp||phone,50),email,address:clean(data.address,500),website:clean(data.website,500),created_at:timestamp,updated_at:timestamp});
+    return json({ok:true,account_id:account.id,message:"Account created successfully. Please sign in."});
+  }catch(error){console.error("REGISTER",error?.stack||error);return json({ok:false,error:"Account creation failed: "+String(error?.message||error)},500);}
+}
+async function login(req,db){
+  const data=await bodyJSON(req),email=clean(data.email,200).toLowerCase(),password=String(data.password||"");
+  if(!email||!password)return json({ok:false,error:"Email and password are required."},400);
+  let account;try{account=await findAccountByEmail(db,email);}catch(e){console.error("LOGIN QUERY",e);return json({ok:false,error:"Login database error."},500);}
+  if(!account||String(account.status||"ACTIVE").toUpperCase()!=="ACTIVE")return json({ok:false,error:"Email or password not recognized. Please check your credentials or use Forgot Password."},401);
+  const matched=await passwordMatches(password,account);if(!matched.ok)return json({ok:false,error:"Email or password not recognized."},401);
+  if(matched.legacy){const salt=await randomToken();await updateAvailable(db,"customer_accounts",{password_hash:await pbkdf2(password,salt,100000),password_salt:salt,password_iterations:100000,updated_at:now()},"id=?",[account.id]).catch(()=>{});}
+  const token=await randomToken();
+  try{await db.prepare("DELETE FROM customer_sessions WHERE CAST(account_id AS TEXT)=?").bind(String(account.id)).run();await createSession(db,account.id,token);}
+  catch(e){console.error("SESSION CREATE",e);return json({ok:false,error:"Unable to create login session."},500);}
+  const profile=await db.prepare("SELECT * FROM business_profiles WHERE CAST(account_id AS TEXT)=? LIMIT 1").bind(String(account.id)).first().catch(()=>null);
+  return json({ok:true,authenticated:true,message:"Login successful.",account:{id:account.id,email:account.email,status:account.status||"ACTIVE"},profile},200,{"Set-Cookie":setCookie(token)});
+}
+async function logout(req,db){
+  const token=cookie(req,"sbs_session");
+  if(token){const cols=await columns(db,"customer_sessions"),col=cols.has("token_hash")?"token_hash":cols.has("token")?"token":null;if(col)await db.prepare(`DELETE FROM customer_sessions WHERE "${col}"=?`).bind(col==="token_hash"?await sha256(token):token).run().catch(()=>{});}
+  return json({ok:true,message:"Logged out successfully."},200,{"Set-Cookie":clearCookie()});
+}
+async function forgotPassword(req,db,env){
+  const data=await bodyJSON(req),email=clean(data.email,200).toLowerCase(),phone=normalizePhone(data.phone);
+  if(!email||!phone)return json({ok:false,error:"Email and phone number are required."},400);
+  const account=await findAccountByEmail(db,email);
+  if(!account)return json({ok:true,message:"If the account details match, reset instructions will be available."});
+  const profile=await db.prepare("SELECT phone FROM business_profiles WHERE CAST(account_id AS TEXT)=? LIMIT 1").bind(String(account.id)).first().catch(()=>null);
+  if(normalizePhone(profile?.phone||account.phone)!==phone)return json({ok:false,error:"The email address and phone number do not match an active account."},404);
+  const token=await randomToken(),expiry=new Date(Date.now()+15*60000).toISOString();
+  await db.prepare("DELETE FROM password_reset_tokens WHERE CAST(account_id AS TEXT)=?").bind(String(account.id)).run().catch(()=>{});
+  await insertAvailable(db,"password_reset_tokens",{account_id:String(account.id),token_hash:await sha256(token),expires_at:expiry,used_at:null,created_at:now()});
+  const response={ok:true,message:"Password reset token generated.",expires_at:expiry};
+  if(String(env.RETURN_RESET_TOKEN||"").toLowerCase()==="true")response.reset_url=baseUrl(req,env)+"/reset-password.html?token="+encodeURIComponent(token);
+  else response.message="Password reset request recorded. Configure a mail provider to deliver the reset link.";
+  return json(response);
+}
+async function resetPassword(req,db){
+  const data=await bodyJSON(req),token=clean(data.token,500),password=String(data.password||data.new_password||"");
+  if(!token)return json({ok:false,error:"Reset token is required."},400);
+  if(password.length<8)return json({ok:false,error:"Password must contain at least 8 characters."},400);
+  const row=await db.prepare("SELECT * FROM password_reset_tokens WHERE token_hash=? AND used_at IS NULL AND expires_at>? LIMIT 1").bind(await sha256(token),now()).first();
+  if(!row)return json({ok:false,error:"This password reset link is invalid or expired."},400);
+  const salt=await randomToken();
+  await updateAvailable(db,"customer_accounts",{password_hash:await pbkdf2(password,salt,100000),password_salt:salt,password_iterations:100000,updated_at:now()},"id=?",[row.account_id]);
+  await db.prepare("UPDATE password_reset_tokens SET used_at=? WHERE id=?").bind(now(),row.id).run();
+  await db.prepare("DELETE FROM customer_sessions WHERE CAST(account_id AS TEXT)=?").bind(String(row.account_id)).run().catch(()=>{});
+  return json({ok:true,message:"Password changed successfully. Please sign in with your new password."});
+}
+
+function forgotPasswordPage(){
+  return html(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Forgot password | Sky Blue SaaS</title><style>body{font:16px Arial;background:#f1f5f9;color:#172554;margin:0}main{max-width:430px;margin:35px auto;padding:24px;background:white;border-radius:14px}label{display:block;margin:15px 0;font-weight:bold}input{box-sizing:border-box;width:100%;padding:12px;margin-top:7px;border:1px solid #cbd5e1;border-radius:7px}button{width:100%;padding:13px;background:#1459c7;color:white;border:0;border-radius:7px}a{color:#1459c7}</style></head><body><main><h1>Reset your password</h1><p>Enter the email and phone number linked to your account.</p><form id="f"><label>Email address<input name="email" type="email" required></label><label>Phone number<input name="phone" type="tel" required></label><button>Generate reset link</button><p id="m" role="status"></p></form><p><a href="/login">Back to sign in</a></p></main><script>document.getElementById('f').addEventListener('submit',async e=>{e.preventDefault();const m=document.getElementById('m');m.textContent='Please wait...';try{const r=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target).entries()))});const d=await r.json();m.textContent=d.error||d.message||'Request complete.';if(d.reset_url){const a=document.createElement('a');a.href=d.reset_url;a.textContent=' Open reset link';m.appendChild(a);}}catch{m.textContent='Unable to submit the request. Please try again.';}});</script></body></html>`);
+}
+function resetPasswordPage(url){
+  const token=clean(url.searchParams.get("token"),500);
+  return html(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Choose new password | Sky Blue SaaS</title><style>body{font:16px Arial;background:#f1f5f9;color:#172554;margin:0}main{max-width:430px;margin:35px auto;padding:24px;background:white;border-radius:14px}label{display:block;margin:15px 0;font-weight:bold}input{box-sizing:border-box;width:100%;padding:12px;margin-top:7px;border:1px solid #cbd5e1;border-radius:7px}button{width:100%;padding:13px;background:#1459c7;color:white;border:0;border-radius:7px}a{color:#1459c7}</style></head><body><main><h1>Choose a new password</h1><form id="f"><label>New password<input name="password" type="password" minlength="8" autocomplete="new-password" required></label><label>Confirm password<input name="confirm" type="password" minlength="8" autocomplete="new-password" required></label><button>Change password</button><p id="m" role="status"></p></form><p><a href="/login">Back to sign in</a></p></main><script>const token=${JSON.stringify(token)};document.getElementById('f').addEventListener('submit',async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target).entries()),m=document.getElementById('m');if(d.password!==d.confirm){m.textContent='Passwords do not match.';return;}m.textContent='Please wait...';try{const r=await fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,password:d.password})});const x=await r.json();m.textContent=x.error||x.message||'Request complete.';if(r.ok&&x.ok)setTimeout(()=>location.href='/login',1200);}catch{m.textContent='Unable to submit the request. Please try again.';}});</script></body></html>`);
+}
+
+// PayFast helpers.
+function payfastHost(env){return String(env.PAYFAST_SANDBOX||"").toLowerCase()==="true"?"https://sandbox.payfast.co.za":"https://www.payfast.co.za";}
+function md5(str){
+  const shifts=[7,12,17,22,5,9,14,20,4,11,16,23,6,10,15,21],k=[];
+  for(let i=0;i<64;i++)k[i]=Math.floor(Math.abs(Math.sin(i+1))*4294967296)>>>0;
+  const bytes=Array.from(new TextEncoder().encode(str)),bitLen=bytes.length*8;bytes.push(128);while(bytes.length%64!==56)bytes.push(0);for(let i=0;i<8;i++)bytes.push(i<4?(bitLen>>>(8*i))&255:0);
+  let a0=0x67452301,b0=0xefcdab89,c0=0x98badcfe,d0=0x10325476;
+  for(let off=0;off<bytes.length;off+=64){
+    const m=[];for(let i=0;i<16;i++)m[i]=(bytes[off+4*i]|bytes[off+4*i+1]<<8|bytes[off+4*i+2]<<16|bytes[off+4*i+3]<<24)>>>0;
+    let a=a0,b=b0,c=c0,d=d0;
+    for(let i=0;i<64;i++){
+      let f,g,s;
+      if(i<16){f=(b&c)|(~b&d);g=i;s=shifts[i%4];}
+      else if(i<32){f=(d&b)|(~d&c);g=(5*i+1)%16;s=shifts[4+i%4];}
+      else if(i<48){f=b^c^d;g=(3*i+5)%16;s=shifts[8+i%4];}
+      else{f=c^(b|~d);g=(7*i)%16;s=shifts[12+i%4];}
+      const sum=(a+f+k[i]+m[g])>>>0,r=((sum<<s)|(sum>>>(32-s)))>>>0;a=d;d=c;c=b;b=(b+r)>>>0;
+    }
+    a0=(a0+a)>>>0;b0=(b0+b)>>>0;c0=(c0+c)>>>0;d0=(d0+d)>>>0;
+  }
+  return[a0,b0,c0,d0].map(n=>[0,8,16,24].map(s=>((n>>>s)&255).toString(16).padStart(2,"0")).join("")).join("");
+}
+function pfSignature(fields,passphrase=""){
+  const keys=Object.keys(fields).filter(k=>k!=="signature"&&fields[k]!==undefined&&fields[k]!==null&&fields[k]!=="").sort();
+  let q=keys.map(k=>`${k}=${encodeURIComponent(String(fields[k]).trim()).replace(/%20/g,"+")}`).join("&");
+  if(passphrase)q+=`&passphrase=${encodeURIComponent(passphrase).replace(/%20/g,"+")}`;
+  return md5(q);
+}
+function pfFields(fields,env){const out={};for(const[k,v]of Object.entries(fields))if(v!==undefined&&v!==null&&v!=="")out[k]=String(v);out.signature=pfSignature(out,env.PAYFAST_PASSPHRASE||"");return out;}
+function pfForm(fields,env){
+  const action=payfastHost(env)+"/eng/process",inputs=Object.entries(fields).map(([k,v])=>`<input type="hidden" name="${esc(k)}" value="${esc(v)}">`).join("");
+  return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sky Blue Digital Service payment</title></head><body style="font-family:Arial;background:#f3f7fb;display:grid;place-items:center;min-height:100vh"><main style="background:white;padding:30px;border-radius:16px;text-align:center"><h2>Sky Blue Digital Service</h2><p>Redirecting securely to PayFast…</p><form id="pf" method="post" action="${action}">${inputs}<noscript><button>Continue to PayFast</button></noscript></form></main><script>document.getElementById('pf').submit()</script></body></html>`;
+}
+async function checkout(req,db,env,account){
+  if(!account)return json({ok:false,error:"Authentication required."},401);
+  if(!env.PAYFAST_MERCHANT_ID||!env.PAYFAST_MERCHANT_KEY)return json({ok:false,error:"PayFast merchant credentials are not configured in Worker secrets."},503);
+  const data=await bodyJSON(req),code=clean(data.product_code||data.code,50),product=CATALOG[code];if(!product)return json({ok:false,error:"Invalid product."},400);
+  const amount=Number(product.price),id=crypto.randomUUID(),reference="SBS-"+String(account.id).replace(/[^a-zA-Z0-9]/g,"").slice(0,12)+"-"+id.replace(/-/g,"").slice(0,12),timestamp=now();
+  try{
+    await insertAvailable(db,"subscriptions",{id,account_id:String(account.id),module_id:product.modules.join(","),plan_name:product.name,amount,currency:"ZAR",status:"pending",created_at:timestamp,updated_at:timestamp});
+    await insertAvailable(db,"saas_subscription_payments",{id:crypto.randomUUID(),account_id:String(account.id),subscription_id:id,payment_reference:reference,amount,status:"PENDING",created_at:timestamp,updated_at:timestamp});
+  }catch(e){console.error("CHECKOUT DB",e);return json({ok:false,error:"Could not create subscription checkout record."},500);}
+  const origin=baseUrl(req,env),fields=pfFields({merchant_id:env.PAYFAST_MERCHANT_ID,merchant_key:env.PAYFAST_MERCHANT_KEY,return_url:origin+"/payment-success.html",cancel_url:origin+"/payment-cancelled.html",notify_url:origin+"/api/payfast/itn",email_address:account.email,m_payment_id:reference,amount:amount.toFixed(2),item_name:product.name,item_description:`Sky Blue Digital Service - ${product.name}`},env);
+  return html(pfForm(fields,env));
+}
+async function payfastITN(req,db,env){
+  const raw=await req.text(),params=new URLSearchParams(raw),data={};for(const[k,v]of params.entries())data[k]=v;
+  if(!data.m_payment_id||!data.signature)return json({ok:false,error:"Missing PayFast payment ID or signature."},400);
+  const expected=pfSignature(data,env.PAYFAST_PASSPHRASE||"");
+  if(!(await safeEqual(String(data.signature).toLowerCase(),expected.toLowerCase())))return json({ok:false,error:"Invalid PayFast signature."},400);
+  if(String(data.merchant_id||"")!==String(env.PAYFAST_MERCHANT_ID||""))return json({ok:false,error:"Merchant ID mismatch."},400);
+  let validation;
+  try{const response=await fetch(payfastHost(env)+"/eng/query/validate",{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded"},body:raw});validation=(await response.text()).trim();}
+  catch(e){console.error("PayFast validation",e);return json({ok:false,error:"Could not validate notification with PayFast."},502);}
+  if(validation!=="VALID")return json({ok:false,error:"PayFast server validation failed."},400);
+  const reference=String(data.m_payment_id),payment=await db.prepare("SELECT * FROM saas_subscription_payments WHERE payment_reference=? LIMIT 1").bind(reference).first();
+  if(!payment)return json({ok:false,error:"Unknown payment reference."},404);
+  const paidAmount=Number(data.amount_gross||data.amount||0);
+  if(!Number.isFinite(paidAmount)||Math.abs(paidAmount-Number(payment.amount))>0.01)return json({ok:false,error:"Payment amount does not match checkout."},400);
+  const status=String(data.payment_status||"").toUpperCase(),paymentId=clean(data.pf_payment_id||"",200);
+  if(status!=="COMPLETE"){
+    await updateAvailable(db,"saas_subscription_payments",{status,raw_status:status,payfast_payment_id:paymentId,payment_data:JSON.stringify(data),updated_at:now()},"payment_reference=?",[reference]);
+    return json({ok:true,status,message:"Payment notification recorded; subscription not activated."});
+  }
+  try{
+    await updateAvailable(db,"saas_subscription_payments",{status:"COMPLETE",raw_status:status,payfast_payment_id:paymentId,payment_data:JSON.stringify(data),updated_at:now()},"payment_reference=?",[reference]);
+    await updateAvailable(db,"subscriptions",{status:"active",payfast_payment_id:paymentId,started_at:now(),updated_at:now(),expires_at:new Date(Date.now()+30*86400000).toISOString()},"id=? AND account_id=?",[payment.subscription_id,String(payment.account_id)]);
+    const sub=await db.prepare("SELECT module_id FROM subscriptions WHERE id=?").bind(payment.subscription_id).first();
+    for(const module of String(sub?.module_id||"").split(",").filter(Boolean))
+      await db.prepare("INSERT INTO customer_modules (account_id,module_code,status,activated_at,updated_at) VALUES (?,?,'active',?,?) ON CONFLICT(account_id,module_code) DO UPDATE SET status='active',activated_at=excluded.activated_at,updated_at=excluded.updated_at").bind(String(payment.account_id),module,now(),now()).run().catch(e=>console.error("Module activation",e));
+  }catch(e){console.error("PAYFAST ITN DB",e);return json({ok:false,error:"Payment validated but activation failed."},500);}
+  return json({ok:true,status:"COMPLETE",payment_id:paymentId});
+}
+
+// Existing customer dashboard and account routes.
+async function customerDashboard(db,account){
+  const getAll=async sql=>((await db.prepare(sql).bind(String(account.id)).all().catch(()=>({results:[]}))).results||[]);
+  const getOne=async sql=>db.prepare(sql).bind(String(account.id)).first().catch(()=>null);
+  return {
+    account:{id:account.id,email:account.email,status:account.status||"ACTIVE"},
+    profile:await getOne("SELECT * FROM business_profiles WHERE CAST(account_id AS TEXT)=? LIMIT 1"),
+    subscriptions:await getAll("SELECT * FROM subscriptions WHERE CAST(account_id AS TEXT)=? ORDER BY created_at DESC LIMIT 100"),
+    payments:await getAll("SELECT * FROM saas_subscription_payments WHERE CAST(account_id AS TEXT)=? ORDER BY created_at DESC LIMIT 50"),
+    modules:await getAll("SELECT * FROM customer_modules WHERE CAST(account_id AS TEXT)=?"),
+    products:await getAll("SELECT * FROM products WHERE CAST(account_id AS TEXT)=? ORDER BY created_at DESC LIMIT 100"),
+    store:await getOne("SELECT * FROM ecommerce_stores WHERE CAST(account_id AS TEXT)=? LIMIT 1"),
+    orders:await getAll("SELECT * FROM ecommerce_orders WHERE CAST(account_id AS TEXT)=? ORDER BY created_at DESC LIMIT 100")
+  };
+}
+async function saveProfile(req,db,account){
+  const d=await bodyJSON(req),t=now(),profile={
+    business_name:clean(d.business_name||d.businessName,200),
+    owner_name:clean(d.owner_name||d.full_name||d.fullName,200),
+    full_name:clean(d.owner_name||d.full_name||d.fullName,200),
+    industry:clean(d.industry,100),phone:clean(d.phone,50),whatsapp:clean(d.whatsapp||d.phone,50),
+    email:account.email,address:clean(d.address,500),website:clean(d.website,500),updated_at:t
+  };
+  const existing=await db.prepare("SELECT account_id FROM business_profiles WHERE CAST(account_id AS TEXT)=?").bind(String(account.id)).first().catch(()=>null);
+  if(existing)await updateAvailable(db,"business_profiles",profile,"CAST(account_id AS TEXT)=?",[String(account.id)]);
+  else await insertAvailable(db,"business_profiles",{id:crypto.randomUUID(),account_id:String(account.id),...profile,created_at:t});
+  return json({ok:true,message:"Business profile saved."});
+}
+async function productsRoute(req,db,account){
+  if(req.method==="GET"){const r=await db.prepare("SELECT * FROM products WHERE CAST(account_id AS TEXT)=? ORDER BY created_at DESC LIMIT 200").bind(String(account.id)).all();return json({ok:true,products:r.results||[]});}
+  const d=await bodyJSON(req),name=clean(d.name||d.product_name,200),price=Number(d.price??d.selling_price??0),stock=Number(d.stock??d.stock_quantity??0);
+  if(!name||!Number.isFinite(price)||price<0)return json({ok:false,error:"Valid product name and price are required."},400);
+  const id=crypto.randomUUID(),t=now();
+  await insertAvailable(db,"products",{id,account_id:String(account.id),name,description:clean(d.description,1000),price,stock,category:clean(d.category,100),sku:clean(d.sku,100),image_url:clean(d.image_url||d.imageUrl,1000),video_url:clean(d.video_url||d.videoUrl,1000),active:1,status:"ACTIVE",created_at:t,updated_at:t});
+  return json({ok:true,product_id:id,message:"Product saved."});
+}
+async function storeRoute(req,db,account){
+  if(req.method==="GET")return json({ok:true,store:await db.prepare("SELECT * FROM ecommerce_stores WHERE CAST(account_id AS TEXT)=? LIMIT 1").bind(String(account.id)).first().catch(()=>null)});
+  const d=await bodyJSON(req),name=clean(d.store_name||d.name||d.business_name,200);
+  if(!name)return json({ok:false,error:"Store name is required."},400);
+  const slug=slugify(d.slug||name)||("store-"+String(account.id)),t=now(),data={
+    store_name:name,slug,description:clean(d.description,1000),logo_url:clean(d.logo_url||d.logoUrl,1000),
+    primary_color:clean(d.primary_color||d.primaryColor,50)||"#0b63ce",
+    secondary_color:clean(d.secondary_color||d.secondaryColor,50)||"#083b78",
+    email:account.email,updated_at:t
+  };
+  const existing=await db.prepare("SELECT account_id FROM ecommerce_stores WHERE CAST(account_id AS TEXT)=?").bind(String(account.id)).first().catch(()=>null);
+  try{
+    if(existing)await updateAvailable(db,"ecommerce_stores",data,"CAST(account_id AS TEXT)=?",[String(account.id)]);
+    else await insertAvailable(db,"ecommerce_stores",{id:crypto.randomUUID(),account_id:String(account.id),...data,currency:"ZAR",status:"ACTIVE",published:0,checkout_enabled:1,delivery_enabled:1,pickup_enabled:1,created_at:t});
+  }catch(e){return json({ok:false,error:"Could not save store. The store URL may already be in use.",details:String(e?.message||e)},409);}
+  return json({ok:true,message:"Online store saved.",slug});
+}
+async function ordersRoute(req,db,account){
+  if(req.method==="GET"){const r=await db.prepare("SELECT * FROM ecommerce_orders WHERE CAST(account_id AS TEXT)=? ORDER BY created_at DESC LIMIT 200").bind(String(account.id)).all();return json({ok:true,orders:r.results||[]});}
+  const d=await bodyJSON(req),total=Number(d.total??d.total_amount??0);
+  if(!Number.isFinite(total)||total<0)return json({ok:false,error:"A valid order total is required."},400);
+  const orderNumber="SBS-ORD-"+Date.now()+"-"+Math.random().toString(36).slice(2,6),t=now();
+  await insertAvailable(db,"ecommerce_orders",{id:crypto.randomUUID(),account_id:String(account.id),order_number:orderNumber,customer_name:clean(d.customer_name||d.customerName,200),customer_email:clean(d.customer_email||d.customerEmail,200),customer_phone:clean(d.customer_phone||d.customerPhone,50),delivery_method:clean(d.delivery_method,50),delivery_address:clean(d.delivery_address,1000),subtotal:Number(d.subtotal??total),delivery_fee:Number(d.delivery_fee||0),total_amount:total,total,notes:typeof d.items==="string"?d.items:JSON.stringify(d.items||[]),payment_status:"PENDING",order_status:"NEW",created_at:t,updated_at:t});
+  return json({ok:true,order_number:orderNumber});
+}
+
+// Safe count helpers used by the new core dashboard.
+async function countRowsForCore(db,table,accountId,statusColumn=null,statusValues=[]){
+  const allowed=["customer_accounts","business_profiles","products","ecommerce_orders","ecommerce_categories","subscriptions","saas_subscription_payments","customers","sales","business_sales","transactions"];
+  if(!allowed.includes(table)||!(await tableExists(db,table)))return 0;
+  const cols=await columns(db,table);if(!cols.has("account_id"))return 0;
+  let sql=`SELECT COUNT(*) AS total FROM "${table}" WHERE CAST(account_id AS TEXT)=?`,args=[String(accountId)];
+  if(statusColumn&&cols.has(statusColumn)&&statusValues.length){
+    sql+=` AND UPPER(CAST("${statusColumn}" AS TEXT)) IN (${statusValues.map(()=>"?").join(",")})`;
+    args.push(...statusValues.map(v=>String(v).toUpperCase()));
+  }
+  const row=await db.prepare(sql).bind(...args).first().catch(()=>null);
+  return Number(row?.total||0);
+}
+async function sumRowsForCore(db,table,accountId,valueColumns){
+  const allowed=["ecommerce_orders","sales","business_sales","transactions","saas_subscription_payments"];
+  if(!allowed.includes(table)||!(await tableExists(db,table)))return 0;
+  const cols=await columns(db,table);if(!cols.has("account_id"))return 0;
+  const valueColumn=valueColumns.find(c=>cols.has(c));if(!valueColumn)return 0;
+  const row=await db.prepare(`SELECT COALESCE(SUM(CAST("${valueColumn}" AS REAL)),0) AS total FROM "${table}" WHERE CAST(account_id AS TEXT)=?`).bind(String(accountId)).first().catch(()=>null);
+  return Number(row?.total||0);
+}
+async function coreCategoryRoute(req,db,account,path){
+  const accountId=String(account.id),match=path.match(/^\/api\/core\/ecommerce\/categories\/([^/]+)$/),id=match?decodeURIComponent(match[1]):"";
+  if(req.method==="GET"&&!id){
+    const r=await db.prepare("SELECT * FROM ecommerce_categories WHERE CAST(account_id AS TEXT)=? ORDER BY name ASC").bind(accountId).all();
+    return json({ok:true,categories:r.results||[]});
+  }
+  if(req.method==="POST"&&!id){
+    const d=await bodyJSON(req),name=clean(d.name||d.category_name,150);
+    if(!name)return json({ok:false,error:"Category name is required."},400);
+    const t=now(),categoryId=crypto.randomUUID();
+    try{
+      await insertAvailable(db,"ecommerce_categories",{id:categoryId,account_id:accountId,name,slug:slugify(d.slug||name),parent_id:clean(d.parent_id||d.parentId,100)||null,active:d.active===false||Number(d.active)===0?0:1,created_at:t,updated_at:t});
+      return json({ok:true,id:categoryId,category:{id:categoryId,account_id:accountId,name,slug:slugify(d.slug||name),active:1},message:"Category created."},201);
+    }catch(e){return json({ok:false,error:"Could not create category.",details:String(e?.message||e)},500);}
+  }
+  if(!id)return json({ok:false,error:"Unsupported category action."},405);
+  if(req.method==="PATCH"||req.method==="PUT"){
+    const d=await bodyJSON(req),update={updated_at:now()};
+    if(d.name!==undefined)update.name=clean(d.name,150);
+    if(d.slug!==undefined)update.slug=slugify(d.slug);
+    if(d.parent_id!==undefined||d.parentId!==undefined)update.parent_id=clean(d.parent_id||d.parentId,100)||null;
+    if(d.active!==undefined)update.active=(d.active===false||Number(d.active)===0)?0:1;
+    if(update.name==="")return json({ok:false,error:"Category name cannot be empty."},400);
+    const result=await updateAvailable(db,"ecommerce_categories",update,"CAST(account_id AS TEXT)=? AND CAST(id AS TEXT)=?",[accountId,id]);
+    if(!result||Number(result.meta?.changes||0)===0)return json({ok:false,error:"Category not found."},404);
+    return json({ok:true,message:"Category updated."});
+  }
+  if(req.method==="DELETE"){
+    const result=await db.prepare("DELETE FROM ecommerce_categories WHERE CAST(account_id AS TEXT)=? AND CAST(id AS TEXT)=?").bind(accountId,id).run();
+    if(Number(result.meta?.changes||0)===0)return json({ok:false,error:"Category not found."},404);
+    return json({ok:true,message:"Category deleted."});
+  }
+  return json({ok:false,error:"Method not allowed."},405);
+}
+async function coreEcommerceProductsRoute(req,db,account,path){
+  const accountId=String(account.id),match=path.match(/^\/api\/core\/ecommerce\/products\/([^/]+)$/),id=match?decodeURIComponent(match[1]):"";
+  if(req.method==="GET"&&!id){
+    const r=await db.prepare("SELECT * FROM products WHERE CAST(account_id AS TEXT)=? ORDER BY created_at DESC LIMIT 500").bind(accountId).all();
+    return json({ok:true,products:r.results||[]});
+  }
+  if(req.method==="POST"&&!id)return productsRoute(req,db,account);
+  if(!id)return json({ok:false,error:"Unsupported product action."},405);
+  if(req.method==="PATCH"||req.method==="PUT"){
+    const d=await bodyJSON(req),update={updated_at:now()};
+    const mappings={name:["name","product_name"],description:["description"],price:["price","selling_price"],stock:["stock","stock_quantity"],category:["category"],sku:["sku"],image_url:["image_url","imageUrl"],video_url:["video_url","videoUrl"],status:["status"],active:["active"]};
+    for(const [target,keys] of Object.entries(mappings)){
+      const key=keys.find(k=>d[k]!==undefined);if(!key)continue;
+      let v=d[key];
+      if(target==="name")v=clean(v,200);
+      if(target==="description")v=clean(v,1000);
+      if(target==="category")v=clean(v,100);
+      if(target==="sku")v=clean(v,100);
+      if(target==="image_url"||target==="video_url")v=clean(v,1000);
+      if(target==="price"||target==="stock"){v=Number(v);if(!Number.isFinite(v)||v<0)return json({ok:false,error:`Invalid ${target}.`},400);}
+      if(target==="active")v=(v===false||Number(v)===0)?0:1;
+      if(target==="status")v=clean(v,30).toUpperCase();
+      update[target]=v;
+    }
+    if(update.name==="")return json({ok:false,error:"Product name cannot be empty."},400);
+    const result=await updateAvailable(db,"products",update,"CAST(account_id AS TEXT)=? AND CAST(id AS TEXT)=?",[accountId,id]);
+    if(!result||Number(result.meta?.changes||0)===0)return json({ok:false,error:"Product not found."},404);
+    return json({ok:true,message:"Product updated."});
+  }
+  if(req.method==="DELETE"){
+    const result=await db.prepare("DELETE FROM products WHERE CAST(account_id AS TEXT)=? AND CAST(id AS TEXT)=?").bind(accountId,id).run();
+    if(Number(result.meta?.changes||0)===0)return json({ok:false,error:"Product not found."},404);
+    return json({ok:true,message:"Product deleted."});
+  }
+  return json({ok:false,error:"Method not allowed."},405);
+}
+
+async function publicStore(db,slug){
+  const store=await db.prepare("SELECT * FROM ecommerce_stores WHERE slug=? AND (status='ACTIVE' OR status='active') LIMIT 1").bind(slug).first();
+  if(!store)return html("<!doctype html><title>Store not found</title><h1>Store not found</h1>",404);
+  const r=await db.prepare("SELECT * FROM products WHERE CAST(account_id AS TEXT)=? AND (active=1 OR status='ACTIVE' OR status='active') ORDER BY created_at DESC").bind(String(store.account_id)).all().catch(()=>({results:[]}));
+  const cards=(r.results||[]).map(p=>`<article class="product">${p.image_url?`<img src="${esc(p.image_url)}" alt="">`:""}<h3>${esc(p.name)}</h3><p>${esc(p.description||"")}</p><strong>R ${money(p.price)}</strong></article>`).join("");
+  return html(`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(store.store_name)}</title><style>body{margin:0;font-family:Arial;background:#f5f8fc;color:#172033}header{background:${esc(store.primary_color||"#0b63ce")};color:white;padding:30px}main{max-width:1100px;margin:auto;padding:25px 18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}.product{background:white;border-radius:16px;padding:18px;box-shadow:0 4px 18px #0001}.product img{width:100%;height:180px;object-fit:cover;border-radius:12px}</style></head><body><header><h1>${esc(store.store_name)}</h1><p>${esc(store.description||"")}</p></header><main><h2>Products</h2><div class="grid">${cards||"<p>No products available yet.</p>"}</div></main></body></html>`);
+}
+function adminAuthorized(req,env){const key=clean(env.ADMIN_KEY,500),supplied=req.headers.get("X-Admin-Key")||(req.headers.get("Authorization")||"").replace(/^Bearer\s+/i,"");return !!key&&supplied===key;}
+async function adminDashboard(db){
+  const count=async sql=>Number((await db.prepare(sql).first())?.total||0);
+  const customers=await count("SELECT COUNT(*) AS total FROM customer_accounts");
+  const active=await count("SELECT COUNT(*) AS total FROM subscriptions WHERE lower(status)='active'");
+  const unpaid=await count("SELECT COUNT(*) AS total FROM subscriptions WHERE lower(status)!='active'");
+  const orders=await count("SELECT COUNT(*) AS total FROM ecommerce_orders");
+  const revenue=await db.prepare("SELECT COALESCE(SUM(amount),0) AS total FROM saas_subscription_payments WHERE status='COMPLETE'").first().catch(()=>({total:0}));
+  const list=await db.prepare("SELECT a.id,a.email,a.status,a.created_at,a.business_name,a.full_name,p.business_name AS profile_business_name,p.phone,p.whatsapp,(SELECT status FROM subscriptions WHERE CAST(account_id AS TEXT)=CAST(a.id AS TEXT) ORDER BY created_at DESC LIMIT 1) AS subscription_status,(SELECT plan_name FROM subscriptions WHERE CAST(account_id AS TEXT)=CAST(a.id AS TEXT) ORDER BY created_at DESC LIMIT 1) AS plan_name FROM customer_accounts a LEFT JOIN business_profiles p ON CAST(p.account_id AS TEXT)=CAST(a.id AS TEXT) ORDER BY a.created_at DESC LIMIT 500").all();
+  return json({ok:true,stats:{customers,active_subscriptions:active,unpaid_subscriptions:unpaid,revenue:Number(revenue?.total||0),orders},customers:list.results||[]});
+}
+function authPage(mode){
+  const isRegister=mode==="register",title=isRegister?"Create your business account":"Welcome back",action=isRegister?"/api/auth/register":"/api/auth/login";
+  const field=(name,label,type="text",required=true)=>`<label>${label}<input name="${name}" type="${type}" ${required?"required":""} autocomplete="${name==="password"?(isRegister?"new-password":"current-password"):"on"}"></label>`;
+  return html(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} | Sky Blue SaaS Solutions</title><style>body{margin:0;background:#f1f5f9;font:16px Arial,sans-serif;color:#172554}main{max-width:430px;margin:35px auto;padding:24px;background:white;border-radius:14px;box-shadow:0 4px 20px #0001}h1{font-size:25px}p{line-height:1.5;color:#475569}label{display:block;margin:15px 0;font-size:14px;font-weight:bold}input{box-sizing:border-box;display:block;width:100%;padding:12px;margin-top:7px;border:1px solid #cbd5e1;border-radius:7px;font-size:16px}button{width:100%;padding:13px;background:#1459c7;color:white;border:0;border-radius:7px;font-size:16px;font-weight:bold}#message{overflow-wrap:anywhere}a{color:#1459c7}</style></head><body><main><h1>Sky Blue SaaS Solutions</h1><p>${title}</p><form id="authForm">${isRegister?field("business_name","Business name")+field("full_name","Full name")+field("phone","Phone number","tel"):""}${field("email","Email address","email")}${field("password","Password","password")}${isRegister?"<p>Password must contain at least 8 characters.</p>":""}<button id="submitBtn" type="submit">${isRegister?"Create account":"Sign in"}</button><p id="message" role="status"></p></form><p>${isRegister?'Already registered? <a href="/login">Sign in</a>':'New here? <a href="/register">Create an account</a>'}</p><p><a href="/forgot-password">Forgot your password?</a></p></main><script>const form=document.getElementById('authForm');form.addEventListener('submit',async e=>{e.preventDefault();const b=document.getElementById('submitBtn'),m=document.getElementById('message');b.disabled=true;m.textContent='Please wait...';try{const r=await fetch('${action}',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(Object.fromEntries(new FormData(form).entries()))}),d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||'Request failed. Please try again.');m.textContent=d.message||'Success.';location.href=${isRegister?"'/login'":"'/customer-dashboard.html'"};}catch(e){m.textContent=e.message||'Unable to connect. Please try again.';}finally{b.disabled=false;}});</script></body></html>`);
+}
+
+async function router(req,env){
+  const db=env.DB;
+  if(!db)return json({ok:false,error:"D1 database binding DB is missing."},500);
+  const url=new URL(req.url),path=url.pathname,method=req.method;
+  if(method==="OPTIONS")return new Response(null,{status:204,headers:{"access-control-allow-origin":"*","access-control-allow-methods":"GET,POST,PUT,PATCH,DELETE,OPTIONS","access-control-allow-headers":"Content-Type,Authorization,X-Admin-Key"}});
+  try{await ensureAuthSchema(db);}catch(e){console.error("AUTH SCHEMA",e?.stack||e);return json({ok:false,error:"Database initialisation failed: "+String(e?.message||e)},500);}
+
+  if(method==="POST"&&["/api/auth/register","/api/register"].includes(path))return register(req,db);
+  if(method==="POST"&&["/api/auth/login","/api/login"].includes(path))return login(req,db);
+  if(method==="POST"&&["/api/auth/logout","/api/logout"].includes(path))return logout(req,db);
+  if(method==="POST"&&["/api/auth/forgot-password","/api/forgot-password"].includes(path))return forgotPassword(req,db,env);
+  if(method==="POST"&&["/api/auth/reset-password","/api/reset-password"].includes(path))return resetPassword(req,db);
+
+  if(path==="/api/auth/me"&&method==="GET"){
+    const a=await accountFromSession(req,db);if(!a)return json({ok:false,authenticated:false},401);
+    const profile=await db.prepare("SELECT * FROM business_profiles WHERE CAST(account_id AS TEXT)=? LIMIT 1").bind(String(a.id)).first().catch(()=>null);
+    return json({ok:true,authenticated:true,account:{id:a.id,email:a.email,status:a.status||"ACTIVE"},profile});
+  }
+  if(path==="/api/health"&&method==="GET")return json({ok:true,status:"online",app:APP,version:VERSION});
+  if(path==="/api/catalog"&&method==="GET")return json({ok:true,products:Object.values(CATALOG),modules:MODULES});
+  if(path==="/api/checkout/start"&&method==="POST")return checkout(req,db,env,await accountFromSession(req,db));
+  if(path==="/api/payfast/itn"&&method==="POST")return payfastITN(req,db,env);
+
+  if(path.startsWith("/api/core/")){
+    const account=await accountFromSession(req,db);
+    if(!account)return json({ok:false,error:"Authentication required."},401);
+    const accountId=String(account.id);
+
+    if(path==="/api/core/dashboard"&&method==="GET"){
+      const customers=await countRowsForCore(db,"customers",accountId);
+      const products=await countRowsForCore(db,"products",accountId);
+      const orders=await countRowsForCore(db,"ecommerce_orders",accountId);
+      const sales=await countRowsForCore(db,"sales",accountId);
+      const revenue=await sumRowsForCore(db,"sales",accountId,["total_amount","total","amount","grand_total"]);
+      return json({ok:true,dashboard:{customers,products,sales: sales||orders,revenue}});
+    }
+    if(path==="/api/core/ecommerce/dashboard"&&method==="GET"){
+      const products=await countRowsForCore(db,"products",accountId);
+      const orders=await countRowsForCore(db,"ecommerce_orders",accountId);
+      const pendingOrders=await countRowsForCore(db,"ecommerce_orders",accountId,"order_status",["NEW","PENDING"]);
+      const revenue=await sumRowsForCore(db,"ecommerce_orders",accountId,["total_amount","total","subtotal"]);
+      return json({ok:true,dashboard:{products,orders,pending_orders:pendingOrders,revenue}});
+    }
+    if(path==="/api/core/business"&&(method==="GET"||method==="POST"||method==="PUT")){
+      if(method==="GET"){
+        const profile=await db.prepare("SELECT * FROM business_profiles WHERE CAST(account_id AS TEXT)=? LIMIT 1").bind(accountId).first().catch(()=>null);
+        return json({ok:true,business:profile,profile});
+      }
+      return saveProfile(req,db,account);
+    }
+    if(path==="/api/core/customers"&&method==="GET"){
+      if(!(await tableExists(db,"customers")))return json({ok:true,customers:[]});
+      const cols=await columns(db,"customers");
+      if(!cols.has("account_id"))return json({ok:true,customers:[]});
+      const r=await db.prepare("SELECT * FROM customers WHERE CAST(account_id AS TEXT)=? ORDER BY rowid DESC LIMIT 500").bind(accountId).all().catch(()=>({results:[]}));
+      return json({ok:true,customers:r.results||[]});
+    }
+    if(path==="/api/core/products"&&["GET","POST"].includes(method))return productsRoute(req,db,account);
+    if(path==="/api/core/ecommerce/store"&&["GET","POST"].includes(method))return storeRoute(req,db,account);
+    if(path==="/api/core/ecommerce/categories"||path.startsWith("/api/core/ecommerce/categories/"))return coreCategoryRoute(req,db,account,path);
+    if(path==="/api/core/ecommerce/products"||path.startsWith("/api/core/ecommerce/products/"))return coreEcommerceProductsRoute(req,db,account,path);
+    if(path==="/api/core/ecommerce/orders"&&["GET","POST"].includes(method))return ordersRoute(req,db,account);
+    return json({ok:false,error:"Core API endpoint not found.",path},404);
+  }
+
+  if(path==="/api/customer/dashboard"&&method==="GET"){
+    const a=await accountFromSession(req,db);if(!a)return json({ok:false,error:"Authentication required."},401);
+    return json({ok:true,dashboard:await customerDashboard(db,a)});
+  }
+  if(path==="/api/business/profile"&&["POST","PUT"].includes(method)){
+    const a=await accountFromSession(req,db);if(!a)return json({ok:false,error:"Authentication required."},401);
+    return saveProfile(req,db,a);
+  }
+  if(path==="/api/products"&&["GET","POST"].includes(method)){
+    const a=await accountFromSession(req,db);if(!a)return json({ok:false,error:"Authentication required."},401);
+    return productsRoute(req,db,a);
+  }
+  if(path==="/api/ecommerce/store"&&["GET","POST"].includes(method)){
+    const a=await accountFromSession(req,db);if(!a)return json({ok:false,error:"Authentication required."},401);
+    return storeRoute(req,db,a);
+  }
+  if(path==="/api/ecommerce/orders"&&["GET","POST"].includes(method)){
+    const a=await accountFromSession(req,db);if(!a)return json({ok:false,error:"Authentication required."},401);
+    return ordersRoute(req,db,a);
+  }
+  if(path.startsWith("/api/admin/")){
+    if(!adminAuthorized(req,env))return json({ok:false,error:"Unauthorized."},401);
+    if(path==="/api/admin/dashboard"&&method==="GET")return adminDashboard(db);
+  }
+
+  const sm=path.match(/^\/store\/([^/]+)$/);
+  if(sm&&method==="GET")return publicStore(db,decodeURIComponent(sm[1]));
+  if(method==="GET"){
+    if(path==="/register")return authPage("register");
+    if(path==="/login")return authPage("login");
+    if(path==="/forgot-password")return forgotPasswordPage();
+    if(path==="/reset-password.html")return resetPasswordPage(url);
+    if(env.ASSETS){const r=await env.ASSETS.fetch(req);if(r.status!==404)return r;}
+  }
+  return json({ok:false,error:"Endpoint not found.",path},404);
+}
+
+export default {
+  async fetch(request,env){
+    try{return await router(request,env);}
+    catch(error){console.error("Worker Error:",error?.stack||error);return json({ok:false,error:"Internal server error.",message:String(error?.message||error)},500);}
+  }
+};
